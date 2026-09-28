@@ -152,11 +152,13 @@ function updateProgress(){
 const BAK_LANGUAGE_KEY="language";
 let bakawaliLanguage=profileGet(BAK_LANGUAGE_KEY,"en")==="ms"?"ms":"en";
 const UI_TEXT={
-  en:{filterAll:"All",filterLanguage:"Language",filterMath:"Math",filterExplore:"Explore",filterAnimals:"Animals",filterScience:"Science",soundOn:"Sound ON",soundOff:"Sound OFF",hear:"Hear",next:"NEXT →",readAloud:"Read aloud",correct:"🎉 Correct!",wrong:"Try again! 💪",great:"Great job!",complete:"🌟 Module complete!",chooseAnswer:"Choose an answer.",listenChoose:"Listen carefully, then choose.",languageName:"English",langButton:"🇬🇧 EN"},
-  ms:{filterAll:"Semua",filterLanguage:"Bahasa",filterMath:"Matematik",filterExplore:"Teroka",filterAnimals:"Haiwan",filterScience:"Sains",soundOn:"Bunyi ON",soundOff:"Bunyi OFF",hear:"Dengar",next:"SETERUSNYA →",readAloud:"Baca kuat",correct:"🎉 Betul!",wrong:"Cuba lagi! 💪",great:"Syabas!",complete:"🌟 Modul selesai!",chooseAnswer:"Pilih jawapan.",listenChoose:"Dengar baik-baik, kemudian pilih.",languageName:"Bahasa Melayu",langButton:"🇲🇾 BM"}
+  en:{
+    musicTitle:"YouTube Music Camp",musicDesc:"Watch and sing along with hand-picked kids songs.",musicPlayerTitle:"Bakawali Music Player",musicPlayerDesc:"Play a kids song directly inside Bakawali.",musicNote:"More songs can be added later by changing the YouTube video or playlist.",filterAll:"All",filterLanguage:"Language",filterMath:"Math",filterExplore:"Explore",filterAnimals:"Animals",filterScience:"Science",soundOn:"Sound ON",soundOff:"Sound OFF",hear:"Hear",next:"NEXT →",readAloud:"Read aloud",correct:"🎉 Correct!",wrong:"Try again! 💪",great:"Great job!",complete:"🌟 Module complete!",chooseAnswer:"Choose an answer.",listenChoose:"Listen carefully, then choose.",languageName:"English",langButton:"🇬🇧 EN"},
+  ms:{
+    musicTitle:"Kem Muzik YouTube",musicDesc:"Tonton dan nyanyi bersama lagu kanak-kanak pilihan.",musicPlayerTitle:"Pemain Muzik Bakawali",musicPlayerDesc:"Mainkan lagu kanak-kanak terus dalam Bakawali.",musicNote:"Lagu lain boleh ditambah kemudian dengan menukar video atau playlist YouTube.",filterAll:"Semua",filterLanguage:"Bahasa",filterMath:"Matematik",filterExplore:"Teroka",filterAnimals:"Haiwan",filterScience:"Sains",soundOn:"Bunyi ON",soundOff:"Bunyi OFF",hear:"Dengar",next:"SETERUSNYA →",readAloud:"Baca kuat",correct:"🎉 Betul!",wrong:"Cuba lagi! 💪",great:"Syabas!",complete:"🌟 Modul selesai!",chooseAnswer:"Pilih jawapan.",listenChoose:"Dengar baik-baik, kemudian pilih.",languageName:"Bahasa Melayu",langButton:"🇲🇾 BM"}
 };
 const MODULE_BM={
- abc:["Jelajah Abjad","Belajar A–Z dan dengar setiap huruf."], phonics:["Bunyi Huruf","Dengar bunyi pertama dalam perkataan mudah."], spelling:["Eja Perkataan","Bina perkataan mudah."], sight:["Perkataan Mudah","Kenali perkataan mudah untuk membaca awal."], reading:["Baca Ayat","Baca ayat pendek dengan petunjuk gambar."], story:["Cerita Mini","Baca cerita pendek dan jawab soalan."], picture:["Padankan Gambar","Pilih perkataan yang sepadan dengan gambar."], wordmatch:["Padan Perkataan & Gambar","Padankan perkataan mudah dengan gambar."],
+ abc:["Jelajah Abjad","Belajar A–Z dan dengar setiap huruf."], phonics:["Bunyi Huruf","Dengar bunyi pertama dalam perkataan mudah."], spelling:["Eja Perkataan","Bina perkataan 3 huruf mudah."], sight:["Perkataan Mudah","Kenali perkataan mudah untuk membaca awal."], reading:["Baca Ayat","Baca ayat pendek dengan petunjuk gambar."], story:["Cerita Mini","Baca cerita pendek dan jawab soalan."], picture:["Padankan Gambar","Pilih perkataan yang sepadan dengan gambar."], wordmatch:["Padan Perkataan & Gambar","Padankan perkataan mudah dengan gambar."],
  count:["Kira Objek","Kira sehingga 10."], addition:["Tambah Mudah","Tambah nombor kecil bersama-sama."], subtraction:["Tolak Mudah","Tolak nombor kecil."], shapes:["Detektif Bentuk","Cari bulatan, segi empat, segi tiga dan lain-lain."], patterns:["Kuasa Corak","Cari apa yang datang seterusnya."], compare:["Lebih atau Kurang","Bandingkan kumpulan dan nombor."], time:["Jelajah Masa","Belajar masa tepat yang mudah."], money:["Kedai Kecil","Kira duit syiling dan harga mudah."],
  memory:["Padanan Memori","Ingat dan padankan pasangan gambar."], sorting:["Asingkan","Masukkan benda ke kumpulan yang betul."], sequence:["Apa Berlaku Seterusnya?","Susun tindakan mudah mengikut urutan."],
  animals:["Detektif Haiwan","50 cabaran tentang bunyi, badan, makanan, pergerakan dan tempat tinggal haiwan."], animalhabitat:["Habitat Haiwan","50 misi tentang tempat haiwan hidup dan keperluan mereka."], scientist:["Saintis Kecil","50 eksperimen mini tentang sains harian."], scienceexplorer:["Jelajah Sains","50 misi tentang cuaca, angkasa, cahaya dan alam semula jadi."]
@@ -166,21 +168,6 @@ const WORD_BM={
  "Apple":"Epal","Ball":"Bola","Sun":"Matahari","Tree":"Pokok","Grass":"Rumput","Leaves":"Daun","Bamboo":"Buluh","Meat":"Daging","Berries":"Buah beri","Pond":"Kolam","Ocean":"Laut","Garden":"Taman","Forest":"Hutan","Jungle":"Hutan rimba","Farm":"Ladang","Desert":"Gurun","Arctic":"Artik","Savanna":"Savana","Grassland":"Padang rumput","River":"Sungai","Rivers":"Sungai","Wetlands":"Tanah lembap","Water":"Air","Food":"Makanan","Shelter":"Tempat berlindung","Flowers":"Bunga","Warm water":"Air suam","Cold regions":"Kawasan sejuk","Australia":"Australia","Moon":"Bulan","Earth":"Bumi","Sunlight":"Cahaya matahari","Wind":"Angin","Rain":"Hujan","Clouds":"Awan","Ice":"Ais","Snow":"Salji","Rock":"Batu","Plant":"Tumbuhan","Roots":"Akar","Flower":"Bunga","Milk":"Susu","Juice":"Jus","Time":"Masa","Weight":"Berat","Temperature":"Suhu","Direction":"Arah",
  "The Sun":"Matahari","A ball":"Bola","A planet":"Planet","A star":"Bintang","Stars":"Bintang","Planets":"Planet","Rocket":"Roket","Spring":"Musim bunga","Summer":"Musim panas","Autumn":"Musim luruh","Winter":"Musim sejuk","Raincoat":"Baju hujan","Thunder":"Guruh","Wind":"Angin","Lava":"Lava","Mountain":"Gunung","Energy":"Tenaga","Air":"Udara","Vibrations":"Getaran","Sound":"Bunyi","Ears":"Telinga","Eyes":"Mata","Nose":"Hidung","Tongue":"Lidah","Touch":"Sentuhan","Sight":"Penglihatan","Thermometer":"Termometer","Ruler":"Pembaris","Roots":"Akar","Sponge":"Span","Wood":"Kayu","Boat":"Bot","Shadow":"Bayang-bayang","Magnet":"Magnet","Direction":"Arah"
 };
-const SPELL_BM={CAT:"KUCING",DOG:"ANJING",SUN:"MATAHARI",BUS:"BAS",HAT:"TOPI"};
-const SPELL_PIC_BM={CAT:"🐱",DOG:"🐶",SUN:"☀️",BUS:"🚌",HAT:"🧢"};
-function localizedSpellData(m){
-  if(bakawaliLanguage!=="ms" || m.id!=="spelling") return m.words;
-  return m.words.map(([word,pic])=>[SPELL_BM[word]||word,SPELL_PIC_BM[word]||pic]);
-}
-function localizedSpellFeedback(word){
-  return bakawaliLanguage==="ms"?`Eja perkataan: ${word}`:`Spell the word: ${word}`;
-}
-function localizedCorrectSpell(){
-  return bakawaliLanguage==="ms"?"🎉 Ejaan betul!":"🎉 Spelled correctly!";
-}
-function localizedKeepSpelling(){
-  return bakawaliLanguage==="ms"?"Bagus! Teruskan!":"Great! Keep going!";
-}
 function bmAnimalPhrase(s){
   let out=s;
   Object.keys(WORD_BM).sort((a,b)=>b.length-a.length).forEach(k=>{out=out.replace(new RegExp('\\b'+k.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')+'\\b','gi'),WORD_BM[k]);});
@@ -226,6 +213,14 @@ function setBakawaliLanguage(lang){
   const activeFilter=document.querySelector('.training-filter.active')?.dataset.filter||'all';
   renderTrainingCards(activeFilter);
 }
+function updateMusicLanguage(){
+  const frame=document.getElementById("bakawaliYoutubePlayer");
+  if(!frame)return;
+  const lang=(typeof getBakawaliLanguage==='function'?getBakawaliLanguage():(localStorage.getItem(BAK_LANGUAGE_KEY)||"en"));
+  const base="https://www.youtube.com/embed/TqfMHH67KJA?playsinline=1&rel=0&hl="+(lang==="ms"?"ms":"en");
+  if(frame.src!==base) frame.src=base;
+}
+
 function initLanguage(){
   const b=document.getElementById('languageToggle');
   if(!b)return;
@@ -560,10 +555,9 @@ function wireTraining(m){
    if(m.type==="spell"){
     let i=0;const stage=document.getElementById("spellStage");
     const show=()=>{
-      const words=localizedSpellData(m);
-      const [word,pic]=words[i%words.length];
+      const [word,pic]=m.words[i%m.words.length];
       const shuffled=[...word].sort(()=>Math.random()-.5);
-      stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word" id="spellWordDisplay">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button type="button" data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">${localizedSpellFeedback(word)}</p>`;
+      stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word" id="spellWordDisplay">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button type="button" data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;
       let chosen=[];
       const updateDisplay=()=>{document.getElementById("spellWordDisplay").innerHTML=word.split("").map((_,idx)=>chosen[idx]||"_").join(" ");};
       stage.querySelectorAll(".letter-choices button").forEach(b=>b.onclick=()=>{
@@ -580,9 +574,9 @@ function wireTraining(m){
         chosen.push(b.dataset.letter);
         b.disabled=true;
         updateDisplay();
-        document.getElementById("trainFeedback").textContent=chosen.length===word.length?localizedCorrectSpell():localizedKeepSpelling();
+        document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Great! Keep going!";
         if(chosen.length===word.length){
-          trainingFeedback("correct",localizedCorrectSpell());
+          trainingFeedback("correct","🎉 Spelled correctly!");
           stage.querySelectorAll(".letter-choices button").forEach(x=>x.disabled=true);
           trainingComplete(m.id);
           setTimeout(()=>{i++;show()},700);
@@ -689,6 +683,7 @@ function initProfiles(){
 document.addEventListener("DOMContentLoaded",()=>{
   initProfiles();
   initLanguage();
+updateMusicLanguage();
   const trainingRoot=document.getElementById("trainingModal");
   if(trainingRoot){trainingRoot.addEventListener("click",e=>{const btn=e.target.closest("button");if(btn&&!btn.id.includes("trainingSoundToggle")){trainingClickSound();}});}
 

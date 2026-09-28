@@ -272,10 +272,22 @@
 </section>
 
 <section id="music" class="page">
-  <div class="page-head"><div><span class="eyebrow">MUSIC CAMP</span><h2>Sing Along</h2><p>Simple browser songs and sound activities.</p></div></div>
-  <div class="music-card">
-    <div class="record">♫</div><div><h3>Bakawali Learning Songs</h3><p>Use your browser voice to practise letters, numbers and colours.</p></div>
-    <div class="music-actions"><button class="primary small" data-speak="A B C! 1 2 3! Red, blue, yellow!">▶ PLAY</button><button class="secondary small" data-speak="Great job, little explorer!">👏 PRAISE</button></div>
+  <div class="page-head"><div><span class="eyebrow">MUSIC CAMP</span><h2 data-i18n="musicTitle">YouTube Music Camp</h2><p data-i18n="musicDesc">Watch and sing along with hand-picked kids songs.</p></div></div>
+  <div class="youtube-music-card">
+    <div class="youtube-music-head">
+      <div class="youtube-music-icon">▶</div>
+      <div><h3 data-i18n="musicPlayerTitle">Bakawali Music Player</h3><p data-i18n="musicPlayerDesc">Play a kids song directly inside Bakawali.</p></div>
+    </div>
+    <div class="youtube-frame-wrap">
+      <iframe
+        id="bakawaliYoutubePlayer"
+        src="https://www.youtube.com/embed/TqfMHH67KJA?playsinline=1&rel=0&hl=en"
+        title="Bakawali YouTube Music Player"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+    <div class="youtube-music-note">🎵 <span data-i18n="musicNote">More songs can be added later by changing the YouTube video or playlist.</span></div>
   </div>
 </section>
 </main>
