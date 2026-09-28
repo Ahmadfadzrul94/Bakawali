@@ -120,7 +120,7 @@
       <h2>Choose Your Game</h2>
       <p>Pick a game below. The game opens only when you choose it.</p>
     </div>
-    <div class="level-pill">🎮 <b>3</b> GAMES</div>
+    <div class="level-pill">🎮 <b>4</b> GAMES</div>
   </div>
 
   <div class="game-select-v2" role="tablist" aria-label="Bakawali games">
@@ -137,6 +137,11 @@
     <button class="game-choice-v2" data-game-panel="blockPanel" role="tab" aria-selected="false">
       <span class="game-choice-icon">🧩</span>
       <span><b>Block Drop</b><small>Move • Rotate • Clear</small></span>
+      <i>PLAY →</i>
+    </button>
+    <button class="game-choice-v2" data-game-panel="astraeaPanel" role="tab" aria-selected="false">
+      <span class="game-choice-icon">🚀</span>
+      <span><b>Astraea Starfighter</b><small>Fly • Fire • Defend</small></span>
       <i>PLAY →</i>
     </button>
   </div>
@@ -234,6 +239,25 @@
   <div class="music-card">
     <div class="record">♫</div><div><h3>Bakawali Learning Songs</h3><p>Use your browser voice to practise letters, numbers and colours.</p></div>
     <div class="music-actions"><button class="primary small" data-speak="A B C! 1 2 3! Red, blue, yellow!">▶ PLAY</button><button class="secondary small" data-speak="Great job, little explorer!">👏 PRAISE</button></div>
+
+
+  <div id="astraeaPanel" class="game-panel-v2">
+    <div class="astraea-card">
+      <div class="astraea-head">
+        <div>
+          <span class="eyebrow">STAR DEFENDER</span>
+          <h3>🚀 Astraea Starfighter</h3>
+          <p>Fly, fire, survive the waves and defeat the dreadnought.</p>
+        </div>
+        <button id="astraeaClose" class="astraea-close" type="button">← BACK TO GAMES</button>
+      </div>
+      <div class="astraea-frame-wrap">
+        <iframe id="astraeaFrame" title="Astraea Starfighter Defender"
+                data-src="astraea.html" src="about:blank"
+                loading="lazy" allow="autoplay; fullscreen"></iframe>
+      </div>
+    </div>
+  </div>
   </div>
 </section>
 </main>

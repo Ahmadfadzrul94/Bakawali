@@ -118,9 +118,20 @@ document.addEventListener("DOMContentLoaded",()=>{
       const panel=document.getElementById(btn.dataset.gamePanel);
       if(panel){
         panel.classList.add("active");
+        const frame = panel.querySelector("#astraeaFrame");
+        if(frame && frame.src.endsWith("about:blank")){
+          frame.src = frame.dataset.src;
+        }
         window.dispatchEvent(new Event("resize"));
       }
     }));
+    const astraeaClose = document.getElementById("astraeaClose");
+    if(astraeaClose){
+      astraeaClose.addEventListener("click",()=>{
+        const first=choices[0];
+        if(first) first.click();
+      });
+    }
   });
 
   safe(()=>{

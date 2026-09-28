@@ -1,10 +1,9 @@
-# Bakawali Adventure V2.1
+# Bakawali Games V3
 
-A polished, original kids adventure website for the Bakawali project.
+Games:
+1. Bakawali Sky Runner
+2. Bakawali Spin Quest
+3. Bakawali Block Drop
+4. Astraea Starfighter Defender
 
-## Files
-- index.html — complete page structure
-- style.css — responsive visual design
-- script.js — navigation, speech, stars, badges and mini games
-
-No external libraries, image assets or paid services are required.
+Astraea is loaded only when the user selects it from the Games picker.
