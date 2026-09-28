@@ -102,94 +102,215 @@ document.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",(
 document.querySelectorAll("[data-speak]").forEach(b=>b.addEventListener("click",()=>{speak(b.dataset.speak);earnStar("🎵 Music time!")}));
 buildLearning();nextQuiz();renderStats();
 
-// Phase 4.5 Adventure Arcade
-document.querySelectorAll(".game-choice").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll(".game-choice").forEach(x=>x.classList.remove("active"));
-  document.querySelectorAll(".game-panel").forEach(x=>x.classList.remove("active"));
-  btn.classList.add("active");document.getElementById(btn.dataset.gamePanel).classList.add("active");
-}));
 
-const oldEarnStar=earnStar;
-earnStar=function(msg="⭐ Quest complete!"){oldEarnStar(msg);const g=document.getElementById("gameStars");if(g)g.textContent=stars};
-document.getElementById("gameStars").textContent=stars;
+document.addEventListener("DOMContentLoaded",()=>{
+  const safe=(fn)=>{try{fn()}catch(e){console.error("Bakawali game error:",e)}};
 
-// MONSTER CHASE
-let chaseRunning=false,chaseX=15,chaseScore=0,chaseTimer;
-const chasePlayer=document.getElementById("chasePlayer"),chaseItem=document.getElementById("chaseItem"),chaseMessage=document.getElementById("chaseMessage");
-function moveChase(dir){if(!chaseRunning)return;chaseX=Math.max(4,Math.min(82,chaseX+(dir==="left"?-5:5)));chasePlayer.style.left=chaseX+"%";checkChase();}
-function spawnChase(){chaseItem.style.left=(20+Math.random()*65)+"%";chaseItem.style.top=(15+Math.random()*55)+"%"}
-function checkChase(){
- const a=chasePlayer.getBoundingClientRect(),b=chaseItem.getBoundingClientRect();
- if(Math.abs((a.left+a.width/2)-(b.left+b.width/2))<55&&Math.abs((a.top+a.height/2)-(b.top+b.height/2))<65){
-   chaseScore++;document.getElementById("chaseScore").textContent=chaseScore;spawnChase();
-   if(chaseScore%5===0){earnStar("⚡ Energy collected!");chaseMessage.textContent="SUPER! +1 ⭐";setTimeout(()=>chaseMessage.textContent="",700)}
- }
-}
-document.querySelectorAll("[data-move]").forEach(b=>b.addEventListener("click",()=>moveChase(b.dataset.move)));
-document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")moveChase("left");if(e.key==="ArrowRight")moveChase("right")});
-document.getElementById("chaseStart").addEventListener("click",()=>{
- if(chaseRunning)return;chaseRunning=true;chaseScore=0;chaseX=15;document.getElementById("chaseScore").textContent=0;
- chaseMessage.textContent="GO!";spawnChase();setTimeout(()=>chaseMessage.textContent="",500);
- clearInterval(chaseTimer);chaseTimer=setInterval(()=>{if(chaseRunning){spawnChase();}},1800);
- setTimeout(()=>{chaseRunning=false;clearInterval(chaseTimer);chaseMessage.textContent="RUN COMPLETE!";if(chaseScore>=3)earnStar("🏃 Monster Chase cleared!");setTimeout(()=>chaseMessage.textContent="",1200)},30000);
+  safe(()=>{
+    document.querySelectorAll(".game-choice").forEach(btn=>btn.addEventListener("click",()=>{
+      document.querySelectorAll(".game-choice").forEach(x=>x.classList.remove("active"));
+      document.querySelectorAll(".game-panel").forEach(x=>x.classList.remove("active"));
+      btn.classList.add("active");
+      const panel=document.getElementById(btn.dataset.gamePanel);
+      if(panel) panel.classList.add("active");
+    }));
+  });
+
+  safe(()=>{
+    const g=document.getElementById("gameStars");
+    if(g) g.textContent=stars;
+  });
+
+  // ---------- MONSTER CHASE ----------
+  safe(()=>{
+    let running=false, x=15, score=0, timer=null, endTimer=null;
+    const player=document.getElementById("chasePlayer");
+    const item=document.getElementById("chaseItem");
+    const stage=document.getElementById("chaseStage");
+    const msg=document.getElementById("chaseMessage");
+    const scoreEl=document.getElementById("chaseScore");
+    const start=document.getElementById("chaseStart");
+    if(!player||!item||!stage||!msg||!scoreEl||!start) return;
+
+    function spawn(){
+      item.style.left=(18+Math.random()*68)+"%";
+      item.style.top=(15+Math.random()*58)+"%";
+    }
+    function collect(){
+      const a=player.getBoundingClientRect(),b=item.getBoundingClientRect();
+      const dx=Math.abs((a.left+a.width/2)-(b.left+b.width/2));
+      const dy=Math.abs((a.top+a.height/2)-(b.top+b.height/2));
+      if(dx<58 && dy<70){
+        score++;
+        scoreEl.textContent=score;
+        spawn();
+        if(score%5===0){
+          msg.textContent="SUPER! +1 ⭐";
+          earnStar("⚡ Energy collected!");
+          setTimeout(()=>{if(running)msg.textContent=""},700);
+        }
+      }
+    }
+    function move(dir){
+      if(!running)return;
+      x=Math.max(4,Math.min(82,x+(dir==="left"?-6:6)));
+      player.style.left=x+"%";
+      collect();
+    }
+    document.querySelectorAll("[data-move]").forEach(b=>{
+      b.onclick=()=>move(b.dataset.move);
+    });
+    window.addEventListener("keydown",e=>{
+      if(e.key==="ArrowLeft")move("left");
+      if(e.key==="ArrowRight")move("right");
+    });
+    start.onclick=()=>{
+      if(running)return;
+      running=true;x=15;score=0;scoreEl.textContent="0";player.style.left=x+"%";
+      msg.textContent="GO!";
+      spawn();
+      setTimeout(()=>{if(running)msg.textContent=""},500);
+      clearInterval(timer);
+      timer=setInterval(spawn,1800);
+      clearTimeout(endTimer);
+      endTimer=setTimeout(()=>{
+        running=false;clearInterval(timer);
+        msg.textContent="RUN COMPLETE!";
+        if(score>=3)earnStar("🏃 Monster Chase cleared!");
+        setTimeout(()=>msg.textContent="",1200);
+      },30000);
+    };
+    spawn();
+  });
+
+  // ---------- SKY BLASTER ----------
+  safe(()=>{
+    let running=false,score=0,combo=0,timer=null,endTimer=null;
+    const target=document.getElementById("skyTarget");
+    const scoreEl=document.getElementById("blastScore");
+    const comboEl=document.getElementById("blastCombo");
+    const msg=document.getElementById("skyMessage");
+    const start=document.getElementById("blastStart");
+    if(!target||!scoreEl||!comboEl||!msg||!start)return;
+
+    function move(){
+      target.style.left=(8+Math.random()*78)+"%";
+      target.style.top=(10+Math.random()*72)+"%";
+    }
+    target.onclick=()=>{
+      if(!running)return;
+      score++;combo++;
+      scoreEl.textContent=score;comboEl.textContent="x"+combo;
+      if(combo>=3){
+        msg.textContent="🔥 COMBO!";
+        setTimeout(()=>{if(running)msg.textContent=""},450);
+      }
+      if(score%8===0)earnStar("🚀 Sky Blaster cleared!");
+      move();
+    };
+    start.onclick=()=>{
+      if(running)return;
+      running=true;score=0;combo=0;
+      scoreEl.textContent="0";comboEl.textContent="x0";
+      msg.textContent="BLAST OFF!";move();
+      setTimeout(()=>{if(running)msg.textContent=""},500);
+      clearInterval(timer);timer=setInterval(()=>{move();combo=0;comboEl.textContent="x0"},950);
+      clearTimeout(endTimer);
+      endTimer=setTimeout(()=>{
+        running=false;clearInterval(timer);
+        msg.textContent="MISSION COMPLETE!";
+        if(score>=5)earnStar("🎯 Sky mission cleared!");
+        setTimeout(()=>msg.textContent="",1200);
+      },25000);
+    };
+    move();
+  });
+
+  // ---------- TREASURE HUNT ----------
+  safe(()=>{
+    let key=false;
+    const result=document.getElementById("treasureResult");
+    const keyEl=document.getElementById("treasureKeys");
+    const chest=document.getElementById("openChest");
+    if(!result||!keyEl||!chest)return;
+
+    document.querySelectorAll("[data-path]").forEach(btn=>{
+      btn.onclick=()=>{
+        const path=btn.dataset.path;
+        if(path==="cave"){
+          if(!key){
+            key=true;keyEl.textContent="1";chest.disabled=false;
+            result.textContent="💎 You found the KEY! The treasure chest can be opened!";
+            earnStar("🔑 Key found!");
+          }
+        }else if(path==="forest"){
+          result.textContent="🌲 You found tiny footprints... maybe a monster was here!";
+        }else{
+          result.textContent="🌊 Splash! The river sends you back to camp.";
+        }
+      };
+    });
+    chest.onclick=()=>{
+      if(!key)return;
+      result.textContent="🎉 TREASURE FOUND! You discovered a Bakawali treasure!";
+      chest.textContent="🏆 TREASURE CLAIMED";
+      chest.disabled=true;
+      earnStar("💎 Treasure Quest complete!");
+    };
+  });
+
+  // ---------- MONSTER BATTLE ----------
+  safe(()=>{
+    let playerHP=100,enemyHP=100,energy=0,busy=false;
+    const p=document.getElementById("playerHp"),e=document.getElementById("enemyHp"),en=document.getElementById("energyBar");
+    const status=document.getElementById("battleStatus"),superBtn=document.getElementById("superSpark"),level=document.getElementById("battleLevel");
+    if(!p||!e||!en||!status||!superBtn)return;
+
+    function ui(){
+      p.style.width=playerHP+"%";e.style.width=enemyHP+"%";en.style.width=energy+"%";
+      superBtn.disabled=energy<100||enemyHP<=0;
+      if(level)level.textContent=Math.floor(stars/3)+1;
+    }
+    function enemyTurn(){
+      if(enemyHP<=0)return;
+      setTimeout(()=>{
+        const hit=8+Math.floor(Math.random()*9);
+        playerHP=Math.max(0,playerHP-hit);ui();
+        if(playerHP<=0){
+          status.textContent="💪 Zapko needs a rest! Try again.";
+          playerHP=100;enemyHP=100;energy=0;ui();
+        }else{
+          status.textContent="Wild Bot attacks! Your turn!";
+        }
+        busy=false;
+      },500);
+    }
+    document.querySelectorAll("[data-battle]").forEach(btn=>{
+      btn.onclick=()=>{
+        if(busy||enemyHP<=0)return;
+        busy=true;
+        if(btn.dataset.battle==="charge"){
+          energy=Math.min(100,energy+35);
+          status.textContent="🔋 Energy charged!";
+        }else{
+          enemyHP=Math.max(0,enemyHP-22);
+          energy=Math.min(100,energy+20);
+          status.textContent="⚡ SPARK HIT!";
+        }
+        ui();
+        if(enemyHP<=0){
+          status.textContent="🏆 Victory! Wild Bot is defeated!";
+          earnStar("⚔️ Battle victory!");
+          setTimeout(()=>{enemyHP=100;playerHP=100;energy=0;busy=false;ui()},900);
+        }else enemyTurn();
+      };
+    });
+    superBtn.onclick=()=>{
+      if(busy||energy<100||enemyHP<=0)return;
+      busy=true;enemyHP=0;energy=0;status.textContent="💥 SUPER SPARK!!!";ui();
+      earnStar("💥 SUPER SPARK victory!");
+      setTimeout(()=>{enemyHP=100;playerHP=100;busy=false;ui();status.textContent="Ready for another battle!"},1100);
+    };
+    ui();
+  });
 });
-
-// SKY BLASTER
-let blastRunning=false,blastScore=0,blastCombo=0,blastTimer;
-const target=document.getElementById("skyTarget"),skyStage=document.getElementById("skyStage");
-function moveTarget(){target.style.left=(8+Math.random()*78)+"%";target.style.top=(10+Math.random()*70)+"%"}
-target.addEventListener("click",()=>{
- if(!blastRunning)return;blastScore++;blastCombo++;document.getElementById("blastScore").textContent=blastScore;document.getElementById("blastCombo").textContent="x"+blastCombo;
- if(blastCombo>=3){document.getElementById("skyMessage").textContent="🔥 COMBO!";setTimeout(()=>document.getElementById("skyMessage").textContent="",450)}
- if(blastScore%8===0)earnStar("🚀 Sky Blaster cleared!");
- moveTarget();
-});
-document.getElementById("blastStart").addEventListener("click",()=>{
- if(blastRunning)return;blastRunning=true;blastScore=0;blastCombo=0;document.getElementById("blastScore").textContent=0;document.getElementById("blastCombo").textContent="x0";
- document.getElementById("skyMessage").textContent="BLAST OFF!";moveTarget();setTimeout(()=>document.getElementById("skyMessage").textContent="",500);
- clearInterval(blastTimer);blastTimer=setInterval(()=>{moveTarget();blastCombo=0;document.getElementById("blastCombo").textContent="x0"},950);
- setTimeout(()=>{blastRunning=false;clearInterval(blastTimer);document.getElementById("skyMessage").textContent="MISSION COMPLETE!";if(blastScore>=5)earnStar("🎯 Sky mission cleared!");setTimeout(()=>document.getElementById("skyMessage").textContent="",1200)},25000);
-});
-
-// TREASURE HUNT
-let hasKey=false;
-document.querySelectorAll("[data-path]").forEach(btn=>btn.addEventListener("click",()=>{
- const path=btn.dataset.path;
- const messages={
-  forest:["🌲 You found footprints! Follow them...","no"],
-  cave:["💎 A crystal shines! You found the KEY!","yes"],
-  river:["🌊 Splash! The current carried you back to camp.","no"]
- };
- document.getElementById("treasureResult").textContent=messages[path][0];
- if(messages[path][1]==="yes"){hasKey=true;document.getElementById("treasureKeys").textContent="1";document.getElementById("openChest").disabled=false;earnStar("🔑 Key found!")}
-}));
-document.getElementById("openChest").addEventListener("click",()=>{
- if(!hasKey)return;document.getElementById("treasureResult").textContent="🎉 TREASURE FOUND! A new adventure badge is yours!";
- document.getElementById("openChest").textContent="🏆 TREASURE CLAIMED";document.getElementById("openChest").disabled=true;earnStar("💎 Treasure Quest complete!");
-});
-
-// MONSTER BATTLE
-let playerHP=100,enemyHP=100,energy=0;
-function battleUI(){document.getElementById("playerHp").style.width=playerHP+"%";document.getElementById("enemyHp").style.width=enemyHP+"%";document.getElementById("energyBar").style.width=energy+"%";document.getElementById("superSpark").disabled=energy<100}
-function enemyMove(){
- if(enemyHP<=0)return;
- const hit=8+Math.floor(Math.random()*9);playerHP=Math.max(0,playerHP-hit);battleUI();
- if(playerHP<=0){document.getElementById("battleStatus").textContent="💪 Zapko needs a rest! Try again.";playerHP=100;enemyHP=100;energy=0;battleUI()}
-}
-function battleAction(type){
- if(enemyHP<=0)return;
- if(type==="charge"){energy=Math.min(100,energy+35);document.getElementById("battleStatus").textContent="🔋 Zapko is charging!";battleUI();setTimeout(enemyMove,400);return}
- const dmg=22;enemyHP=Math.max(0,enemyHP-dmg);energy=Math.min(100,energy+20);document.getElementById("battleStatus").textContent="⚡ SPARK HIT!";battleUI();
- if(enemyHP<=0){document.getElementById("battleStatus").textContent="🏆 Victory! Wild Bot is down!";earnStar("⚔️ Battle victory!");enemyHP=100;playerHP=100;energy=0;battleUI();return}
- setTimeout(enemyMove,450)
-}
-document.querySelectorAll("[data-battle]").forEach(b=>b.addEventListener("click",()=>battleAction(b.dataset.battle)));
-document.getElementById("superSpark").addEventListener("click",()=>{
- if(energy<100||enemyHP<=0)return;enemyHP=0;energy=0;document.getElementById("battleStatus").textContent="💥 SUPER SPARK!!!";battleUI();earnStar("💥 SUPER SPARK victory!");
- setTimeout(()=>{enemyHP=100;playerHP=100;battleUI()},900);
-});
-document.getElementById("battleLevel").textContent=Math.floor(stars/3)+1;
-battleUI();
-
-const hash=location.hash.replace("#","");
-if(hash && document.getElementById(hash)) showPage(hash);
