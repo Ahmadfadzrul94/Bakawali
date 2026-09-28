@@ -2,60 +2,195 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bakawali Adventure</title>
+<meta name="description" content="Bakawali Adventure — a playful learning world for little explorers.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">🌿 BAKAWALI</div>
-  <button id="homeBtn">HOME</button>
+  <div class="brand" data-go="home">
+    <span class="brand-mark">⚡</span>
+    <span><b>BAKAWALI</b><small>ADVENTURE WORLD</small></span>
+  </div>
+  <nav>
+    <button data-go="home">🗺️ <span>Map</span></button>
+    <button data-go="training">📚 <span>Training</span></button>
+    <button data-go="games">🎮 <span>Games</span></button>
+    <button data-go="collection">🏆 <span>Collection</span></button>
+    <button data-go="music">🎵 <span>Music</span></button>
+  </nav>
 </header>
 
-<main>
-<section id="homeScreen" class="screen">
+<main id="app">
+<section id="home" class="page active">
   <div class="hero">
-    <div>
-      <p class="eyebrow">WORLD 1</p>
-      <h1>Bakawali Forest</h1>
-      <p>Help Baku reach the flag! Collect stars and jump over the little forest bugs.</p>
-      <button id="startBtn" class="bigBtn">▶ START ADVENTURE</button>
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="pulse"></span> NEW QUEST AVAILABLE</div>
+      <h1>BAKAWALI<br><em>ADVENTURE</em></h1>
+      <p class="lead">Explore. Learn. Play. Collect.</p>
+      <div class="trainer-row">
+        <div class="avatar">🧢</div>
+        <div>
+          <strong>Little Explorer</strong>
+          <div class="stats"><span>⭐ <b id="stars">0</b> Stars</span><span>🏅 <b id="badges">0</b> Badges</span><span>⚡ LV. <b id="level">1</b></span></div>
+        </div>
+      </div>
+      <button class="primary" data-go="training">START ADVENTURE <span>▶</span></button>
     </div>
-    <div class="heroBuddy">🐾</div>
+
+    <div class="hero-scene">
+      <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+      <div class="mountain m1"></div><div class="mountain m2"></div>
+      <div class="ground"></div>
+      <div class="monster monster-zap" title="Zapko">
+        <span class="ear e1"></span><span class="ear e2"></span>
+        <span class="eye left"></span><span class="eye right"></span><span class="mouth"></span>
+        <span class="bolt"></span>
+      </div>
+      <div class="monster monster-bub" title="Bubblu">
+        <span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span>
+      </div>
+      <div class="monster monster-flam" title="Flammi">
+        <span class="flame f1"></span><span class="flame f2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span>
+      </div>
+      <div class="sign">BAKAWALI<br><small>WILD TRAILS</small></div>
+    </div>
+  </div>
+
+  <div class="section-title"><span>🗺️</span><div><h2>Adventure Map</h2><p>Choose your next training ground.</p></div></div>
+  <div class="map-grid">
+    <button class="map-card forest" data-go="training"><span class="map-icon">🌲</span><b>ABC FOREST</b><small>Letters & sounds</small><i>GO →</i></button>
+    <button class="map-card mountain-card" data-go="training"><span class="map-icon">⛰️</span><b>NUMBER MOUNTAIN</b><small>Numbers 1–10</small><i>GO →</i></button>
+    <button class="map-card cave" data-go="training"><span class="map-icon">💎</span><b>COLOUR CAVE</b><small>Colours & shapes</small><i>GO →</i></button>
+    <button class="map-card arena" data-go="games"><span class="map-icon">⚔️</span><b>BATTLE ARENA</b><small>Mini games & quizzes</small><i>PLAY →</i></button>
+  </div>
+
+  <div class="quest">
+    <div class="quest-badge">★</div>
+    <div class="quest-text"><small>FIRST QUEST</small><strong>Meet the Bakawali Buddies</strong><p>Discover your first three original monsters.</p></div>
+    <button class="secondary" data-go="collection">VIEW BUDDIES</button>
   </div>
 </section>
 
-<section id="gameScreen" class="screen hidden">
-  <div class="gameHeader">
-    <strong>WORLD 1-1</strong>
-    <span>⭐ <b id="score">0</b></span>
-    <span>💎 <b id="gems">0</b></span>
-    <span>❤️ <b id="lives">3</b></span>
+<section id="training" class="page">
+  <div class="page-head">
+    <div><span class="eyebrow">TRAINING CAMP</span><h2>Learn & Level Up</h2><p>Pick a lesson, listen, practise, then earn your star.</p></div>
+    <div class="level-pill">⚡ LEVEL <b id="level2">1</b></div>
   </div>
-  <div class="gameWrap">
-    <canvas id="game" width="960" height="540"></canvas>
-    <div id="message" class="message hidden"></div>
-    <div class="touch">
-      <button id="leftBtn">◀</button>
-      <button id="jumpBtn">▲</button>
-      <button id="rightBtn">▶</button>
-    </div>
+
+  <div class="learn-tabs">
+    <button class="learn-tab active" data-tab="abc-tab">🔤 ABC</button>
+    <button class="learn-tab" data-tab="number-tab">🔢 Numbers</button>
+    <button class="learn-tab" data-tab="colour-tab">🎨 Colours</button>
+    <button class="learn-tab" data-tab="shape-tab">🔷 Shapes</button>
   </div>
-  <p class="controls">Keyboard: <b>← →</b> move · <b>SPACE / ↑</b> jump</p>
+
+  <div id="abc-tab" class="learn-panel active">
+    <div class="panel-intro"><div><span class="eyebrow">ABC FOREST</span><h3>Letter Explorer</h3><p>Tap a letter to hear it.</p></div><div class="progress-mini"><span id="abcProgress">0/26</span></div></div>
+    <div class="letter-grid" id="letterGrid"></div>
+  </div>
+
+  <div id="number-tab" class="learn-panel">
+    <div class="panel-intro"><div><span class="eyebrow">NUMBER MOUNTAIN</span><h3>Counting Trail</h3><p>Tap a number to hear it and practise counting.</p></div><div class="progress-mini"><span id="numberProgress">0/10</span></div></div>
+    <div class="number-grid" id="numberGrid"></div>
+  </div>
+
+  <div id="colour-tab" class="learn-panel">
+    <div class="panel-intro"><div><span class="eyebrow">COLOUR CAVE</span><h3>Colour Hunt</h3><p>Tap a colour to hear its name.</p></div></div>
+    <div class="colour-grid" id="colourGrid"></div>
+  </div>
+
+  <div id="shape-tab" class="learn-panel">
+    <div class="panel-intro"><div><span class="eyebrow">SHAPE CAVE</span><h3>Shape Explorer</h3><p>Tap a shape to hear its name.</p></div></div>
+    <div class="shape-grid" id="shapeGrid"></div>
+  </div>
+
+  <div class="mini-quiz">
+    <div><span class="eyebrow">QUICK CHECK</span><h3 id="quizQuestion">What comes after 4?</h3></div>
+    <div class="quiz-options" id="quizOptions"><button data-answer="5">5</button><button data-answer="6">6</button><button data-answer="3">3</button></div>
+    <p id="quiz-result"></p>
+  </div>
 </section>
 
-<section id="winScreen" class="screen hidden">
-  <div class="winCard">
-    <div class="winIcon">🏁</div>
-    <h1>Level Complete!</h1>
-    <p>You reached the Bakawali Forest flag.</p>
-    <div class="result">⭐ <span id="finalScore">0</span> &nbsp; 💎 <span id="finalGems">0</span></div>
-    <button id="againBtn" class="bigBtn">↻ PLAY AGAIN</button>
-    <button id="homeWinBtn" class="secondaryBtn">HOME</button>
+<section id="games" class="page">
+  <div class="page-head">
+    <div><span class="eyebrow">ADVENTURE ARCADE</span><h2>Game Zone</h2><p>Pick a mission, help your buddy and collect rewards!</p></div>
+    <div class="level-pill">⭐ <b id="gameStars">0</b> STARS</div>
+  </div>
+
+  <div class="game-select">
+    <button class="game-choice active" data-game-panel="chase-game"><span>⚡</span><b>Monster Chase</b><small>Run • dodge • collect</small></button>
+    <button class="game-choice" data-game-panel="blaster-game"><span>🚀</span><b>Sky Blaster</b><small>Hit targets • combo</small></button>
+    <button class="game-choice" data-game-panel="treasure-game"><span>💎</span><b>Treasure Hunt</b><small>Explore • find • unlock</small></button>
+    <button class="game-choice" data-game-panel="battle-game"><span>⚔️</span><b>Monster Battle</b><small>Attack • charge • win</small></button>
+  </div>
+
+  <div id="chase-game" class="game-panel active arcade-panel">
+    <div class="arcade-head"><div><span class="eyebrow">FOREST RUN</span><h3>⚡ Monster Chase</h3><p>Help Zapko catch energy stars. Move with ◀ ▶ or the buttons.</p></div><div class="score-chip">⭐ <span id="chaseScore">0</span></div></div>
+    <div class="chase-stage" id="chaseStage">
+      <div class="chase-bg tree-a">🌲</div><div class="chase-bg tree-b">🌳</div>
+      <div class="chase-player" id="chasePlayer">⚡</div>
+      <div class="chase-item" id="chaseItem">⭐</div>
+      <div class="chase-obstacle o1">🪨</div><div class="chase-obstacle o2">🪵</div>
+      <div class="chase-message" id="chaseMessage">READY?</div>
+    </div>
+    <div class="arcade-controls"><button data-move="left">◀</button><button class="go-button" id="chaseStart">START RUN</button><button data-move="right">▶</button></div>
+  </div>
+
+  <div id="blaster-game" class="game-panel arcade-panel">
+    <div class="arcade-head"><div><span class="eyebrow">SKY TRAINING</span><h3>🚀 Sky Blaster</h3><p>Tap the flying targets. Build a combo before they disappear!</p></div><div class="score-chip">🎯 <span id="blastScore">0</span> <small id="blastCombo">x0</small></div></div>
+    <div class="sky-stage" id="skyStage"><div class="sky-cloud">☁️</div><div class="sky-target" id="skyTarget">🎯</div><div class="sky-message" id="skyMessage">READY?</div></div>
+    <div class="arcade-controls"><button class="go-button" id="blastStart">START BLAST</button></div>
+  </div>
+
+  <div id="treasure-game" class="game-panel arcade-panel">
+    <div class="arcade-head"><div><span class="eyebrow">LOST TEMPLE</span><h3>💎 Treasure Hunt</h3><p>Choose a path. Find the key, then open the treasure chest!</p></div><div class="score-chip">🔑 <span id="treasureKeys">0</span>/1</div></div>
+    <div class="treasure-map">
+      <div class="treasure-node start-node">🏕️<small>START</small></div>
+      <div class="path-line"></div>
+      <div class="treasure-choices">
+        <button data-path="forest">🌲<b>Forest</b><small>Something is hiding...</small></button>
+        <button data-path="cave">🕳️<b>Crystal Cave</b><small>A shiny clue!</small></button>
+        <button data-path="river">🌊<b>River</b><small>Follow the water...</small></button>
+      </div>
+      <div class="treasure-result" id="treasureResult">Choose your path!</div>
+      <button class="chest-button" id="openChest" disabled>🔒 TREASURE CHEST</button>
+    </div>
+  </div>
+
+  <div id="battle-game" class="game-panel arcade-panel">
+    <div class="battle-head"><div><span class="eyebrow">BUDDY ARENA</span><h3>⚔️ Zapko vs. Wild Bot</h3><p>Fill the energy meter, then unleash SUPER SPARK!</p></div><div class="battle-level">LV. <b id="battleLevel">1</b></div></div>
+    <div class="battle-arena">
+      <div class="fighter player"><div class="battle-monster zap-battle"><span class="ear e1"></span><span class="ear e2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="bolt"></span></div><b>Zapko</b><div class="hp"><i id="playerHp"></i></div><div class="energy"><i id="energyBar"></i></div></div>
+      <div class="vs">VS</div>
+      <div class="fighter enemy"><div class="battle-monster wild-battle"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div><b>Wild Bot</b><div class="hp enemyhp"><i id="enemyHp"></i></div></div>
+    </div>
+    <div class="battle-actions"><button class="primary small" data-battle="spark">⚡ SPARK</button><button class="secondary small" data-battle="charge">🔋 CHARGE</button><button class="primary small super-btn" id="superSpark" disabled>💥 SUPER SPARK</button></div>
+    <div class="game-status" id="battleStatus">Choose an action!</div>
+  </div>
+</section>
+
+<section id="collection" class="page">
+  <div class="page-head"><div><span class="eyebrow">MONSTER COLLECTION</span><h2>Bakawali Buddies</h2><p>Original creatures from the Bakawali world.</p></div></div>
+  <div class="monster-grid">
+    <article class="buddy-card electric"><div class="buddy-art zap-preview"><span class="ear e1"></span><span class="ear e2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="bolt"></span></div><div><span class="type">ELECTRIC</span><h3>Zapko</h3><p>A speedy little spark who loves letter hunts.</p></div></article>
+    <article class="buddy-card water"><div class="buddy-art bub-preview"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div><div><span class="type">WATER</span><h3>Bubblu</h3><p>A cheerful swimmer who counts bubbles all day.</p></div></article>
+    <article class="buddy-card fire"><div class="buddy-art flam-preview"><span class="flame f1"></span><span class="flame f2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span></div><div><span class="type">FIRE</span><h3>Flammi</h3><p>A warm-hearted buddy who lights up colour caves.</p></div></article>
+  </div>
+</section>
+
+<section id="music" class="page">
+  <div class="page-head"><div><span class="eyebrow">MUSIC CAMP</span><h2>Sing Along</h2><p>Simple browser songs and sound activities.</p></div></div>
+  <div class="music-card">
+    <div class="record">♫</div><div><h3>Bakawali Learning Songs</h3><p>Use your browser voice to practise letters, numbers and colours.</p></div>
+    <div class="music-actions"><button class="primary small" data-speak="A B C! 1 2 3! Red, blue, yellow!">▶ PLAY</button><button class="secondary small" data-speak="Great job, little explorer!">👏 PRAISE</button></div>
   </div>
 </section>
 </main>
 
+<div id="toast" class="toast">⭐ Quest complete!</div>
+<footer>BAKAWALI ADVENTURE WORLD · Made for little explorers</footer>
 <script src="script.js"></script>
 </body>
 </html>
