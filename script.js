@@ -128,6 +128,8 @@ document.addEventListener("DOMContentLoaded",()=>{
     const astraeaClose = document.getElementById("astraeaClose");
     if(astraeaClose){
       astraeaClose.addEventListener("click",()=>{
+        const frame=document.getElementById("astraeaFrame");
+        if(frame) frame.src='about:blank';
         const first=choices[0];
         if(first) first.click();
       });
