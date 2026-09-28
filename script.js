@@ -153,6 +153,7 @@ function trainingSave(){
 function trainingComplete(id){
   if(trainingState.has(id)) return;
   trainingState.add(id); trainingSave(); earnStar("⭐ Training module complete!");
+  trainingFeedback("complete");
   renderTrainingCards();
 }
 function renderTrainingCards(filter="all"){
@@ -166,6 +167,45 @@ function renderTrainingCards(filter="all"){
   }).join("");
   wrap.querySelectorAll("[data-training-id]").forEach(b=>b.addEventListener("click",()=>openTraining(b.dataset.trainingId)));
 }
+/* =========================
+   TRAINING SOUND ENGINE
+   Browser-only sounds + speech; no external audio files.
+   ========================= */
+let trainingSoundOn = true;
+let trainingAudioCtx = null;
+function trainingAudio(){
+  try{
+    if(!trainingAudioCtx) trainingAudioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(trainingAudioCtx.state === "suspended") trainingAudioCtx.resume();
+    return trainingAudioCtx;
+  }catch(e){ return null; }
+}
+function trainingTone(freq=520,duration=.08,type="sine",gain=.045,delay=0){
+  if(!trainingSoundOn)return;
+  const ctx=trainingAudio(); if(!ctx)return;
+  const now=ctx.currentTime+delay;
+  const osc=ctx.createOscillator(), g=ctx.createGain();
+  osc.type=type; osc.frequency.setValueAtTime(freq,now);
+  g.gain.setValueAtTime(0.0001,now);
+  g.gain.exponentialRampToValueAtTime(gain,now+.01);
+  g.gain.exponentialRampToValueAtTime(0.0001,now+duration);
+  osc.connect(g);g.connect(ctx.destination);osc.start(now);osc.stop(now+duration+.02);
+}
+function trainingClickSound(){ trainingTone(620,.055,"square",.028); }
+function trainingStartSound(){ trainingTone(440,.09,"sine",.035,0); trainingTone(660,.11,"sine",.04,.09); trainingTone(880,.14,"sine",.045,.19); }
+function trainingCorrectSound(){ trainingTone(660,.10,"sine",.04,0); trainingTone(880,.13,"sine",.045,.10); trainingTone(1100,.18,"sine",.05,.23); }
+function trainingWrongSound(){ trainingTone(220,.14,"sawtooth",.035,0); trainingTone(170,.18,"sawtooth",.03,.12); }
+function trainingCompleteSound(){ trainingTone(523,.10,"sine",.04,0); trainingTone(659,.10,"sine",.04,.10); trainingTone(784,.12,"sine",.045,.20); trainingTone(1047,.20,"sine",.05,.32); }
+function trainingSay(text){
+  if(!trainingSoundOn || !("speechSynthesis" in window))return;
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate=.86; u.pitch=1.08; u.volume=.95; speechSynthesis.speak(u); }catch(e){}
+}
+function trainingFeedback(kind,text){
+  if(kind==="correct"){trainingCorrectSound();trainingSay("Correct!");}
+  if(kind==="wrong"){trainingWrongSound();trainingSay("Wrong. Try again!");}
+  if(kind==="complete"){trainingCompleteSound();trainingSay("Great job! Module complete!");}
+  if(text){const el=document.getElementById("trainFeedback");if(el)el.textContent=text;}
+}
 function speakTraining(text){speak(text);}
 
 function openTraining(id){
@@ -173,6 +213,18 @@ function openTraining(id){
   const modal=document.getElementById("trainingModal"), body=document.getElementById("trainingModalBody");
   modal.classList.remove("hidden");modal.setAttribute("aria-hidden","false");
   body.innerHTML=trainingTemplate(currentTraining);
+  const soundToggle=document.getElementById("trainingSoundToggle");
+  if(soundToggle){
+    soundToggle.onclick=(ev)=>{
+      ev.stopPropagation();
+      trainingSoundOn=!trainingSoundOn;
+      soundToggle.textContent=trainingSoundOn?"🔊 Sound ON":"🔇 Sound OFF";
+      soundToggle.setAttribute("aria-pressed",String(trainingSoundOn));
+      if(trainingSoundOn){trainingStartSound();trainingSay("Sound on");}else if("speechSynthesis" in window)speechSynthesis.cancel();
+    };
+  }
+  trainingStartSound();
+  setTimeout(()=>trainingSay("Let’s learn " + currentTraining.title),120);
   wireTraining(currentTraining);
 }
 function closeTraining(){
@@ -180,7 +232,7 @@ function closeTraining(){
   currentTraining=null;
 }
 function trainingTemplate(m){
-  const head=`<div class="training-activity-head"><span class="eyebrow">${m.cat==="language"?"LANGUAGE":m.cat==="math"?"MATH":"EXPLORER"}</span><h3>${m.icon} ${m.title}</h3><p>${m.desc}</p></div>`;
+  const head=`<div class="training-activity-head"><span class="eyebrow">${m.cat==="language"?"LANGUAGE":m.cat==="math"?"MATH":"EXPLORER"}</span><h3>${m.icon} ${m.title}</h3><p>${m.desc}</p><button type="button" class="secondary training-sound-toggle" id="trainingSoundToggle" aria-pressed="true">🔊 Sound ON</button></div>`;
   if(m.type==="flash") return head+`<div class="flash-stage" id="trainingStage"></div><div class="activity-actions"><button class="secondary" id="trainHear">🔊 Hear</button><button class="primary" id="trainNext">NEXT →</button></div>`;
   if(m.type==="quiz") return head+`<div class="activity-question">${m.q}</div><div class="activity-options">${m.a.map(x=>`<button data-correct="${x===m.correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback"></p>`;
   if(m.type==="spell") return head+`<div id="spellStage"></div>`;
@@ -219,7 +271,7 @@ function wireTraining(m){
   }
   if(m.type==="spell"){
     let i=0;const stage=document.getElementById("spellStage");
-    const show=()=>{const [word,pic]=m.words[i%m.words.length];const shuffled=[...word].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;let chosen=[];stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{chosen.push(b.dataset.letter);b.disabled=true;const target=word.slice(0,chosen.length);if(chosen.join("")!==target){document.getElementById("trainFeedback").textContent="Try the next letter carefully!";chosen=[];stage.querySelectorAll("button").forEach(x=>x.disabled=false);}else{document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Good!";if(chosen.length===word.length){trainingComplete(m.id);setTimeout(()=>{i++;show()},500);}}});};show();
+    const show=()=>{const [word,pic]=m.words[i%m.words.length];const shuffled=[...word].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;let chosen=[];stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{chosen.push(b.dataset.letter);b.disabled=true;const target=word.slice(0,chosen.length);if(chosen.join("")!==target){trainingFeedback("wrong","Try the next letter carefully!");chosen=[];stage.querySelectorAll("button").forEach(x=>x.disabled=false);}else{document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Good!";if(chosen.length===word.length){trainingComplete(m.id);setTimeout(()=>{i++;show()},500);}}});};show();
   }
   if(m.type==="reading"){
     let i=0;const stage=document.getElementById("readingStage");
@@ -229,34 +281,34 @@ function wireTraining(m){
   }
   if(m.type==="picture"){
     let i=0;const stage=document.getElementById("pictureStage");
-    const show=()=>{const item=m.items[i%m.items.length];const [pic,opts,correct]=item;stage.innerHTML=`<div class="picture-big">${pic}</div><div class="activity-options">${opts.map(x=>`<button data-choice="${x}" data-correct="${x===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Which word matches?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.correct==="true"){b.disabled=true;document.getElementById("trainFeedback").textContent="🎉 Match!";trainingComplete(m.id);setTimeout(()=>{i++;show()},450)}else document.getElementById("trainFeedback").textContent="Look again 👀";});};show();
+    const show=()=>{const item=m.items[i%m.items.length];const [pic,opts,correct]=item;stage.innerHTML=`<div class="picture-big">${pic}</div><div class="activity-options">${opts.map(x=>`<button data-choice="${x}" data-correct="${x===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Which word matches?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.correct==="true"){b.disabled=true;trainingFeedback("correct","🎉 Match!");trainingComplete(m.id);setTimeout(()=>{i++;show()},450)}else trainingFeedback("wrong","Look again 👀");});};show();
   }
   if(m.type==="count"){
-    let n=3;const stage=document.getElementById("countStage");const show=()=>{const opts=[n,n+1,n-1].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="count-objects">${"🍎".repeat(n)}</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===n}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">How many apples?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);n=n>=9?3:n+1;setTimeout(show,500)}else document.getElementById("trainFeedback").textContent="Count again ☝️";});};show();
+    let n=3;const stage=document.getElementById("countStage");const show=()=>{const opts=[n,n+1,n-1].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="count-objects">${"🍎".repeat(n)}</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===n}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">How many apples?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Correct!");trainingComplete(m.id);n=n>=9?3:n+1;setTimeout(show,500)}else trainingFeedback("wrong","Count again ☝️");});};show();
   }
   if(m.type==="math"){
-    let i=0;const stage=document.getElementById("mathStage");const show=()=>{const [a,b,c]=m.ops[i%m.ops.length];const opts=[c,c+1,Math.max(0,c-1)].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="math-question">${a} + ${b} = ?</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===c}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Add the numbers.</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Try counting the two groups.";});};show();
+    let i=0;const stage=document.getElementById("mathStage");const show=()=>{const [a,b,c]=m.ops[i%m.ops.length];const opts=[c,c+1,Math.max(0,c-1)].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="math-question">${a} + ${b} = ?</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===c}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Add the numbers.</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){trainingFeedback("correct","🎉 Correct!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Try counting the two groups.");});};show();
   }
   if(m.type==="sub"){
-    const qs=[[5,2,3],[6,1,5],[7,3,4],[8,2,6],[5,1,4]];let i=0;const stage=document.getElementById("subStage");const show=()=>{const [a,b,c]=qs[i%qs.length];const opts=[c,c+1,Math.max(0,c-1)].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="math-question">${a} − ${b} = ?</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===c}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Take away ${b}.</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Try again!";});};show();
+    const qs=[[5,2,3],[6,1,5],[7,3,4],[8,2,6],[5,1,4]];let i=0;const stage=document.getElementById("subStage");const show=()=>{const [a,b,c]=qs[i%qs.length];const opts=[c,c+1,Math.max(0,c-1)].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="math-question">${a} − ${b} = ?</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===c}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Take away ${b}.</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){trainingFeedback("correct","🎉 Correct!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Try again!");});};show();
   }
   if(m.type==="pattern"){
-    const patterns=[["🔴","🔵","🔴","🔵",["🔴","🟢","🟡"],"🔴"],["⭐","🌙","⭐","🌙",["⭐","☀️","🌙"],"⭐"],["🍎","🍎","🍌","🍎","🍎",["🍌","🍎","🍊"],"🍌"]];let i=0;const stage=document.getElementById("patternStage");const show=()=>{const p=patterns[i%patterns.length];const answer=p[p.length-1];const opts=p[p.length-2];stage.innerHTML=`<div class="pattern-row">${p.slice(0,-2).map(x=>`<span>${x}</span>`).join("")}<span>❓</span></div><div class="activity-options">${opts.map(x=>`<button data-c="${x===answer}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">What comes next?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Pattern complete!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Look at the repeating pattern.";});};show();
+    const patterns=[["🔴","🔵","🔴","🔵",["🔴","🟢","🟡"],"🔴"],["⭐","🌙","⭐","🌙",["⭐","☀️","🌙"],"⭐"],["🍎","🍎","🍌","🍎","🍎",["🍌","🍎","🍊"],"🍌"]];let i=0;const stage=document.getElementById("patternStage");const show=()=>{const p=patterns[i%patterns.length];const answer=p[p.length-1];const opts=p[p.length-2];stage.innerHTML=`<div class="pattern-row">${p.slice(0,-2).map(x=>`<span>${x}</span>`).join("")}<span>❓</span></div><div class="activity-options">${opts.map(x=>`<button data-c="${x===answer}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">What comes next?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Pattern complete!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Look at the repeating pattern.");});};show();
   }
   if(m.type==="compare"){
-    let i=0;const qs=[[3,5],[7,4],[2,6],[8,8]];const stage=document.getElementById("compareStage");const show=()=>{const [a,b]=qs[i%qs.length];const ans=a===b?"SAME":a>b?"LEFT":"RIGHT";stage.innerHTML=`<div class="compare-row"><span>${"🍎".repeat(a)}</span><span>${"🍎".repeat(b)}</span></div><div class="activity-options"><button data-a="LEFT">👈 More</button><button data-a="SAME">⚖️ Same</button><button data-a="RIGHT">More 👉</button></div><p class="activity-feedback" id="trainFeedback">Which side has more?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.a===ans){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Count the apples again.";});};show();
+    let i=0;const qs=[[3,5],[7,4],[2,6],[8,8]];const stage=document.getElementById("compareStage");const show=()=>{const [a,b]=qs[i%qs.length];const ans=a===b?"SAME":a>b?"LEFT":"RIGHT";stage.innerHTML=`<div class="compare-row"><span>${"🍎".repeat(a)}</span><span>${"🍎".repeat(b)}</span></div><div class="activity-options"><button data-a="LEFT">👈 More</button><button data-a="SAME">⚖️ Same</button><button data-a="RIGHT">More 👉</button></div><p class="activity-feedback" id="trainFeedback">Which side has more?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.a===ans){trainingFeedback("correct","🎉 Correct!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Count the apples again.");});};show();
   }
   if(m.type==="money"){
-    const qs=[[1,2,3],[2,2,4],[1,1,2],[2,1,3]];let i=0;const stage=document.getElementById("moneyStage");const show=()=>{const [a,b,c]=qs[i%qs.length];stage.innerHTML=`<div class="money-coins">🪙 ${a} + 🪙 ${b} = ?</div><div class="activity-options">${[c,c+1,c+2].map(x=>`<button data-c="${x===c}">${x} coins</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">How many coins?</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🪙 Great counting!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Count the coins.";});};show();
+    const qs=[[1,2,3],[2,2,4],[1,1,2],[2,1,3]];let i=0;const stage=document.getElementById("moneyStage");const show=()=>{const [a,b,c]=qs[i%qs.length];stage.innerHTML=`<div class="money-coins">🪙 ${a} + 🪙 ${b} = ?</div><div class="activity-options">${[c,c+1,c+2].map(x=>`<button data-c="${x===c}">${x} coins</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">How many coins?</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){trainingFeedback("correct","🪙 Great counting!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Count the coins.");});};show();
   }
   if(m.type==="memory"){
-    const cards=["🐶","🐱","🐟","🐶","🐱","🐟"].sort(()=>Math.random()-.5);let open=[],matched=0;const stage=document.getElementById("memoryStage");const draw=()=>{stage.innerHTML=`<div class="memory-grid">${cards.map((x,i)=>`<button class="memory-card" data-i="${i}">${open.includes(i)?"<span>"+x+"</span>":"❔"}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Find all 3 pairs.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.i);if(open.includes(i))return;open.push(i);draw();if(open.length===2){const [a,c]=open;if(cards[a]===cards[c]){matched++;document.getElementById("trainFeedback").textContent="🎉 Pair!";open=[];if(matched===3)trainingComplete(m.id,"🧠 Memory master!");}else setTimeout(()=>{open=[];draw()},650)}});};draw();
+    const cards=["🐶","🐱","🐟","🐶","🐱","🐟"].sort(()=>Math.random()-.5);let open=[],matched=0;const stage=document.getElementById("memoryStage");const draw=()=>{stage.innerHTML=`<div class="memory-grid">${cards.map((x,i)=>`<button class="memory-card" data-i="${i}">${open.includes(i)?"<span>"+x+"</span>":"❔"}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Find all 3 pairs.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.i);if(open.includes(i))return;open.push(i);draw();if(open.length===2){const [a,c]=open;if(cards[a]===cards[c]){matched++;trainingFeedback("correct","🎉 Pair!");open=[];if(matched===3)trainingComplete(m.id,"🧠 Memory master!");}else setTimeout(()=>{open=[];draw()},650)}});};draw();
   }
   if(m.type==="sort"){
-    const qs=[["🍎","FRUIT",["FRUIT","ANIMAL","TOY"]],["🐶","ANIMAL",["TOY","ANIMAL","FRUIT"]],["⚽","TOY",["FRUIT","TOY","ANIMAL"]]];let i=0;const stage=document.getElementById("sortStage");const show=()=>{const [item,ans,opts]=qs[i%qs.length];stage.innerHTML=`<div class="sort-item">${item}</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Where does it belong?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Sorted!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Try another group.";});};show();
+    const qs=[["🍎","FRUIT",["FRUIT","ANIMAL","TOY"]],["🐶","ANIMAL",["TOY","ANIMAL","FRUIT"]],["⚽","TOY",["FRUIT","TOY","ANIMAL"]]];let i=0;const stage=document.getElementById("sortStage");const show=()=>{const [item,ans,opts]=qs[i%qs.length];stage.innerHTML=`<div class="sort-item">${item}</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Where does it belong?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Sorted!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Try another group.");});};show();
   }
   if(m.type==="sequence"){
-    const qs=[["Wake up 🌞","Brush teeth 🪥","Eat breakfast 🍳","Go to bed 🛏️",1],["Plant seed 🌱","Water it 💧","It grows 🌿","Pick flower 🌸",2]];let i=0;const stage=document.getElementById("sequenceStage");const show=()=>{const q=qs[i%qs.length];const order=[q[0],q[1],q[2],q[3]];const correct=q[4];stage.innerHTML=`<div class="sequence-card"><p>What happens <b>first</b>?</p>${order.map((x,j)=>`<button data-c="${j===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose the first step.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Good thinking!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Think about what happens first.";});};show();
+    const qs=[["Wake up 🌞","Brush teeth 🪥","Eat breakfast 🍳","Go to bed 🛏️",1],["Plant seed 🌱","Water it 💧","It grows 🌿","Pick flower 🌸",2]];let i=0;const stage=document.getElementById("sequenceStage");const show=()=>{const q=qs[i%qs.length];const order=[q[0],q[1],q[2],q[3]];const correct=q[4];stage.innerHTML=`<div class="sequence-card"><p>What happens <b>first</b>?</p>${order.map((x,j)=>`<button data-c="${j===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose the first step.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Good thinking!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Think about what happens first.");});};show();
   }
 }
 
@@ -264,7 +316,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   const modal=document.getElementById("trainingModal");
   const close=document.getElementById("trainingClose");
   if(close)close.onclick=closeTraining;
-  if(modal)modal.addEventListener("click",e=>{if(e.target===modal)closeTraining();});
+  if(modal){
+    modal.addEventListener("click",e=>{
+      if(e.target===modal){closeTraining();return;}
+      const btn=e.target.closest("button");
+      if(btn && !btn.disabled) trainingClickSound();
+    });
+  }
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.classList.contains("hidden"))closeTraining();});
   document.querySelectorAll(".training-filter").forEach(b=>b.addEventListener("click",()=>{
     document.querySelectorAll(".training-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderTrainingCards(b.dataset.filter);

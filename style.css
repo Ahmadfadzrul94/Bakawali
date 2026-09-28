@@ -216,3 +216,6 @@ body.runner-fullscreen .runner-touch{padding:12px 18px}
 @media(max-width:1050px){.training-modules{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.training-modules{grid-template-columns:repeat(2,minmax(0,1fr))}.training-modal-card{padding:22px 16px}.activity-question,.math-question{font-size:28px}}
 @media(max-width:480px){.training-modules{grid-template-columns:1fr}.training-filter{font-size:12px}.flash-card strong{font-size:62px}.memory-grid{grid-template-columns:repeat(3,68px)}.memory-card{height:68px}}
+
+/* Training sound control */
+.training-sound-toggle{margin-top:10px;font-size:.85rem;padding:8px 12px;min-height:40px}
