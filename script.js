@@ -107,12 +107,19 @@ document.addEventListener("DOMContentLoaded",()=>{
   const safe=(fn)=>{try{fn()}catch(e){console.error("Bakawali game error:",e)}};
 
   safe(()=>{
-    document.querySelectorAll(".game-choice").forEach(btn=>btn.addEventListener("click",()=>{
-      document.querySelectorAll(".game-choice").forEach(x=>x.classList.remove("active"));
-      document.querySelectorAll(".game-panel").forEach(x=>x.classList.remove("active"));
+    const choices=document.querySelectorAll(".game-choice-v2");
+    const panels=document.querySelectorAll(".game-panel-v2");
+    choices.forEach(btn=>btn.addEventListener("click",()=>{
+      document.body.classList.remove("runner-fullscreen");
+      choices.forEach(x=>{x.classList.remove("active");x.setAttribute("aria-selected","false")});
+      panels.forEach(x=>x.classList.remove("active"));
       btn.classList.add("active");
+      btn.setAttribute("aria-selected","true");
       const panel=document.getElementById(btn.dataset.gamePanel);
-      if(panel) panel.classList.add("active");
+      if(panel){
+        panel.classList.add("active");
+        window.dispatchEvent(new Event("resize"));
+      }
     }));
   });
 
@@ -518,6 +525,6 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   function loop(time){if(state!=='play')return;const delta=time-lastTime;lastTime=time;dropCounter+=delta;if(dropCounter>Math.max(120,800-(level-1)*70)){soft();dropCounter=0;}draw();raf=requestAnimationFrame(loop);}
   document.getElementById('blockStartBtn').onclick=startGame;document.getElementById('blockAgain').onclick=startGame;document.getElementById('blockPauseBtn').onclick=togglePause;document.getElementById('blockResume').onclick=togglePause;
   document.querySelector('[data-block-left]').onclick=()=>move(-1);document.querySelector('[data-block-right]').onclick=()=>move(1);document.querySelector('[data-block-rotate]').onclick=rotate;document.querySelector('[data-block-down]').onclick=soft;document.querySelector('[data-block-drop]').onclick=hardDrop;
-  window.addEventListener('keydown',e=>{if(!document.getElementById('blockDrop')?.offsetParent)return;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')move(-1);else if(e.key==='ArrowRight')move(1);else if(e.key==='ArrowUp')rotate();else if(e.key==='ArrowDown')soft();else if(e.code==='Space')hardDrop();else if(e.key.toLowerCase()==='p')togglePause();});
+  window.addEventListener('keydown',e=>{if(!document.getElementById('blockPanel')?.classList.contains('active'))return;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')move(-1);else if(e.key==='ArrowRight')move(1);else if(e.key==='ArrowUp')rotate();else if(e.key==='ArrowDown')soft();else if(e.code==='Space')hardDrop();else if(e.key.toLowerCase()==='p')togglePause();});
   resetBoard();drawNext();
 })();

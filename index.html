@@ -115,90 +115,109 @@
 
 <section id="games" class="page">
   <div class="page-head">
-    <div><span class="eyebrow">ADVENTURE ARCADE</span><h2>Bakawali Sky Runner</h2><p>Lari, lompat, dash dan kumpul Star. Simple to play, susah nak berhenti! 😎</p></div>
-    <div class="level-pill">⭐ <b id="runnerBest">0</b> BEST</div>
+    <div>
+      <span class="eyebrow">ADVENTURE ARCADE</span>
+      <h2>Choose Your Game</h2>
+      <p>Pick a game below. The game opens only when you choose it.</p>
+    </div>
+    <div class="level-pill">🎮 <b>3</b> GAMES</div>
   </div>
 
-  <div class="runner-card">
-    <div class="runner-top">
-      <div><span class="eyebrow">FOREST SKYWAY</span><h3>🌿 Bakawali Sky Runner</h3></div>
-      <div class="runner-hud"><span>⭐ <b id="runnerScore">0</b></span><span>⚡ <b id="runnerEnergy">100</b>%</span></div>
-    </div>
-
-    <div class="runner-wrap">
-      <canvas id="runnerCanvas"></canvas>
-      <div id="runnerStart" class="runner-overlay">
-        <div class="runner-logo">🐾</div>
-        <h3>READY TO RUN?</h3>
-        <p>Jump over obstacles, collect Stars and use DASH to smash through barriers.</p>
-        <button id="runnerStartBtn" class="primary">▶ START RUN</button>
-        <small>SPACE / ↑ = Jump · SHIFT / X = Dash</small>
-      </div>
-      <div id="runnerPause" class="runner-overlay hidden">
-        <h3>⏸ PAUSED</h3><button id="runnerResume" class="primary">CONTINUE</button>
-      </div>
-      <div id="runnerOver" class="runner-overlay hidden">
-        <div class="runner-logo">💥</div><h3>GAME OVER</h3>
-        <p>Score: <b id="runnerFinal">0</b></p>
-        <button id="runnerAgain" class="primary">↻ PLAY AGAIN</button>
-      </div>
-    </div>
-
-    <div class="runner-actions">
-      <button id="runnerJump" class="runner-touch jump">⬆ JUMP</button>
-      <button id="runnerDash" class="runner-touch dash">⚡ DASH</button>
-      <button id="runnerPauseBtn" class="runner-touch">Ⅱ</button><button id="runnerFullBtn" class="runner-touch full">⛶ FULL</button>
-    </div>
-    <div class="runner-help">Desktop: <b>SPACE / ↑</b> Jump · <b>SHIFT / X</b> Dash · <b>P / ESC</b> Pause</div>
+  <div class="game-select-v2" role="tablist" aria-label="Bakawali games">
+    <button class="game-choice-v2 active" data-game-panel="runnerPanel" role="tab" aria-selected="true">
+      <span class="game-choice-icon">🏃</span>
+      <span><b>Sky Runner</b><small>Run • Jump • Dash</small></span>
+      <i>PLAY →</i>
+    </button>
+    <button class="game-choice-v2" data-game-panel="spinPanel" role="tab" aria-selected="false">
+      <span class="game-choice-icon">🎡</span>
+      <span><b>Spin Quest</b><small>Spin • Reward • Collect</small></span>
+      <i>PLAY →</i>
+    </button>
+    <button class="game-choice-v2" data-game-panel="blockPanel" role="tab" aria-selected="false">
+      <span class="game-choice-icon">🧩</span>
+      <span><b>Block Drop</b><small>Move • Rotate • Clear</small></span>
+      <i>PLAY →</i>
+    </button>
   </div>
 
-  <div class="spin-card" id="spinQuest">
-    <div class="spin-head">
-      <div><span class="eyebrow">LUCKY GROVE</span><h3>🎡 Bakawali Spin Quest</h3><p>Spin the wheel, complete the reward, and collect your prize.</p></div>
-      <div class="score-chip">⭐ <b id="spinStars">0</b> STARS</div>
+  <div id="runnerPanel" class="game-panel-v2 active">
+    <div class="runner-card">
+      <div class="runner-top">
+        <div><span class="eyebrow">FOREST SKYWAY</span><h3>🌿 Bakawali Sky Runner</h3></div>
+        <div class="runner-hud"><span>⭐ <b id="runnerScore">0</b></span><span>⚡ <b id="runnerEnergy">100</b>%</span></div>
+      </div>
+      <div class="runner-wrap">
+        <canvas id="runnerCanvas"></canvas>
+        <div id="runnerStart" class="runner-overlay">
+          <div class="runner-logo">🐾</div><h3>READY TO RUN?</h3>
+          <p>Jump over obstacles, collect Stars and use DASH to smash through barriers.</p>
+          <button id="runnerStartBtn" class="primary">▶ START RUN</button>
+          <small>SPACE / ↑ = Jump · SHIFT / X = Dash</small>
+        </div>
+        <div id="runnerPause" class="runner-overlay hidden"><h3>⏸ PAUSED</h3><button id="runnerResume" class="primary">CONTINUE</button></div>
+        <div id="runnerOver" class="runner-overlay hidden"><div class="runner-logo">💥</div><h3>GAME OVER</h3><p>Score: <b id="runnerFinal">0</b></p><button id="runnerAgain" class="primary">↻ PLAY AGAIN</button></div>
+      </div>
+      <div class="runner-actions">
+        <button id="runnerJump" class="runner-touch jump">⬆ JUMP</button>
+        <button id="runnerDash" class="runner-touch dash">⚡ DASH</button>
+        <button id="runnerPauseBtn" class="runner-touch">Ⅱ</button>
+        <button id="runnerFullBtn" class="runner-touch full">⛶ FULL</button>
+      </div>
+      <div class="runner-help">Desktop: <b>SPACE / ↑</b> Jump · <b>SHIFT / X</b> Dash · <b>P / ESC</b> Pause</div>
     </div>
-    <div class="spin-layout">
-      <div class="wheel-wrap">
-        <div class="wheel-pointer">▼</div>
-        <div class="spin-wheel" id="spinWheel" aria-label="Bakawali reward spinner">
-          <div class="wheel-label l1">⭐ +5</div><div class="wheel-label l2">💎 +2</div><div class="wheel-label l3">⚡ ENERGY</div><div class="wheel-label l4">⭐ +10</div>
-          <div class="wheel-label l5">🛡️ SHIELD</div><div class="wheel-label l6">💎 +5</div><div class="wheel-label l7">🎯 CHALLENGE</div><div class="wheel-label l8">⭐ +3</div>
-          <div class="wheel-center">🌿</div>
+  </div>
+
+  <div id="spinPanel" class="game-panel-v2">
+    <div class="spin-card" id="spinQuest">
+      <div class="spin-head">
+        <div><span class="eyebrow">LUCKY GROVE</span><h3>🎡 Bakawali Spin Quest</h3><p>Spin the wheel, complete the reward, and collect your prize.</p></div>
+        <div class="score-chip">⭐ <b id="spinStars">0</b> STARS</div>
+      </div>
+      <div class="spin-layout">
+        <div class="wheel-wrap">
+          <div class="wheel-pointer">▼</div>
+          <div class="spin-wheel" id="spinWheel" aria-label="Bakawali reward spinner">
+            <div class="wheel-label l1">⭐ +5</div><div class="wheel-label l2">💎 +2</div><div class="wheel-label l3">⚡ ENERGY</div><div class="wheel-label l4">⭐ +10</div>
+            <div class="wheel-label l5">🛡️ SHIELD</div><div class="wheel-label l6">💎 +5</div><div class="wheel-label l7">🎯 CHALLENGE</div><div class="wheel-label l8">⭐ +3</div>
+            <div class="wheel-center">🌿</div>
+          </div>
+        </div>
+        <div class="spin-side">
+          <div class="spin-result" id="spinResult" aria-live="polite">Press SPIN to start your quest.</div>
+          <button id="spinBtn" class="spin-btn">🎡 SPIN</button>
+          <button id="spinClaim" class="secondary small" disabled>COLLECT REWARD</button>
+          <div class="spin-challenge hidden" id="spinChallenge"><b>Mini Challenge</b><span id="spinChallengeText">Jump 3 times in Runner.</span></div>
         </div>
       </div>
-      <div class="spin-side">
-        <div class="spin-result" id="spinResult" aria-live="polite">Press SPIN to start your quest.</div>
-        <button id="spinBtn" class="spin-btn">🎡 SPIN</button>
-        <button id="spinClaim" class="secondary small" disabled>COLLECT REWARD</button>
-        <div class="spin-challenge hidden" id="spinChallenge"><b>Mini Challenge</b><span id="spinChallengeText">Jump 3 times in Runner.</span></div>
-      </div>
     </div>
   </div>
 
-  <div class="tetris-card" id="blockDrop">
-    <div class="tetris-head">
-      <div><span class="eyebrow">BLOCK GROVE</span><h3>🧩 Bakawali Block Drop</h3><p>Susun blok, lengkapkan baris dan kumpul score. Classic falling-block action.</p></div>
-      <div class="score-chip">🏆 <b id="blockBest">0</b> BEST</div>
-    </div>
-    <div class="tetris-layout">
-      <div class="tetris-board-wrap">
-        <canvas id="blockCanvas" aria-label="Bakawali Block Drop game board"></canvas>
-        <div id="blockStart" class="block-overlay"><div class="runner-logo">🧩</div><h3>READY?</h3><p>Move, rotate and drop the blocks to clear lines.</p><button id="blockStartBtn" class="primary">▶ START GAME</button><small>← → Move · ↑ Rotate · ↓ Drop · SPACE Hard Drop · P Pause</small></div>
-        <div id="blockOver" class="block-overlay hidden"><div class="runner-logo">💥</div><h3>GAME OVER</h3><p>Score: <b id="blockFinal">0</b></p><button id="blockAgain" class="primary">↻ PLAY AGAIN</button></div>
-        <div id="blockPause" class="block-overlay hidden"><h3>⏸ PAUSED</h3><button id="blockResume" class="primary">CONTINUE</button></div>
+  <div id="blockPanel" class="game-panel-v2">
+    <div class="tetris-card" id="blockDrop">
+      <div class="tetris-head">
+        <div><span class="eyebrow">BLOCK GROVE</span><h3>🧩 Bakawali Block Drop</h3><p>Susun blok, lengkapkan baris dan kumpul score.</p></div>
+        <div class="score-chip">🏆 <b id="blockBest">0</b> BEST</div>
       </div>
-      <div class="tetris-side">
-        <div class="block-stat"><span>SCORE</span><b id="blockScore">0</b></div>
-        <div class="block-stat"><span>LINES</span><b id="blockLines">0</b></div>
-        <div class="block-stat"><span>LEVEL</span><b id="blockLevel">1</b></div>
-        <div class="next-box"><span>NEXT</span><div id="blockNextPreview"></div></div>
-        <button id="blockPauseBtn" class="runner-touch">Ⅱ PAUSE</button>
+      <div class="tetris-layout">
+        <div class="tetris-board-wrap">
+          <canvas id="blockCanvas" aria-label="Bakawali Block Drop game board"></canvas>
+          <div id="blockStart" class="block-overlay"><div class="runner-logo">🧩</div><h3>READY?</h3><p>Move, rotate and drop the blocks to clear lines.</p><button id="blockStartBtn" class="primary">▶ START GAME</button><small>← → Move · ↑ Rotate · ↓ Soft Drop · SPACE Hard Drop · P Pause</small></div>
+          <div id="blockOver" class="block-overlay hidden"><div class="runner-logo">💥</div><h3>GAME OVER</h3><p>Score: <b id="blockFinal">0</b></p><button id="blockAgain" class="primary">↻ PLAY AGAIN</button></div>
+          <div id="blockPause" class="block-overlay hidden"><h3>⏸ PAUSED</h3><button id="blockResume" class="primary">CONTINUE</button></div>
+        </div>
+        <div class="tetris-side">
+          <div class="block-stat"><span>SCORE</span><b id="blockScore">0</b></div>
+          <div class="block-stat"><span>LINES</span><b id="blockLines">0</b></div>
+          <div class="block-stat"><span>LEVEL</span><b id="blockLevel">1</b></div>
+          <div class="next-box"><span>NEXT</span><div id="blockNextPreview"></div></div>
+          <button id="blockPauseBtn" class="runner-touch">Ⅱ PAUSE</button>
+        </div>
       </div>
+      <div class="block-touch"><button data-block-left>◀</button><button data-block-rotate>↻</button><button data-block-right>▶</button><button data-block-down>▼</button><button data-block-drop>⤓</button></div>
+      <div class="runner-help">Desktop: <b>← →</b> Move · <b>↑</b> Rotate · <b>↓</b> Soft Drop · <b>SPACE</b> Hard Drop · <b>P</b> Pause</div>
     </div>
-    <div class="block-touch"><button data-block-left>◀</button><button data-block-rotate>↻</button><button data-block-right>▶</button><button data-block-down>▼</button><button data-block-drop>⤓</button></div>
-    <div class="runner-help">Desktop: <b>← →</b> Move · <b>↑</b> Rotate · <b>↓</b> Soft Drop · <b>SPACE</b> Hard Drop · <b>P</b> Pause</div>
   </div>
-
 </section>
 
 <section id="collection" class="page">
