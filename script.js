@@ -405,3 +405,63 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
     if(btn.dataset.go !== 'games') document.body.classList.remove('runner-fullscreen');
   });
 });
+
+
+// ---------------- Spin Quest ----------------
+(() => {
+  const wheel=document.getElementById('spinWheel');
+  const spinBtn=document.getElementById('spinBtn');
+  const claimBtn=document.getElementById('spinClaim');
+  const result=document.getElementById('spinResult');
+  const challenge=document.getElementById('spinChallenge');
+  const challengeText=document.getElementById('spinChallengeText');
+  const spinStars=document.getElementById('spinStars');
+  if(!wheel||!spinBtn||!claimBtn)return;
+
+  const rewards=[
+    {label:'⭐ +5 Stars',stars:5},
+    {label:'💎 +2 Gems',gems:2},
+    {label:'⚡ Energy Boost',energy:25},
+    {label:'⭐ +10 Stars',stars:10},
+    {label:'🛡️ Shield Reward',shield:1},
+    {label:'💎 +5 Gems',gems:5},
+    {label:'🎯 Mini Challenge',challenge:true},
+    {label:'⭐ +3 Stars',stars:3}
+  ];
+  const challenges=['Jump 3 times in Sky Runner.','Collect 5 Stars in Sky Runner.','Try a Dash through one obstacle.'];
+  let angle=0, selected=null, spinning=false;
+  const getStars=()=>Number(localStorage.getItem('bakawaliStars')||0);
+  const update=()=>spinStars.textContent=getStars();
+  update();
+
+  spinBtn.addEventListener('click',()=>{
+    if(spinning)return;
+    spinning=true;selected=Math.floor(Math.random()*rewards.length);
+    const slice=360/rewards.length;
+    // Pointer is at top. Land the selected slice under the pointer.
+    const target=(360-(selected*slice+slice/2))%360;
+    angle += 1440 + target;
+    wheel.style.transform=`rotate(${angle}deg)`;
+    spinBtn.disabled=true;claimBtn.disabled=true;challenge.classList.add('hidden');
+    result.textContent='🎡 Spinning...';
+    setTimeout(()=>{
+      const r=rewards[selected];
+      result.textContent=r.label;
+      claimBtn.disabled=false;spinning=false;
+      if(r.challenge){challenge.classList.remove('hidden');challengeText.textContent=challenges[Math.floor(Math.random()*challenges.length)];}
+    },3700);
+  });
+
+  claimBtn.addEventListener('click',()=>{
+    if(selected===null)return;
+    const r=rewards[selected];
+    let msg='🎉 Reward collected!';
+    if(r.stars){stars+=r.stars;localStorage.setItem('bakawaliStars',stars);renderStats();msg=`⭐ +${r.stars} Stars collected!`;}
+    if(r.gems){const g=Number(localStorage.getItem('bakawaliGems')||0)+r.gems;localStorage.setItem('bakawaliGems',g);msg=`💎 +${r.gems} Gems collected!`;}
+    if(r.energy){msg='⚡ Energy Boost unlocked for your next run!';}
+    if(r.shield){msg='🛡️ Shield earned!';}
+    if(r.challenge){msg='🎯 Challenge unlocked!';}
+    result.textContent=msg;claimBtn.disabled=true;spinBtn.disabled=false;selected=null;update();
+    if(typeof toast!=='undefined'){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800);}
+  });
+})();

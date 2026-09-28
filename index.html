@@ -151,6 +151,29 @@
     </div>
     <div class="runner-help">Desktop: <b>SPACE / ↑</b> Jump · <b>SHIFT / X</b> Dash · <b>P / ESC</b> Pause</div>
   </div>
+
+  <div class="spin-card" id="spinQuest">
+    <div class="spin-head">
+      <div><span class="eyebrow">LUCKY GROVE</span><h3>🎡 Bakawali Spin Quest</h3><p>Spin the wheel, complete the reward, and collect your prize.</p></div>
+      <div class="score-chip">⭐ <b id="spinStars">0</b> STARS</div>
+    </div>
+    <div class="spin-layout">
+      <div class="wheel-wrap">
+        <div class="wheel-pointer">▼</div>
+        <div class="spin-wheel" id="spinWheel" aria-label="Bakawali reward spinner">
+          <div class="wheel-label l1">⭐ +5</div><div class="wheel-label l2">💎 +2</div><div class="wheel-label l3">⚡ ENERGY</div><div class="wheel-label l4">⭐ +10</div>
+          <div class="wheel-label l5">🛡️ SHIELD</div><div class="wheel-label l6">💎 +5</div><div class="wheel-label l7">🎯 CHALLENGE</div><div class="wheel-label l8">⭐ +3</div>
+          <div class="wheel-center">🌿</div>
+        </div>
+      </div>
+      <div class="spin-side">
+        <div class="spin-result" id="spinResult" aria-live="polite">Press SPIN to start your quest.</div>
+        <button id="spinBtn" class="spin-btn">🎡 SPIN</button>
+        <button id="spinClaim" class="secondary small" disabled>COLLECT REWARD</button>
+        <div class="spin-challenge hidden" id="spinChallenge"><b>Mini Challenge</b><span id="spinChallengeText">Jump 3 times in Runner.</span></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="collection" class="page">
