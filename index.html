@@ -1,141 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#17204a">
-<title>Bakawali Adventure ⚡</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bakawali Adventure</title>
+<meta name="description" content="Bakawali Adventure — a playful learning world for little explorers.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="#home" data-page="home"><span class="logo">⚡</span><span>BAKAWALI<small>ADVENTURE WORLD</small></span></a>
+  <div class="brand" data-go="home">
+    <span class="brand-mark">⚡</span>
+    <span><b>BAKAWALI</b><small>ADVENTURE WORLD</small></span>
+  </div>
   <nav>
-    <button data-page="home">🗺️ Map</button>
-    <button data-page="learning">📚 Training</button>
-    <button data-page="games">🎮 Games</button>
-    <button data-page="gallery">🏆 Collection</button>
-    <button data-page="songs">🎵 Music</button>
+    <button data-go="home">🗺️ <span>Map</span></button>
+    <button data-go="training">📚 <span>Training</span></button>
+    <button data-go="games">🎮 <span>Games</span></button>
+    <button data-go="collection">🏆 <span>Collection</span></button>
+    <button data-go="music">🎵 <span>Music</span></button>
   </nav>
 </header>
 
-<main>
+<main id="app">
 <section id="home" class="page active">
-  <div class="top-status">
-    <div class="trainer">
-      <div class="avatar">🧢</div>
-      <div><small>TRAINER</small><b>Little Explorer</b></div>
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="pulse"></span> NEW QUEST AVAILABLE</div>
+      <h1>BAKAWALI<br><em>ADVENTURE</em></h1>
+      <p class="lead">Explore. Learn. Play. Collect.</p>
+      <div class="trainer-row">
+        <div class="avatar">🧢</div>
+        <div>
+          <strong>Little Explorer</strong>
+          <div class="stats"><span>⭐ <b id="stars">0</b> Stars</span><span>🏅 <b id="badges">0</b> Badges</span><span>⚡ LV. <b id="level">1</b></span></div>
+        </div>
+      </div>
+      <button class="primary" data-go="training">START ADVENTURE <span>▶</span></button>
     </div>
-    <div class="stats"><span>⭐ <b>0</b> Stars</span><span>🏅 <b>0</b> Badges</span><span>⚡ LV. 1</span></div>
+
+    <div class="hero-scene">
+      <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+      <div class="mountain m1"></div><div class="mountain m2"></div>
+      <div class="ground"></div>
+      <div class="monster monster-zap" title="Zapko">
+        <span class="ear e1"></span><span class="ear e2"></span>
+        <span class="eye left"></span><span class="eye right"></span><span class="mouth"></span>
+        <span class="bolt"></span>
+      </div>
+      <div class="monster monster-bub" title="Bubblu">
+        <span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span>
+      </div>
+      <div class="monster monster-flam" title="Flammi">
+        <span class="flame f1"></span><span class="flame f2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span>
+      </div>
+      <div class="sign">BAKAWALI<br><small>WILD TRAILS</small></div>
+    </div>
   </div>
 
-  <div class="adventure-world">
-    <div class="sun">☀️</div>
-    <div class="cloud cloud1">☁️</div><div class="cloud cloud2">☁️</div>
-    <div class="mountain m1"></div><div class="mountain m2"></div>
-
-    <div class="world-title">
-      <div class="tiny-title">WELCOME, TRAINER!</div>
-      <h1>BAKAWALI<br><span>ADVENTURE</span></h1>
-      <p>Explore • Learn • Play • Collect</p>
-      <button class="start-btn" data-page="learning">START ADVENTURE <span>▶</span></button>
-    </div>
-
-    <div class="monster-svg zapko">
-      <svg viewBox="0 0 180 180" role="img" aria-label="Zapko electric monster">
-        <path class="outline" d="M48 116 Q25 92 39 57 Q51 26 82 34 Q112 10 141 39 Q164 62 145 101 Q139 139 101 146 Q67 151 48 116Z"/>
-        <path class="body-yellow" d="M49 114 Q31 90 44 61 Q57 33 84 41 Q110 20 136 45 Q155 66 137 99 Q132 128 101 137 Q68 141 49 114Z"/>
-        <path class="outline" d="M73 35 L62 12 L84 27 L94 7 L101 34"/>
-        <path class="outline" d="M119 40 L132 16 L139 39"/>
-        <circle class="eye" cx="73" cy="82" r="9"/><circle class="eye" cx="119" cy="82" r="9"/>
-        <circle class="shine" cx="70" cy="79" r="3"/><circle class="shine" cx="116" cy="79" r="3"/>
-        <path class="mouth" d="M78 105 Q96 119 116 102"/>
-        <path class="bolt" d="M94 61 L78 91 L94 88 L86 113 L111 78 L96 81Z"/>
-      </svg>
-    </div>
-    <div class="monster-svg bubblu">
-      <svg viewBox="0 0 180 180" role="img" aria-label="Bubblu water monster">
-        <path class="outline" d="M42 113 Q27 78 50 51 Q70 28 91 39 Q116 20 141 45 Q161 67 146 105 Q137 139 96 145 Q56 144 42 113Z"/>
-        <path class="body-blue" d="M48 111 Q35 82 55 57 Q72 38 93 47 Q114 29 135 50 Q151 69 138 102 Q130 129 97 136 Q61 136 48 111Z"/>
-        <path class="outline" d="M53 66 Q24 57 29 33 Q53 38 66 51"/>
-        <path class="outline" d="M127 57 Q155 43 160 24 Q174 47 142 73"/>
-        <circle class="eye" cx="73" cy="84" r="9"/><circle class="eye" cx="119" cy="84" r="9"/>
-        <circle class="shine" cx="70" cy="81" r="3"/><circle class="shine" cx="116" cy="81" r="3"/>
-        <path class="mouth" d="M78 106 Q96 117 116 105"/>
-        <circle class="bubble" cx="137" cy="72" r="7"/><circle class="bubble" cx="145" cy="56" r="4"/>
-        <path class="fin" d="M83 43 Q93 20 105 44Z"/>
-      </svg>
-    </div>
-    <div class="monster-svg flammi">
-      <svg viewBox="0 0 180 180" role="img" aria-label="Flammi fire monster">
-        <path class="outline" d="M47 119 Q25 91 43 59 Q55 37 75 42 Q69 20 87 8 Q91 29 107 40 Q117 22 132 20 Q126 45 145 61 Q161 82 145 112 Q129 143 96 145 Q61 145 47 119Z"/>
-        <path class="body-red" d="M52 116 Q35 91 50 65 Q60 47 80 52 Q77 35 86 25 Q94 43 110 53 Q119 38 126 34 Q123 53 139 66 Q152 85 138 108 Q125 133 96 135 Q65 136 52 116Z"/>
-        <path class="flame" d="M78 110 Q67 94 77 77 Q83 69 89 77 Q88 61 99 51 Q100 69 112 77 Q122 87 115 103 Q108 118 96 120 Q83 120 78 110Z"/>
-        <circle class="eye" cx="72" cy="87" r="8"/><circle class="eye" cx="119" cy="87" r="8"/>
-        <circle class="shine" cx="69" cy="84" r="3"/><circle class="shine" cx="116" cy="84" r="3"/>
-        <path class="mouth" d="M78 108 Q96 120 115 107"/>
-      </svg>
-    </div>
-
-    <div class="map-path">
-      <div class="path-line"></div>
-      <button class="map-node node1" data-page="learning"><i>🔤</i><b>ABC<br>FOREST</b><small>START</small></button>
-      <button class="map-node node2" data-page="learning"><i>🔢</i><b>NUMBER<br>MOUNTAIN</b><small>LOCKED</small></button>
-      <button class="map-node node3" data-page="learning"><i>🎨</i><b>COLOUR<br>CAVE</b><small>LOCKED</small></button>
-      <button class="map-node node4" data-page="games"><i>⚔️</i><b>BATTLE<br>ARENA</b><small>SOON</small></button>
-    </div>
-
-    <div class="tree tree1">🌲</div><div class="tree tree2">🌳</div><div class="tree tree3">🌲</div>
-    <div class="grass"></div>
+  <div class="section-title"><span>🗺️</span><div><h2>Adventure Map</h2><p>Choose your next training ground.</p></div></div>
+  <div class="map-grid">
+    <button class="map-card forest" data-go="training"><span class="map-icon">🌲</span><b>ABC FOREST</b><small>Letters & sounds</small><i>GO →</i></button>
+    <button class="map-card mountain-card" data-go="training"><span class="map-icon">⛰️</span><b>NUMBER MOUNTAIN</b><small>Numbers 1–10</small><i>GO →</i></button>
+    <button class="map-card cave" data-go="training"><span class="map-icon">💎</span><b>COLOUR CAVE</b><small>Colours & shapes</small><i>GO →</i></button>
+    <button class="map-card arena" data-go="games"><span class="map-icon">⚔️</span><b>BATTLE ARENA</b><small>Mini games & quizzes</small><i>PLAY →</i></button>
   </div>
 
-  <div class="quest-strip">
-    <div class="quest-icon">🎯</div>
-    <div class="quest-copy"><small>FIRST QUEST</small><b>Learn your ABCs</b><span>Complete your first lesson and earn your first ⭐</span></div>
-    <button data-page="learning">GO ▶</button>
-  </div>
-
-  <div class="buddy-section">
-    <div><small>MEET THE TEAM</small><h2>Choose your adventure buddy</h2></div>
-    <button class="buddy-card yellow"><span class="mini-monster">⚡</span><b>Zapko</b><small>Electric Buddy</small></button>
-    <button class="buddy-card blue"><span class="mini-monster">💧</span><b>Bubblu</b><small>Water Buddy</small></button>
-    <button class="buddy-card red"><span class="mini-monster">🔥</span><b>Flammi</b><small>Fire Buddy</small></button>
+  <div class="quest">
+    <div class="quest-badge">★</div>
+    <div class="quest-text"><small>FIRST QUEST</small><strong>Meet the Bakawali Buddies</strong><p>Discover your first three original monsters.</p></div>
+    <button class="secondary" data-go="collection">VIEW BUDDIES</button>
   </div>
 </section>
 
-<section id="learning" class="page">
-  <div class="section-heading"><div class="ribbon">📚 TRAINING CAMP</div><h2>Power up your brain!</h2><p>Every lesson brings you closer to your next badge.</p></div>
-  <div class="topic-tabs">
-    <button class="topic active" data-topic="abc">🔤 ABC</button>
-    <button class="topic" data-topic="numbers">🔢 Numbers</button>
-    <button class="topic" data-topic="colours">🎨 Colours</button>
-    <button class="topic" data-topic="shapes">🔷 Shapes</button>
-    <button class="topic" data-topic="quiz">⚔️ Challenge</button>
+<section id="training" class="page">
+  <div class="page-head"><div><span class="eyebrow">TRAINING CAMP</span><h2>Learn & Level Up</h2><p>Every lesson earns stars. Finish a lesson to unlock your next badge.</p></div><div class="level-pill">⚡ LEVEL <b id="level2">1</b></div></div>
+  <div class="lesson-grid">
+    <article class="lesson"><div class="lesson-art abc">ABC</div><h3>ABC Forest</h3><p>Meet letters from A to Z and hear their sounds.</p><button class="primary small" data-lesson="abc">TRAIN +1 ⭐</button></article>
+    <article class="lesson"><div class="lesson-art nums">1 2 3</div><h3>Number Mountain</h3><p>Count from 1 to 10 with friendly challenges.</p><button class="primary small" data-lesson="numbers">TRAIN +1 ⭐</button></article>
+    <article class="lesson"><div class="lesson-art colors">● ■ ▲</div><h3>Colour Cave</h3><p>Explore colours and shapes hidden in the cave.</p><button class="primary small" data-lesson="colours">TRAIN +1 ⭐</button></article>
   </div>
-  <div id="lesson" class="lesson"></div>
+  <div class="mini-quiz">
+    <div><span class="eyebrow">QUICK CHECK</span><h3>What comes after 4?</h3></div>
+    <div class="quiz-options"><button data-answer="5">5</button><button data-answer="6">6</button><button data-answer="3">3</button></div>
+    <p id="quiz-result"></p>
+  </div>
 </section>
 
 <section id="games" class="page">
-  <div class="section-heading"><div class="ribbon">🎮 BATTLE ARENA</div><h2>Mini games are coming!</h2><p>Win stars, collect badges and unlock new places.</p></div>
+  <div class="page-head"><div><span class="eyebrow">BATTLE ZONE</span><h2>Games & Quests</h2><p>Short, simple games made for little explorers.</p></div></div>
   <div class="game-grid">
-    <div class="game-card"><span>🧠</span><b>Memory Quest</b><small>Find the matching buddies.</small><em>COMING SOON</em></div>
-    <div class="game-card"><span>🎯</span><b>Number Attack</b><small>Hit the correct number.</small><em>COMING SOON</em></div>
-    <div class="game-card"><span>🎨</span><b>Colour Power</b><small>Choose the right power.</small><em>COMING SOON</em></div>
+    <article class="game-card"><div class="game-icon">🔤</div><h3>Letter Hunt</h3><p>Find the letter hiding in the forest.</p><button class="primary small" data-game="letter">PLAY</button></article>
+    <article class="game-card"><div class="game-icon">🔢</div><h3>Number Dash</h3><p>Tap the number the monster asks for.</p><button class="primary small" data-game="number">PLAY</button></article>
+    <article class="game-card"><div class="game-icon">🎨</div><h3>Colour Blast</h3><p>Match the colour before the timer ends.</p><button class="primary small" data-game="colour">PLAY</button></article>
+  </div>
+  <div id="game-output" class="game-output">Choose a quest above to begin!</div>
+</section>
+
+<section id="collection" class="page">
+  <div class="page-head"><div><span class="eyebrow">MONSTER COLLECTION</span><h2>Bakawali Buddies</h2><p>Original creatures from the Bakawali world.</p></div></div>
+  <div class="monster-grid">
+    <article class="buddy-card electric"><div class="buddy-art zap-preview"><span class="ear e1"></span><span class="ear e2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="bolt"></span></div><div><span class="type">ELECTRIC</span><h3>Zapko</h3><p>A speedy little spark who loves letter hunts.</p></div></article>
+    <article class="buddy-card water"><div class="buddy-art bub-preview"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div><div><span class="type">WATER</span><h3>Bubblu</h3><p>A cheerful swimmer who counts bubbles all day.</p></div></article>
+    <article class="buddy-card fire"><div class="buddy-art flam-preview"><span class="flame f1"></span><span class="flame f2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span></div><div><span class="type">FIRE</span><h3>Flammi</h3><p>A warm-hearted buddy who lights up colour caves.</p></div></article>
   </div>
 </section>
 
-<section id="gallery" class="page">
-  <div class="section-heading"><div class="ribbon">🏆 COLLECTION</div><h2>Treasure & Memories</h2><p>Your badges, artwork and special memories.</p></div>
-  <div class="empty-state"><div>🎒</div><h3>Your backpack is empty!</h3><p>Badges and private family memories will appear here.</p></div>
-</section>
-
-<section id="songs" class="page">
-  <div class="section-heading"><div class="ribbon">🎵 MUSIC CAMP</div><h2>Sing on the adventure!</h2><p>Fun songs and learning music will live here.</p></div>
-  <div class="empty-state"><div>🎧</div><h3>Music Camp is getting ready</h3><p>Coming soon.</p></div>
+<section id="music" class="page">
+  <div class="page-head"><div><span class="eyebrow">MUSIC CAMP</span><h2>Sing Along</h2><p>Simple browser songs and sound activities.</p></div></div>
+  <div class="music-card">
+    <div class="record">♫</div><div><h3>Bakawali Learning Songs</h3><p>Use your browser voice to practise letters, numbers and colours.</p></div>
+    <div class="music-actions"><button class="primary small" data-speak="A B C! 1 2 3! Red, blue, yellow!">▶ PLAY</button><button class="secondary small" data-speak="Great job, little explorer!">👏 PRAISE</button></div>
+  </div>
 </section>
 </main>
 
-<footer>🌟 BAKAWALI ADVENTURE WORLD · A little world made with love 🌟</footer>
+<div id="toast" class="toast">⭐ Quest complete!</div>
+<footer>BAKAWALI ADVENTURE WORLD · Made for little explorers</footer>
 <script src="script.js"></script>
 </body>
 </html>

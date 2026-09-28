@@ -1,15 +1,41 @@
-const pages=document.querySelectorAll(".page");
-document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>{pages.forEach(p=>p.classList.toggle("active",p.id===b.dataset.page));scrollTo({top:0,behavior:"smooth"})}));
-
-const lesson=document.getElementById("lesson"),topics=document.querySelectorAll(".topic");
-const data={
-abc:{title:"ABC Adventure 🔤",hint:"Tap a letter to hear its name.",cards:"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(l=>({big:l,small:`Letter ${l}`,speak:`Letter ${l}`}))},
-numbers:{title:"Number Mountain 🔢",hint:"Tap a number to hear it.",cards:Array.from({length:10},(_,i)=>({big:String(i+1),small:`${i+1} ${i?"stars":"star"}`,speak:String(i+1)}))},
-colours:{title:"Colour Cave 🎨",hint:"Tap a colour to hear its name.",cards:[["Yellow","#ffd633"],["Blue","#65c8ee"],["Red","#ed5a54"],["Green","#62bf72"],["Purple","#a995df"],["Orange","#ff9c42"],["Pink","#f49ab5"],["White","#fff"]].map(([name,color])=>({color,name,speak:name}))},
-shapes:{title:"Shape Valley 🔷",hint:"Tap a shape to hear its name.",cards:[["Circle","circle"],["Square","square"],["Triangle","triangle"]].map(([name,shape])=>({name,shape,speak:name}))}
-};
-function speak(t){if("speechSynthesis"in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.rate=.82;u.pitch=1.08;speechSynthesis.speak(u)}}
-function renderTopic(topic){topics.forEach(t=>t.classList.toggle("active",t.dataset.topic===topic));if(topic==="quiz"){renderQuiz();return}let d=data[topic];lesson.innerHTML=`<h2 class="lesson-title">${d.title}</h2><p class="hint">${d.hint}</p><div class="cards"></div>`;let cards=lesson.querySelector(".cards");d.cards.forEach(x=>{let b=document.createElement("button");b.className="learn-card";b.innerHTML=x.color?`<div class="colour-dot" style="background:${x.color}"></div><b>${x.name}</b>`:x.shape?`<div class="shape ${x.shape}"></div><b>${x.name}</b>`:`<span class="big">${x.big}</span><small>${x.small}</small>`;b.onclick=()=>speak(x.speak);cards.appendChild(b)})}
-const qs=[{q:"Which letter comes first?",emoji:"🔤",options:["A","B","C","D"],answer:"A"},{q:"How many stars? ⭐⭐⭐",emoji:"⭐",options:["2","3","4","5"],answer:"3"},{q:"What colour is the sky?",emoji:"🌤️",options:["Blue","Pink","Green","Orange"],answer:"Blue"},{q:"Which one is a circle?",emoji:"🔷",options:["⚪ Circle","⬜ Square","🔺 Triangle","⭐ Star"],answer:"⚪ Circle"}];let qi=0,score=0;
-function renderQuiz(){let x=qs[qi%qs.length];lesson.innerHTML=`<div class="quiz"><div class="quiz-emoji">${x.emoji}</div><h2>${x.q}</h2><div class="quiz-options">${x.options.map(o=>`<button>${o}</button>`).join("")}</div><div class="feedback"></div><p class="hint">Challenge ${(qi%qs.length)+1} of ${qs.length} · ⭐ ${score}</p></div>`;lesson.querySelectorAll(".quiz-options button").forEach(b=>b.onclick=()=>{let f=lesson.querySelector(".feedback");if(b.textContent===x.answer){score++;f.textContent="Correct! 🌟 Power up!";speak("Correct! Power up!")}else{f.textContent=`Good try! The answer is ${x.answer}.`;speak("Good try!")}setTimeout(()=>{qi++;renderQuiz()},850)})}
-topics.forEach(t=>t.onclick=()=>renderTopic(t.dataset.topic));renderTopic("abc");
+const pages=[...document.querySelectorAll(".page")];
+const toast=document.getElementById("toast");
+let stars=Number(localStorage.getItem("bakawaliStars")||0);
+let badges=Number(localStorage.getItem("bakawaliBadges")||0);
+function renderStats(){
+ document.querySelectorAll("#stars").forEach(x=>x.textContent=stars);
+ document.querySelectorAll("#badges").forEach(x=>x.textContent=badges);
+ const level=Math.floor(stars/3)+1;
+ document.querySelectorAll("#level,#level2").forEach(x=>x.textContent=level);
+}
+function showPage(id){
+ pages.forEach(p=>p.classList.toggle("active",p.id===id));
+ history.replaceState(null,"","#"+id);
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
+function earnStar(msg="⭐ Quest complete!"){
+ stars++; localStorage.setItem("bakawaliStars",stars);
+ if(stars%3===0){badges++;localStorage.setItem("bakawaliBadges",badges)}
+ renderStats(); toast.textContent=msg;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1800);
+}
+document.querySelectorAll("[data-lesson]").forEach(b=>b.addEventListener("click",()=>{
+ const lesson=b.dataset.lesson;
+ const words={abc:"A says ah! B says buh! C says kuh!",numbers:"1, 2, 3, 4, 5! Great counting!",colours:"Red, blue, yellow! Colours unlocked!"};
+ speak(words[lesson]); earnStar("⭐ Training complete!");
+}));
+document.querySelectorAll("[data-answer]").forEach(b=>b.addEventListener("click",()=>{
+ const out=document.getElementById("quiz-result");
+ if(b.dataset.answer==="5"){out.textContent="🎉 Correct! +1 Star";earnStar("🎉 Correct answer!")}
+ else out.textContent="Try again! Hint: 4 comes before 5.";
+}));
+document.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",()=>{
+ const out=document.getElementById("game-output");
+ const q={letter:"🔤 Find the letter A! Say “A” out loud, then tap PLAY again to practise.",number:"🔢 What comes after 7? Answer: 8!",colour:"🎨 Find something blue around you!"}[b.dataset.game];
+ out.innerHTML="<div>"+q+"<br><button class='primary small' style='margin-top:12px' onclick='earnStar(\"🏆 Game cleared!\")'>CLAIM STAR</button></div>";
+}));
+function speak(text){if("speechSynthesis" in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=.85;speechSynthesis.speak(u)}}
+document.querySelectorAll("[data-speak]").forEach(b=>b.addEventListener("click",()=>{speak(b.dataset.speak);earnStar("🎵 Music time!")}));
+renderStats();
+const hash=location.hash.replace("#","");
+if(hash && document.getElementById(hash)) showPage(hash);
