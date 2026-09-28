@@ -465,7 +465,35 @@ function wireTraining(m){
    }
    if(m.type==="spell"){
     let i=0;const stage=document.getElementById("spellStage");
-    const show=()=>{const [word,pic]=m.words[i%m.words.length];const shuffled=[...word].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;let chosen=[];stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{chosen.push(b.dataset.letter);b.disabled=true;const target=word.slice(0,chosen.length);if(chosen.join("")!==target){trainingFeedback("wrong","Try the next letter carefully!");chosen=[];stage.querySelectorAll("button").forEach(x=>x.disabled=false);}else{document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Good!";if(chosen.length===word.length){trainingComplete(m.id);setTimeout(()=>{i++;show()},500);}}});};show();
+    const show=()=>{
+      const [word,pic]=m.words[i%m.words.length];
+      const shuffled=[...word].sort(()=>Math.random()-.5);
+      stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word" id="spellWordDisplay">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button type="button" data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;
+      let chosen=[];
+      const updateDisplay=()=>{document.getElementById("spellWordDisplay").innerHTML=word.split("").map((_,idx)=>chosen[idx]||"_").join(" ");};
+      stage.querySelectorAll(".letter-choices button").forEach(b=>b.onclick=()=>{
+        if(b.disabled)return;
+        trainingClickSound();
+        const expected=word[chosen.length];
+        b.classList.add(b.dataset.letter===expected?"letter-selected":"letter-wrong");
+        if(b.dataset.letter!==expected){
+          trainingFeedback("wrong","❌ Wrong letter. Try again!");
+          b.classList.add("wrong-choice");
+          setTimeout(()=>{b.classList.remove("letter-wrong","wrong-choice");},450);
+          return;
+        }
+        chosen.push(b.dataset.letter);
+        b.disabled=true;
+        updateDisplay();
+        document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Great! Keep going!";
+        if(chosen.length===word.length){
+          trainingFeedback("correct","🎉 Spelled correctly!");
+          stage.querySelectorAll(".letter-choices button").forEach(x=>x.disabled=true);
+          trainingComplete(m.id);
+          setTimeout(()=>{i++;show()},700);
+        }
+      });
+    };show();
   }
   if(m.type==="reading"){
     let i=0;const stage=document.getElementById("readingStage");
