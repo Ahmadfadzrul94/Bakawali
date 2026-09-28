@@ -114,13 +114,48 @@
 </section>
 
 <section id="games" class="page">
-  <div class="page-head"><div><span class="eyebrow">BATTLE ZONE</span><h2>Games & Quests</h2><p>Short, simple games made for little explorers.</p></div></div>
-  <div class="game-grid">
-    <article class="game-card"><div class="game-icon">🔤</div><h3>Letter Hunt</h3><p>Find the letter hiding in the forest.</p><button class="primary small" data-game="letter">PLAY</button></article>
-    <article class="game-card"><div class="game-icon">🔢</div><h3>Number Dash</h3><p>Tap the number the monster asks for.</p><button class="primary small" data-game="number">PLAY</button></article>
-    <article class="game-card"><div class="game-icon">🎨</div><h3>Colour Blast</h3><p>Match the colour before the timer ends.</p><button class="primary small" data-game="colour">PLAY</button></article>
+  <div class="page-head">
+    <div><span class="eyebrow">BATTLE ZONE</span><h2>Games & Quests</h2><p>Play short learning games and help your Bakawali buddy level up.</p></div>
+    <div class="level-pill">⭐ <b id="gameStars">0</b> STARS</div>
   </div>
-  <div id="game-output" class="game-output">Choose a quest above to begin!</div>
+
+  <div class="game-select">
+    <button class="game-choice active" data-game-panel="memory-game"><span>🧠</span><b>Memory Match</b><small>Find the matching pairs</small></button>
+    <button class="game-choice" data-game-panel="number-game"><span>🔢</span><b>Number Dash</b><small>Choose the right answer</small></button>
+    <button class="game-choice" data-game-panel="colour-game"><span>🎨</span><b>Colour Blast</b><small>Hit the colour called out</small></button>
+    <button class="game-choice" data-game-panel="battle-game"><span>⚔️</span><b>Buddy Battle</b><small>Help your monster win</small></button>
+  </div>
+
+  <div id="memory-game" class="game-panel active">
+    <div class="game-top"><div><span class="eyebrow">MEMORY MATCH</span><h3>Find the pairs</h3><p>Match all four pairs. No timer — take your time.</p></div><button class="secondary small" id="memoryReset">RESET</button></div>
+    <div class="memory-board" id="memoryBoard"></div>
+    <div class="game-status" id="memoryStatus">Find a pair!</div>
+  </div>
+
+  <div id="number-game" class="game-panel">
+    <div class="game-top"><div><span class="eyebrow">NUMBER DASH</span><h3 id="numberGameQuestion">Which number comes after 6?</h3><p>Choose the correct answer.</p></div><div class="score-chip">🏆 <span id="numberScore">0</span>/5</div></div>
+    <div class="dash-options" id="dashOptions"></div>
+    <div class="game-status" id="numberGameStatus">Ready?</div>
+  </div>
+
+  <div id="colour-game" class="game-panel">
+    <div class="game-top"><div><span class="eyebrow">COLOUR BLAST</span><h3 id="colourQuestion">Tap BLUE!</h3><p>Find the colour named above.</p></div><div class="score-chip">🎯 <span id="colourScore">0</span>/5</div></div>
+    <div class="blast-options" id="blastOptions"></div>
+    <div class="game-status" id="colourGameStatus">Ready?</div>
+  </div>
+
+  <div id="battle-game" class="game-panel">
+    <div class="battle-stage">
+      <div class="battle-head"><div><span class="eyebrow">BUDDY BATTLE</span><h3>Zapko vs. Wild Bot</h3><p>Choose an action. This is a friendly learning battle.</p></div><div class="battle-level">LV. <b id="battleLevel">1</b></div></div>
+      <div class="battle-arena">
+        <div class="fighter player"><div class="battle-monster zap-battle"><span class="ear e1"></span><span class="ear e2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="bolt"></span></div><b>Zapko</b><div class="hp"><i id="playerHp"></i></div></div>
+        <div class="vs">VS</div>
+        <div class="fighter enemy"><div class="battle-monster wild-battle"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div><b>Wild Bot</b><div class="hp enemyhp"><i id="enemyHp"></i></div></div>
+      </div>
+      <div class="battle-actions"><button class="primary small" data-battle="spark">⚡ SPARK</button><button class="secondary small" data-battle="learn">📚 LEARN</button><button class="secondary small" data-battle="encourage">👏 ENCOURAGE</button></div>
+      <div class="game-status" id="battleStatus">Choose an action!</div>
+    </div>
+  </div>
 </section>
 
 <section id="collection" class="page">
