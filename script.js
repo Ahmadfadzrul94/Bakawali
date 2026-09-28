@@ -1,8 +1,38 @@
 const pages=[...document.querySelectorAll(".page")];
 const toast=document.getElementById("toast");
-let stars=Number(localStorage.getItem("bakawaliStars")||0);
-let badges=Number(localStorage.getItem("bakawaliBadges")||0);
-const learned=new Set(JSON.parse(localStorage.getItem("bakawaliLearned")||"[]"));
+/* =========================
+   BAKAWALI PROFILE PROTOTYPE
+   Simple local profiles first; cloud login can be added later.
+   ========================= */
+const PROFILE_KEY="bakawaliProfiles";
+const ACTIVE_PROFILE_KEY="bakawaliActiveProfile";
+function profileLoad(){
+  let profiles=[];
+  try{profiles=JSON.parse(localStorage.getItem(PROFILE_KEY)||"[]")}catch(e){}
+  if(!Array.isArray(profiles))profiles=[];
+  if(!profiles.length){
+    const migrated={id:"explorer",name:"Little Explorer",avatar:"🧢",created:Date.now(),stars:Number(localStorage.getItem("bakawaliStars")||0),badges:Number(localStorage.getItem("bakawaliBadges")||0)};
+    profiles=[migrated]; localStorage.setItem(PROFILE_KEY,JSON.stringify(profiles));
+    localStorage.setItem(ACTIVE_PROFILE_KEY,migrated.id);
+  }
+  let active=localStorage.getItem(ACTIVE_PROFILE_KEY);
+  if(!profiles.some(p=>p.id===active)){active=profiles[0].id;localStorage.setItem(ACTIVE_PROFILE_KEY,active)}
+  return {profiles,active};
+}
+let profileState=profileLoad();
+let activeProfile=profileState.profiles.find(p=>p.id===profileState.active)||profileState.profiles[0];
+const profilePrefix=()=>"bakawali:"+activeProfile.id+":";
+const pkey=k=>profilePrefix()+k;
+function profileGet(k,fallback){const v=localStorage.getItem(pkey(k));return v===null?fallback:v;}
+function profileSet(k,v){localStorage.setItem(pkey(k),String(v));}
+function refreshProfileLabel(){
+  document.querySelectorAll("[data-profile-name]").forEach(x=>x.textContent=activeProfile.name);
+  document.querySelectorAll("[data-profile-avatar]").forEach(x=>x.textContent=activeProfile.avatar||"🧢");
+}
+let stars=Number(profileGet("stars",activeProfile.stars||0));
+let badges=Number(profileGet("badges",activeProfile.badges||0));
+const learned=new Set(JSON.parse(profileGet("learned","[]")));
+refreshProfileLabel();
 
 /* =========================
    BAKAWALI AUDIO HUB
@@ -83,8 +113,8 @@ function showPage(id){
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
 
 function earnStar(msg="⭐ Quest complete!"){
-  stars++; localStorage.setItem("bakawaliStars",stars);
-  if(stars%3===0){badges++;localStorage.setItem("bakawaliBadges",badges)}
+  stars++; profileSet("stars",stars);
+  if(stars%3===0){badges++;profileSet("badges",badges)}
   renderStats(); toast.textContent=msg;toast.classList.add("show");
   setTimeout(()=>toast.classList.remove("show"),1800);
 }
@@ -98,7 +128,7 @@ function speak(text){
 function learn(key,text,button){
   speak(text);
   if(!learned.has(key)){
-    learned.add(key);localStorage.setItem("bakawaliLearned",JSON.stringify([...learned]));
+    learned.add(key);profileSet("learned",JSON.stringify([...learned]));
     button.classList.add("done"); earnStar("⭐ New lesson learned!");
   }else{
     button.classList.add("done");
@@ -209,15 +239,18 @@ const trainingModules=[
   {id:"memory",cat:"world",icon:"🧠",title:"Memory Match",desc:"Remember and match picture pairs.",type:"memory"},
   {id:"sorting",cat:"world",icon:"📦",title:"Sort It Out",desc:"Put things into the right group.",type:"sort"},
   {id:"sequence",cat:"world",icon:"🔁",title:"What Happens Next?",desc:"Put a simple action in order.",type:"sequence"},
-  {id:"animals",cat:"world",icon:"🐾",title:"Animal Detective",desc:"Match animals with where they belong.",type:"quiz",
-   q:"Which animal lives in water?",a:["🐟 Fish","🐱 Cat","🐰 Rabbit"],correct:"🐟 Fish"}
+  {id:"animals",cat:"world",icon:"🐾",title:"Animal Detective",desc:"Match animals with where they belong.",type:"animal",
+   animals:[["🐶","Dog","BARK!","Farm / Home"],["🐱","Cat","MEOW!","Home"],["🦁","Lion","ROAR!","Savanna"],["🐘","Elephant","TRUMPET!","Grassland"],["🐸","Frog","RIBBIT!","Pond"]]},
+  {id:"animalhabitat",cat:"world",icon:"🌎",title:"Animal Habitat",desc:"Explore where animals live and what they need.",type:"animalhabitat"},
+  {id:"scientist",cat:"world",icon:"🔬",title:"Little Scientist",desc:"Discover simple science through moving experiments.",type:"science"},
+  {id:"scienceexplorer",cat:"world",icon:"🚀",title:"Science Explorer",desc:"Explore weather, space, light and nature.",type:"scienceexplorer"}
 ];
 
-const trainingState=new Set(JSON.parse(localStorage.getItem("bakawaliTrainingDone")||"[]"));
+const trainingState=new Set(JSON.parse(profileGet("trainingDone","[]")));
 let currentTraining=null;
 
 function trainingSave(){
-  localStorage.setItem("bakawaliTrainingDone",JSON.stringify([...trainingState]));
+  profileSet("trainingDone",JSON.stringify([...trainingState]));
   const done=trainingState.size, pct=Math.round(done/trainingModules.length*100);
   const d=document.getElementById("trainingDone"), t=document.getElementById("trainingProgressText"), bar=document.getElementById("trainingProgressBar");
   if(d)d.textContent=done;if(t)t.textContent=pct+"%";if(bar)bar.style.width=pct+"%";
@@ -331,6 +364,10 @@ function trainingTemplate(m){
   if(m.type==="memory") return head+`<div id="memoryStage"></div>`;
   if(m.type==="sort") return head+`<div id="sortStage"></div>`;
   if(m.type==="sequence") return head+`<div id="sequenceStage"></div>`;
+  if(m.type==="animal") return head+`<div id="animalStage"></div>`;
+  if(m.type==="animalhabitat") return head+`<div id="animalHabitatStage"></div>`;
+  if(m.type==="science") return head+`<div id="scienceStage"></div>`;
+  if(m.type==="scienceexplorer") return head+`<div id="scienceExplorerStage"></div>`;
   return head;
 }
 
@@ -395,9 +432,53 @@ function wireTraining(m){
   if(m.type==="sequence"){
     const qs=[["Wake up 🌞","Brush teeth 🪥","Eat breakfast 🍳","Go to bed 🛏️",1],["Plant seed 🌱","Water it 💧","It grows 🌿","Pick flower 🌸",2]];let i=0;const stage=document.getElementById("sequenceStage");const show=()=>{const q=qs[i%qs.length];const order=[q[0],q[1],q[2],q[3]];const correct=q[4];stage.innerHTML=`<div class="sequence-card"><p>What happens <b>first</b>?</p>${order.map((x,j)=>`<button data-c="${j===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose the first step.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Good thinking!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Think about what happens first.");});};show();
   }
+  if(m.type==="animal"){
+    let i=0; const stage=document.getElementById("animalStage");
+    const show=()=>{const a=m.animals[i%m.animals.length]; const opts=m.animals.map(x=>x[1]).sort(()=>Math.random()-.5); stage.innerHTML=`<div class="animal-live-card"><div class="animal-sky"><div class="animal-sun"></div><div class="animal-cloud"></div><div class="animal-ground"></div><button class="animal-character" id="animalSound" type="button" aria-label="Hear ${a[1]}">${a[0]}</button></div><div class="animal-name">${a[1]} <span>${a[3]}</span></div><div class="activity-options">${opts.map(x=>`<button data-c="${x===a[1]}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Listen to the animal sound, then choose.</p></div>`;
+      const sayAnimal=()=>{trainingClickSound();trainingSay(a[2]);};
+      document.getElementById("animalSound").onclick=sayAnimal; setTimeout(sayAnimal,160);
+      stage.querySelectorAll(".activity-options button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){b.classList.add("correct-choice");trainingFeedback("correct","🎉 Correct! It says "+a[2]);trainingComplete(m.id);i++;setTimeout(show,650)}else{b.classList.add("wrong-choice");trainingFeedback("wrong","Try again! Listen once more 👂");}});
+    }; show();
+  }
+  if(m.type==="animalhabitat"){
+    const qs=[["🐧","Penguin","❄️ Arctic",["❄️ Arctic","🌵 Desert","🌴 Jungle"]],["🐪","Camel","🌵 Desert",["🌊 Ocean","🌵 Desert","❄️ Arctic"]],["🐬","Dolphin","🌊 Ocean",["🌊 Ocean","🌳 Forest","🚜 Farm"]],["🐵","Monkey","🌴 Jungle",["🏜️ Desert","🌴 Jungle","🏠 Home"]]]; let i=0; const stage=document.getElementById("animalHabitatStage"); const show=()=>{const [a,n,h,opts]=qs[i%qs.length];stage.innerHTML=`<div class="habitat-live"><div class="habitat-animal">${a}</div><h3>Where does the ${n} live?</h3><div class="activity-options">${opts.map(x=>`<button data-c="${x===h}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose a habitat.</p></div>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Correct habitat!");trainingComplete(m.id);i++;setTimeout(show,550)}else trainingFeedback("wrong","Not quite. Try again!");});};show();
+  }
+  if(m.type==="science"){
+    const qs=[["🧊","What happens to ice in a warm place?",["It melts 🫠","It grows 🌱","It flies 🚀"],"It melts 🫠"],["🪶","Which is lighter?",["Feather 🪶","Rock 🪨","Elephant 🐘"],"Feather 🪶"],["🧲","What can a magnet attract?",["Some metal 🧲","Water 💧","Sunlight ☀️"],"Some metal 🧲"],["🌱","What does a plant need to grow?",["Water 💧","A toy 🧸","A shoe 👟"],"Water 💧"]];let i=0;const stage=document.getElementById("scienceStage");const show=()=>{const [icon,q,opts,ans]=qs[i%qs.length];stage.innerHTML=`<div class="science-lab"><div class="science-object">${icon}</div><h3>${q}</h3><div class="activity-options">${opts.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Think like a little scientist!</p></div>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🔬 Correct! Great science thinking!");trainingComplete(m.id);i++;setTimeout(show,550)}else trainingFeedback("wrong","Hmm... test your idea again!");});};show();
+  }
+  if(m.type==="scienceexplorer"){
+    const qs=[["☀️","What gives us light in the daytime?",["The Sun ☀️","A rock 🪨","A fish 🐟"],"The Sun ☀️"],["🌧️","What do we wear when it rains?",["Raincoat 🧥","Swimsuit 🩱","Helmet 🪖"],"Raincoat 🧥"],["🌙","What do we often see at night?",["Moon 🌙","Rainbow 🌈","Sunflower 🌻"],"Moon 🌙"],["👀","Which sense helps us see?",["Eyes 👀","Ears 👂","Nose 👃"],"Eyes 👀"]];let i=0;const stage=document.getElementById("scienceExplorerStage");const show=()=>{const [icon,q,opts,ans]=qs[i%qs.length];stage.innerHTML=`<div class="science-explorer"><div class="space-object">${icon}</div><h3>${q}</h3><div class="activity-options">${opts.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Explore and choose!</p></div>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🚀 Correct! Explorer level up!");trainingComplete(m.id);i++;setTimeout(show,550)}else trainingFeedback("wrong","Try another answer!");});};show();
+  }
+}
+
+
+function openProfilePicker(){
+  const modal=document.getElementById("profileModal"); if(!modal)return;
+  const list=document.getElementById("profileList");
+  list.innerHTML=profileState.profiles.map(p=>`<button type="button" class="profile-card ${p.id===activeProfile.id?"active":""}" data-profile-id="${p.id}"><span class="profile-avatar">${p.avatar||"🧢"}</span><span><b>${p.name}</b><small>Level ${Math.floor(Number(profileGetFor(p,"stars",p.stars||0))/3)+1}</small></span><span>▶</span></button>`).join("");
+  list.querySelectorAll("[data-profile-id]").forEach(b=>b.onclick=()=>switchProfile(b.dataset.profileId));
+  modal.classList.remove("hidden");
+}
+function profileGetFor(p,k,fallback){const v=localStorage.getItem("bakawali:"+p.id+":"+k);return v===null?fallback:v;}
+function switchProfile(id){
+  const p=profileState.profiles.find(x=>x.id===id);if(!p)return;
+  localStorage.setItem(ACTIVE_PROFILE_KEY,p.id); location.reload();
+}
+function addProfile(name,avatar="🧢"){
+  const clean=String(name||"").trim().slice(0,18);if(!clean)return;
+  const id="p"+Date.now().toString(36);
+  profileState.profiles.push({id,name:clean,avatar,created:Date.now(),stars:0,badges:0});
+  localStorage.setItem(PROFILE_KEY,JSON.stringify(profileState.profiles));localStorage.setItem(ACTIVE_PROFILE_KEY,id);location.reload();
+}
+function initProfiles(){
+  const btn=document.getElementById("profileButton"),close=document.getElementById("profileClose"),form=document.getElementById("profileCreateForm");
+  if(btn)btn.onclick=openProfilePicker;if(close)close.onclick=()=>document.getElementById("profileModal").classList.add("hidden");
+  if(form)form.onsubmit=e=>{e.preventDefault();const input=document.getElementById("profileNameInput");addProfile(input.value);};
+  refreshProfileLabel();
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
+  initProfiles();
   const trainingRoot=document.getElementById("trainingModal");
   if(trainingRoot){trainingRoot.addEventListener("click",e=>{const btn=e.target.closest("button");if(btn&&!btn.id.includes("trainingSoundToggle")){trainingClickSound();}});}
 
