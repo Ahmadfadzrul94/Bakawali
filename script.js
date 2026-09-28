@@ -212,6 +212,11 @@ function setBakawaliLanguage(lang){
   updateLanguageUI();
   const activeFilter=document.querySelector('.training-filter.active')?.dataset.filter||'all';
   renderTrainingCards(activeFilter);
+  updateMusicLanguage();
+  window.bakawaliDailyQuestSync?.();
+  window.renderBadges?.();
+  window.bakawaliRefreshStory?.();
+  window.bakawaliUpdateParent?.();
 }
 function updateMusicLanguage(){
   const frame=document.getElementById("bakawaliYoutubePlayer");
@@ -319,7 +324,8 @@ const trainingModules=[
   {id:"animals",cat:"animal",icon:"🐾",title:"Animal Detective",desc:"50 animal challenges: sounds, bodies, food, movement and homes.",type:"animal50"},
   {id:"animalhabitat",cat:"animal",icon:"🌎",title:"Animal Habitat",desc:"50 habitat missions: where animals live and what they need.",type:"animalhabitat50"},
   {id:"scientist",cat:"science",icon:"🔬",title:"Little Scientist",desc:"50 mini experiments about everyday science.",type:"science50"},
-  {id:"scienceexplorer",cat:"science",icon:"🚀",title:"Science Explorer",desc:"50 discovery missions about weather, space, light and nature.",type:"scienceexplorer50"}
+  {id:"scienceexplorer",cat:"science",icon:"🚀",title:"Science Explorer",desc:"50 discovery missions about weather, space, light and nature.",type:"scienceexplorer50"},
+  {id:"dragmatch",cat:"world",icon:"🖐️",title:"Drag & Match",desc:"Drag objects to the place where they belong.",type:"dragmatch"}
 ];
 
 const animal50=[
@@ -529,6 +535,7 @@ function trainingTemplate(m){
   if(m.type==="animalhabitat50") return head+`<div id="animalHabitatStage"></div>`;
   if(m.type==="science50") return head+`<div id="scienceStage"></div>`;
   if(m.type==="scienceexplorer50") return head+`<div id="scienceExplorerStage"></div>`;
+  if(m.type==="dragmatch") return head+`<div id="dragMatchStage"></div>`;
   return head;
 }
 
@@ -620,6 +627,39 @@ function wireTraining(m){
   }
   if(m.type==="sequence"){
     const qs=[["Wake up 🌞","Brush teeth 🪥","Eat breakfast 🍳","Go to bed 🛏️",1],["Plant seed 🌱","Water it 💧","It grows 🌿","Pick flower 🌸",2]];let i=0;const stage=document.getElementById("sequenceStage");const show=()=>{const q=qs[i%qs.length];const order=[q[0],q[1],q[2],q[3]];const correct=q[4];stage.innerHTML=`<div class="sequence-card"><p>What happens <b>first</b>?</p>${order.map((x,j)=>`<button data-c="${j===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose the first step.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Good thinking!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Think about what happens first.");});};show();
+  }
+  if(m.type==="dragmatch"){
+    let i=0; const puzzles=[
+      {item:"🐟",targets:["🌊 Water","🌳 Forest","🏜️ Desert"],answer:0},
+      {item:"🐫",targets:["🌊 Ocean","🏜️ Desert","❄️ Snow"],answer:1},
+      {item:"🐦",targets:["🌳 Tree","🌊 Ocean","🌋 Volcano"],answer:0},
+      {item:"🧊",targets:["☀️ Hot Sun","❄️ Cold Place","🌴 Jungle"],answer:1},
+      {item:"🌱",targets:["🪨 Rock","🌍 Soil","☁️ Sky"],answer:1},
+      {item:"🚗",targets:["🛣️ Road","🌊 Ocean","🌳 Tree"],answer:0}
+    ];
+    const stage=document.getElementById("dragMatchStage");
+    const show=()=>{
+      const q=puzzles[i%puzzles.length];
+      const ms=bakawaliLanguage==='ms';
+      stage.innerHTML=`<div class="drag-match-card"><div class="drag-match-progress">${ms?'Cabaran':'Challenge'} ${i+1} / ${puzzles.length}</div><div class="drag-object" id="dragObject" draggable="true">${q.item}</div><p>${ms?'Seret objek ke tempat yang betul.':'Drag the object to the right place.'}</p><div class="drag-targets">${q.targets.map((t,j)=>`<button class="drag-target" data-index="${j}">${t}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">${ms?'Cuba!':'Have a go!'}</p></div>`;
+      const obj=document.getElementById('dragObject');
+      obj.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain','drag'));
+      stage.querySelectorAll('.drag-target').forEach(btn=>{
+        btn.addEventListener('dragover',e=>{e.preventDefault();btn.classList.add('drag-over')});
+        btn.addEventListener('dragleave',()=>btn.classList.remove('drag-over'));
+        btn.addEventListener('drop',e=>{e.preventDefault();btn.classList.remove('drag-over');check(Number(btn.dataset.index))});
+        btn.addEventListener('click',()=>check(Number(btn.dataset.index)));
+      });
+      let startX=0,startY=0;
+      obj.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;obj.setPointerCapture?.(e.pointerId)});
+      obj.addEventListener('pointerup',e=>{if(Math.hypot(e.clientX-startX,e.clientY-startY)<12){stage.querySelectorAll('.drag-target').forEach(x=>x.classList.remove('selected'));obj.classList.add('drag-ready');}});
+    };
+    const check=(idx)=>{
+      const q=puzzles[i%puzzles.length]; const ms=bakawaliLanguage==='ms';
+      if(idx===q.answer){trainingFeedback('correct',ms?'🎉 Betul!':'🎉 Correct!');i++; if(i>=puzzles.length){trainingComplete(m.id,ms?'🖐️ Hebat! Semua padanan selesai!':'🖐️ Great! All matches complete!');i=0;return;} setTimeout(show,550);}
+      else trainingFeedback('wrong',ms?'Cuba tempat lain.':'Try another place.');
+    };
+    show();
   }
   if(m.type==="animal50"){
     let i=seriesProgress(m.id,50); const stage=document.getElementById("animalStage");
@@ -1141,4 +1181,97 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   document.querySelector('[data-block-left]').onclick=()=>move(-1);document.querySelector('[data-block-right]').onclick=()=>move(1);document.querySelector('[data-block-rotate]').onclick=rotate;document.querySelector('[data-block-down]').onclick=soft;document.querySelector('[data-block-drop]').onclick=hardDrop;
   window.addEventListener('keydown',e=>{if(!document.getElementById('blockPanel')?.classList.contains('active'))return;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')move(-1);else if(e.key==='ArrowRight')move(1);else if(e.key==='ArrowUp')rotate();else if(e.key==='ArrowDown')soft();else if(e.code==='Space')hardDrop();else if(e.key.toLowerCase()==='p')togglePause();});
   resetBoard();drawNext();
+})();
+
+/* =========================================================
+   BAKAWALI ADVENTURE WORLD EXPANSION — QUESTS / BADGES / BUDDY / STORY / CREATOR / PARENT
+   ========================================================= */
+(function initAdventureExpansion(){
+  const dayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+  const qkey=()=>"dailyQuest:"+dayKey();
+  const getQuest=()=>{try{return JSON.parse(profileGet(qkey(),"{}"))||{}}catch(e){return {}}};
+  const setQuest=x=>profileSet(qkey(),JSON.stringify(x));
+  const quests=[
+    {id:"spell",icon:"✏️",en:"Complete Spell It!",ms:"Siapkan Eja Perkataan",action:()=>openTraining("spelling"),done:()=>trainingState.has("spelling")},
+    {id:"math",icon:"🔢",en:"Finish one Math mission",ms:"Siapkan satu misi Matematik",action:()=>openTraining("addition"),done:()=>trainingState.has("addition")},
+    {id:"buddy",icon:"🐾",en:"Make a buddy happy",ms:"Gembirakan satu buddy",action:()=>showPage("collection"),done:()=>Number(profileGet("buddyDaily",0))>=1}
+  ];
+  function syncDailyQuest(){
+    const q=getQuest(); let changed=false;
+    quests.forEach(x=>{if(!q[x.id]&&x.done()){q[x.id]=true;changed=true;}});
+    if(changed){setQuest(q); if(Object.keys(q).filter(k=>q[k]).length===quests.length && !q.rewarded){q.rewarded=true;setQuest(q);earnStar("🎉 Daily Quest complete! ⭐ +30");profileSet("dailyQuestBonus:"+dayKey(),"1");}}
+    renderDailyQuest();
+  }
+  function renderDailyQuest(){
+    const wrap=document.getElementById("dailyQuestList"); if(!wrap)return; const q=getQuest();
+    wrap.innerHTML=quests.map(x=>{const done=!!q[x.id];return `<button class="daily-quest-item ${done?'done':''}" data-daily-id="${x.id}"><span>${done?'✅':x.icon}</span><b>${bakawaliLanguage==='ms'?x.ms:x.en}</b><small>${done?(bakawaliLanguage==='ms'?'SELESAI':'DONE'):(bakawaliLanguage==='ms'?'MULA →':'GO →')}</small></button>`}).join("");
+    wrap.querySelectorAll("[data-daily-id]").forEach(b=>b.onclick=()=>{const x=quests.find(z=>z.id===b.dataset.dailyId);if(x&&!getQuest()[x.id])x.action();});
+  }
+  window.bakawaliDailyQuestSync=syncDailyQuest;
+
+  // Wrap training completion so daily missions and badges stay in sync.
+  const originalTrainingComplete=trainingComplete;
+  trainingComplete=function(id){originalTrainingComplete(id);setTimeout(syncDailyQuest,50);setTimeout(renderBadges,80);setTimeout(updateParentCorner,100)};
+
+  const badgeDefs=[
+    {id:"first",icon:"🌟",en:"First Spark",ms:"Percikan Pertama",desc:"Earn your first star.",ok:()=>stars>=1},
+    {id:"learner",icon:"📚",en:"Learning Ranger",ms:"Ranger Pembelajaran",desc:"Complete 3 training modules.",ok:()=>trainingState.size>=3},
+    {id:"word",icon:"🔤",en:"Word Wizard",ms:"Ahli Perkataan",desc:"Complete 5 language modules.",ok:()=>trainingState.has("abc")&&trainingState.has("spelling")&&trainingState.has("reading")},
+    {id:"math",icon:"🔢",en:"Number Hero",ms:"Wira Nombor",desc:"Complete 3 math modules.",ok:()=>["count","addition","subtraction"].every(x=>trainingState.has(x))},
+    {id:"animal",icon:"🐾",en:"Animal Ranger",ms:"Ranger Haiwan",desc:"Complete both animal missions.",ok:()=>trainingState.has("animals")&&trainingState.has("animalhabitat")},
+    {id:"science",icon:"🔬",en:"Little Scientist",ms:"Saintis Kecil",desc:"Complete both science missions.",ok:()=>trainingState.has("scientist")&&trainingState.has("scienceexplorer")},
+    {id:"gamer",icon:"🎮",en:"Game Master",ms:"Juara Permainan",desc:"Play all four games.",ok:()=>Number(profileGet("gamesPlayed",0))>=4},
+    {id:"creator",icon:"🎨",en:"Little Creator",ms:"Pencipta Kecil",desc:"Save a scene in Little Creator.",ok:()=>profileGet("creatorSaved","0")==="1"},
+    {id:"story",icon:"📖",en:"Story Explorer",ms:"Penjelajah Cerita",desc:"Complete the Lost Star story.",ok:()=>profileGet("storyComplete","0")==="1"}
+  ];
+  function renderBadges(){
+    const grid=document.getElementById("badgeGrid"); if(!grid)return; const unlocked=badgeDefs.filter(x=>x.ok());
+    const count=document.getElementById("badgeRoomCount"); if(count)count.textContent=`${unlocked.length} / ${badgeDefs.length}`;
+    grid.innerHTML=badgeDefs.map(x=>{const ok=x.ok();return `<article class="badge-tile ${ok?'unlocked':'locked'}"><div>${ok?x.icon:'🔒'}</div><b>${bakawaliLanguage==='ms'?x.ms:x.en}</b><small>${x.desc}</small></article>`}).join("");
+  }
+  window.renderBadges=renderBadges;
+
+  // Buddy camp
+  let activeBuddy=profileGet("activeBuddy","zapko");
+  const buddyDefs={zapko:{icon:"⚡",name:"Zapko",ms:"Zapko",color:"Electric",say:"Let's explore!",happy:80,energy:80},bubblu:{icon:"💧",name:"Bubblu",ms:"Bubblu",color:"Water",say:"Splash time!",happy:82,energy:76},flammi:{icon:"🔥",name:"Flammi",ms:"Flammi",color:"Fire",say:"Let's light the trail!",happy:78,energy:84}};
+  function buddyState(id){let h=Number(profileGet("buddy:"+id+":happy",buddyDefs[id].happy));let e=Number(profileGet("buddy:"+id+":energy",buddyDefs[id].energy));return {h:Math.max(0,Math.min(100,h)),e:Math.max(0,Math.min(100,e))};}
+  function saveBuddy(id,st){profileSet("buddy:"+id+":happy",st.h);profileSet("buddy:"+id+":energy",st.e)}
+  function renderBuddy(){const d=buddyDefs[activeBuddy],st=buddyState(activeBuddy);document.querySelectorAll("#buddyPicker button").forEach(b=>b.classList.toggle("active",b.dataset.buddy===activeBuddy));const t=document.getElementById("buddyCampTitle"),h=document.getElementById("buddyHappy"),e=document.getElementById("buddyEnergy"),m=document.getElementById("buddyMood");if(t)t.textContent=`${d.icon} ${d.name} is waiting!`;if(h)h.textContent=st.h;if(e)e.textContent=st.e;if(m)m.textContent=st.h>75?'😊':st.h>45?'🙂':'😴';}
+  function buddyAction(action){const st=buddyState(activeBuddy),d=buddyDefs[activeBuddy];let msg='';if(action==='feed'){st.h=Math.min(100,st.h+10);st.e=Math.min(100,st.e+4);msg=bakawaliLanguage==='ms'?`${d.name}: "Sedap! Terima kasih!"`:`${d.name}: "Yum! Thank you!"`;}if(action==='play'){if(st.e<15){msg=bakawaliLanguage==='ms'?`${d.name} penat. Bagi dia rehat dulu.`:`${d.name} is tired. Let me rest!`;}else{st.h=Math.min(100,st.h+8);st.e=Math.max(0,st.e-15);msg=bakawaliLanguage==='ms'?`${d.name}: "Seronoknya!"`:`${d.name}: "That was fun!"`;profileSet("buddyDaily",1);}}if(action==='rest'){st.e=Math.min(100,st.e+20);st.h=Math.min(100,st.h+3);msg=bakawaliLanguage==='ms'?`${d.name}: "Ahhh... segarnya!"`:`${d.name}: "Ahhh... refreshed!"`;}saveBuddy(activeBuddy,st);const r=document.getElementById("buddyResponse");if(r)r.textContent=msg;renderBuddy();syncDailyQuest();renderBadges();}
+  function talkBuddy(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){const r=document.getElementById("buddyResponse");if(r)r.textContent=bakawaliLanguage==='ms'?"🎤 Mic belum disokong oleh browser ini.":"🎤 Voice input is not supported in this browser.";return;}const r=document.getElementById("buddyResponse");if(r)r.textContent=bakawaliLanguage==='ms'?"🎤 Saya dengar... cuba sebut hello!":"🎤 I'm listening... say hello!";const rec=new SR();rec.lang=bakawaliLanguage==='ms'?'ms-MY':'en-US';rec.interimResults=false;rec.maxAlternatives=1;rec.onresult=e=>{const text=e.results?.[0]?.[0]?.transcript||'';if(r)r.textContent=`${buddyDefs[activeBuddy].name}: "${text}" 👋`;const st=buddyState(activeBuddy);st.h=Math.min(100,st.h+5);saveBuddy(activeBuddy,st);profileSet("buddyDaily",1);syncDailyQuest();renderBuddy()};rec.onerror=()=>{if(r)r.textContent=bakawaliLanguage==='ms'?"🎤 Cuba tekan Talk sekali lagi.":"🎤 Try the Talk button again."};rec.start();}
+
+  // Story quest
+  const storyData=[
+    {scene:'🌲✨',en:{title:'The Strange Light',text:'A tiny star falls into Bakawali Forest. What should we do?'},ms:{title:'Cahaya Pelik',text:'Satu bintang kecil jatuh ke Hutan Bakawali. Apa patut kita buat?'},choices:[['🔎 Follow the light','Ikut cahaya',1],['🏠 Go home','Balik rumah',1]]},
+    {scene:'🦉🌟',en:{title:'A Forest Friend',text:'An owl points toward a hidden cave. Which way should we go?'},ms:{title:'Kawan Hutan',text:'Seekor burung hantu menunjukkan gua tersembunyi. Ke mana kita pergi?'},choices:[['💎 Enter the cave','Masuk ke gua',2],['🌳 Climb the tree','Panjat pokok',2]]},
+    {scene:'💎⭐',en:{title:'The Lost Star',text:'Inside the cave, the star is trapped behind a little puzzle.'},ms:{title:'Bintang Yang Hilang',text:'Di dalam gua, bintang itu terperangkap di sebalik teka-teki kecil.'},choices:[['🧩 Solve the puzzle','Selesaikan teka-teki',3],['💪 Push the rock','Tolak batu',3]]},
+    {scene:'🌈⭐',en:{title:'Adventure Complete!',text:'The star flies home and paints a rainbow over Bakawali Island. Great exploring!'},ms:{title:'Pengembaraan Selesai!',text:'Bintang itu terbang pulang dan melukis pelangi di atas Pulau Bakawali. Hebatnya pengembaraan!'},choices:[]}
+  ];
+  let storyStep=Number(profileGet("storyStep",0))||0;
+  function renderStory(){const d=storyData[Math.min(storyStep,storyData.length-1)],lang=d[bakawaliLanguage],sc=document.getElementById("storyScene"),cl=document.getElementById("storyChapterLabel"),ti=document.getElementById("storyTitle"),tx=document.getElementById("storyText"),ch=document.getElementById("storyChoices"),pt=document.getElementById("storyProgressText"),pb=document.getElementById("storyProgressBar");if(!sc)return;sc.textContent=d.scene;cl.textContent=`${bakawaliLanguage==='ms'?'BAB':'CHAPTER'} ${Math.min(storyStep+1,4)}`;ti.textContent=lang.title;tx.textContent=lang.text;pt.textContent=`${Math.min(storyStep+1,4)} / 4`;pb.style.width=((Math.min(storyStep,3)+1)/4*100)+'%';ch.innerHTML=d.choices.length?d.choices.map((c,i)=>`<button class="primary story-choice" data-next="${c[2]}">${bakawaliLanguage==='ms'?c[1]:c[0]}</button>`).join(''):`<button class="primary" id="storyFinish">⭐ ${bakawaliLanguage==='ms'?'Tamatkan cerita':'Finish Story'}</button>`;ch.querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>{storyStep=Number(b.dataset.next);profileSet('storyStep',storyStep);if(storyStep>=3){profileSet('storyComplete','1');earnStar(bakawaliLanguage==='ms'?'📖 Cerita selesai!':'📖 Story complete!');}renderStory();renderBadges();updateParentCorner()});const f=document.getElementById('storyFinish');if(f)f.onclick=()=>{showPage('home');};}
+
+  // Creator scene
+  function saveCreator(){const stage=document.getElementById('creatorStage');if(!stage)return;const items=[...stage.querySelectorAll('.creator-sticker')].map(x=>({emoji:x.textContent,left:x.style.left,top:x.style.top}));profileSet('creatorScene',JSON.stringify(items));profileSet('creatorSaved','1');renderBadges();updateParentCorner();toast.textContent=bakawaliLanguage==='ms'?'🎨 Scene disimpan!':'🎨 Scene saved!';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1400);}
+  function loadCreator(){const stage=document.getElementById('creatorStage');if(!stage)return;stage.querySelectorAll('.creator-sticker').forEach(x=>x.remove());let arr=[];try{arr=JSON.parse(profileGet('creatorScene','[]'))||[]}catch(e){};arr.forEach(x=>addSticker(x.emoji,x.left,x.top,false));}
+  function addSticker(emoji,left,top,save=true){const stage=document.getElementById('creatorStage');if(!stage)return;const el=document.createElement('button');el.type='button';el.className='creator-sticker';el.textContent=emoji;el.style.left=left||((15+Math.random()*70)+'%');el.style.top=top||((12+Math.random()*62)+'%');el.title='Drag me';stage.appendChild(el);let ox=0,oy=0,drag=false;el.addEventListener('pointerdown',e=>{drag=true;ox=e.clientX-el.getBoundingClientRect().left;oy=e.clientY-el.getBoundingClientRect().top;el.setPointerCapture?.(e.pointerId)});el.addEventListener('pointermove',e=>{if(!drag)return;const r=stage.getBoundingClientRect();el.style.left=Math.max(2,Math.min(94,((e.clientX-r.left-ox)/r.width)*100))+'%';el.style.top=Math.max(3,Math.min(78,((e.clientY-r.top-oy)/r.height)*100))+'%'});el.addEventListener('pointerup',()=>{drag=false;if(save)saveCreator()});el.addEventListener('click',()=>{if(!drag)el.classList.add('creator-pop');setTimeout(()=>el.classList.remove('creator-pop'),250)});}
+
+  // Parent corner
+  function updateParentCorner(){const s=document.getElementById('parentStars'),b=document.getElementById('parentBadges'),t=document.getElementById('parentTraining'),g=document.getElementById('parentGames');if(!s)return;s.textContent=stars;b.textContent=badgeDefs.filter(x=>x.ok()).length;t.textContent=Math.round(trainingState.size/trainingModules.length*100)+'%';g.textContent=Number(profileGet('gamesPlayed',0));const cats={language:['abc','phonics','spelling','sight','reading','story','picture','wordmatch'],math:['count','addition','subtraction','shapes','patterns','compare','time','money'],animal:['animals','animalhabitat'],science:['scientist','scienceexplorer']};Object.entries(cats).forEach(([k,ids])=>{const el=document.getElementById('skill'+k.charAt(0).toUpperCase()+k.slice(1));if(el){const pct=Math.round(ids.filter(x=>trainingState.has(x)).length/ids.length*100);el.textContent=pct+'%';el.style.width=pct+'%';}});}
+
+  window.bakawaliRefreshStory=renderStory;
+  window.bakawaliUpdateParent=updateParentCorner;
+
+  function init(){
+    renderDailyQuest();renderBadges();renderBuddy();renderStory();loadCreator();updateParentCorner();
+    document.querySelectorAll('[data-buddy]').forEach(b=>b.addEventListener('click',()=>{activeBuddy=b.dataset.buddy;profileSet('activeBuddy',activeBuddy);renderBuddy();}));
+    document.querySelectorAll('[data-buddy-action]').forEach(b=>b.addEventListener('click',()=>buddyAction(b.dataset.buddyAction)));
+    const talk=document.getElementById('buddyTalk');if(talk)talk.onclick=talkBuddy;
+    const save=document.getElementById('creatorSave');if(save)save.onclick=saveCreator;const clear=document.getElementById('creatorClear');if(clear)clear.onclick=()=>{document.querySelectorAll('#creatorStage .creator-sticker').forEach(x=>x.remove());profileSet('creatorScene','[]');};
+    document.querySelectorAll('#creatorPalette [data-sticker]').forEach(b=>b.addEventListener('click',()=>addSticker(b.dataset.sticker)));
+    document.querySelectorAll('.game-choice-v2').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.gamePanel||'';const played=JSON.parse(profileGet('gamesPlayedIds','[]')||'[]');if(!played.includes(id)){played.push(id);profileSet('gamesPlayedIds',JSON.stringify(played));profileSet('gamesPlayed',played.length);renderBadges();updateParentCorner();}}));
+    const pm=document.getElementById('parentModal'),pb=document.getElementById('openParentCorner'),pc=document.getElementById('parentClose');if(pb)pb.onclick=()=>{updateParentCorner();pm.classList.remove('hidden');pm.setAttribute('aria-hidden','false')};if(pc)pc.onclick=()=>{pm.classList.add('hidden');pm.setAttribute('aria-hidden','true')};if(pm)pm.addEventListener('click',e=>{if(e.target===pm)pc?.click()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pm&&!pm.classList.contains('hidden'))pc?.click()});
+    window.addEventListener('hashchange',()=>{if(location.hash==='#story')renderStory();if(location.hash==='#creator')loadCreator();});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

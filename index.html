@@ -43,7 +43,7 @@
       <input id="profileNameInput" maxlength="18" placeholder="New explorer name" aria-label="New explorer name" required>
       <button class="primary" type="submit">＋ CREATE PROFILE</button>
     </form>
-    <small class="profile-local-note">🔒 Prototype: profiles are stored locally in this browser. Cloud login comes later.</small>
+    <div class="profile-modal-actions"><button id="openParentCorner" class="secondary" type="button">👨‍👦 Parent Corner</button></div><small class="profile-local-note">🔒 Progress and creations are stored locally in this browser.</small>
   </div>
 </div>
 
@@ -96,6 +96,18 @@
     <div class="quest-text"><small>FIRST QUEST</small><strong>Meet the Bakawali Buddies</strong><p>Discover your first three original monsters.</p></div>
     <button class="secondary" data-go="collection">VIEW BUDDIES</button>
   </div>
+
+  <div class="daily-quest-panel" id="dailyQuestPanel">
+    <div class="daily-quest-head"><div><span class="eyebrow">DAILY QUEST</span><h3>🌟 Today's Adventure</h3><p>Three tiny missions. Finish them and earn a bonus.</p></div><div class="daily-quest-reward">⭐ <b id="dailyQuestReward">+30</b></div></div>
+    <div id="dailyQuestList" class="daily-quest-list"></div>
+  </div>
+
+  <div class="world-actions-grid">
+    <button class="world-action-card" data-go="story"><span>📖</span><b>Story Quest</b><small>Help Bakawali make adventure choices.</small><i>START →</i></button>
+    <button class="world-action-card" data-go="creator"><span>🎨</span><b>Little Creator</b><small>Build your own Bakawali scene.</small><i>CREATE →</i></button>
+    <button class="world-action-card" data-go="collection"><span>🐾</span><b>Buddy Camp</b><small>Feed, play and talk with your buddy.</small><i>VISIT →</i></button>
+    <button class="world-action-card" data-go="collection"><span>🏆</span><b>Badge Room</b><small>Unlock adventure badges.</small><i>VIEW →</i></button>
+  </div>
 </section>
 
 <section id="training" class="page">
@@ -103,9 +115,9 @@
     <div>
       <span class="eyebrow">TRAINING CAMP</span>
       <h2>Learn & Level Up</h2>
-      <p>24 learning adventures made for a curious 5-year-old explorer — including 4 world-learning modules with 50 activities each.</p>
+      <p>25 learning adventures made for a curious 5-year-old explorer — including hands-on drag & drop, animals and science missions.</p>
     </div>
-    <div class="level-pill">📚 <b id="trainingDone">0</b>/24 COMPLETE</div>
+    <div class="level-pill">📚 <b id="trainingDone">0</b>/25 COMPLETE</div>
   </div>
 
   <div class="training-progress">
@@ -269,6 +281,41 @@
     <article class="buddy-card water"><div class="buddy-art bub-preview"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div><div><span class="type">WATER</span><h3>Bubblu</h3><p>A cheerful swimmer who counts bubbles all day.</p></div></article>
     <article class="buddy-card fire"><div class="buddy-art flam-preview"><span class="flame f1"></span><span class="flame f2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span></div><div><span class="type">FIRE</span><h3>Flammi</h3><p>A warm-hearted buddy who lights up colour caves.</p></div></article>
   </div>
+
+  <div class="buddy-camp-card">
+    <div class="buddy-camp-head"><div><span class="eyebrow">BUDDY CAMP</span><h3 id="buddyCampTitle">⚡ Zapko is waiting!</h3><p id="buddyCampDesc">Choose an action and make your buddy happy.</p></div><div class="buddy-mood" id="buddyMood">😊</div></div>
+    <div class="buddy-picker" id="buddyPicker"><button class="active" data-buddy="zapko">⚡ Zapko</button><button data-buddy="bubblu">💧 Bubblu</button><button data-buddy="flammi">🔥 Flammi</button></div>
+    <div class="buddy-stats"><span>❤️ Happiness <b id="buddyHappy">80</b></span><span>⚡ Energy <b id="buddyEnergy">80</b></span></div>
+    <div class="buddy-actions"><button class="secondary" data-buddy-action="feed">🍎 Feed</button><button class="secondary" data-buddy-action="play">🎾 Play</button><button class="secondary" data-buddy-action="rest">💤 Rest</button><button class="primary" id="buddyTalk">🎤 Talk</button></div>
+    <p class="buddy-response" id="buddyResponse">Zapko: "Let's explore!"</p>
+  </div>
+
+  <div class="badge-room-card">
+    <div class="badge-room-head"><div><span class="eyebrow">BADGE ROOM</span><h3>🏆 Adventure Badges</h3><p>Every badge celebrates something you explored.</p></div><span id="badgeRoomCount" class="badge-count">0 / 9</span></div>
+    <div id="badgeGrid" class="badge-grid"></div>
+  </div>
+</section>
+
+<section id="story" class="page">
+  <div class="page-head"><div><span class="eyebrow">STORY QUEST</span><h2>📖 Bakawali and the Lost Star</h2><p>Choose what the explorer should do next.</p></div><button class="secondary" data-go="home">← BACK TO MAP</button></div>
+  <div class="story-card" id="storyCard">
+    <div class="story-scene" id="storyScene">🌳</div>
+    <div class="story-chapter"><span id="storyChapterLabel">CHAPTER 1</span><h3 id="storyTitle">The Strange Light</h3><p id="storyText">A tiny star falls into Bakawali Forest. What should we do?</p></div>
+    <div id="storyChoices" class="story-choices"></div>
+    <div class="story-progress"><span id="storyProgressText">1 / 4</span><div><i id="storyProgressBar"></i></div></div>
+  </div>
+</section>
+
+<section id="creator" class="page">
+  <div class="page-head"><div><span class="eyebrow">LITTLE CREATOR</span><h2>🎨 Build Your Adventure</h2><p>Tap a sticker, then drag it around your own Bakawali scene.</p></div><button class="secondary" data-go="home">← BACK TO MAP</button></div>
+  <div class="creator-layout">
+    <div class="creator-palette" id="creatorPalette">
+      <b>ADD TO SCENE</b>
+      <button data-sticker="🌞">🌞 Sun</button><button data-sticker="☁️">☁️ Cloud</button><button data-sticker="🌳">🌳 Tree</button><button data-sticker="🏠">🏠 House</button><button data-sticker="⛰️">⛰️ Mountain</button><button data-sticker="⭐">⭐ Star</button><button data-sticker="🌈">🌈 Rainbow</button><button data-sticker="🪐">🪐 Planet</button><button data-sticker="⚡">⚡ Zapko Spark</button><button data-sticker="💧">💧 Bubblu Drop</button><button data-sticker="🔥">🔥 Flammi Flame</button>
+      <div class="creator-tools"><button id="creatorClear" class="secondary">🗑️ Clear</button><button id="creatorSave" class="primary">💾 Save Scene</button></div>
+    </div>
+    <div class="creator-stage-wrap"><div id="creatorStage" class="creator-stage"><div class="creator-ground"></div><div class="creator-hint">Tap a sticker to add it here ✨</div></div></div>
+  </div>
 </section>
 
 <section id="music" class="page">
@@ -292,8 +339,17 @@
 </section>
 </main>
 
+<div id="parentModal" class="profile-modal hidden" aria-hidden="true">
+  <div class="profile-modal-card parent-card">
+    <button id="parentClose" class="training-close" type="button" aria-label="Close">×</button>
+    <span class="eyebrow">PARENT CORNER</span><h2>👨‍👦 Bakawali Progress</h2><p class="profile-note">A simple local summary for grown-ups.</p>
+    <div class="parent-stat-grid"><div><b id="parentStars">0</b><small>⭐ Stars</small></div><div><b id="parentBadges">0</b><small>🏆 Badges</small></div><div><b id="parentTraining">0%</b><small>📚 Training</small></div><div><b id="parentGames">0</b><small>🎮 Games played</small></div></div>
+    <div class="parent-skill-list"><div><span>🔤 Language</span><i><b id="skillLanguage"></b></i></div><div><span>🔢 Math</span><i><b id="skillMath"></b></i></div><div><span>🐾 Animals</span><i><b id="skillAnimals"></b></i></div><div><span>🔬 Science</span><i><b id="skillScience"></b></i></div></div>
+    <small class="profile-local-note">🔒 This summary stays on this browser.</small>
+  </div>
+</div>
 <div id="toast" class="toast">⭐ Quest complete!</div>
 <footer>BAKAWALI ADVENTURE WORLD · Made for little explorers</footer>
-<script src="script.js?v=42"></script>
+<script src="script.js?v=50"></script>
 </body>
 </html>
