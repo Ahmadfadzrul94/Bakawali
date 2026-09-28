@@ -174,6 +174,31 @@
       </div>
     </div>
   </div>
+
+  <div class="tetris-card" id="blockDrop">
+    <div class="tetris-head">
+      <div><span class="eyebrow">BLOCK GROVE</span><h3>🧩 Bakawali Block Drop</h3><p>Susun blok, lengkapkan baris dan kumpul score. Classic falling-block action.</p></div>
+      <div class="score-chip">🏆 <b id="blockBest">0</b> BEST</div>
+    </div>
+    <div class="tetris-layout">
+      <div class="tetris-board-wrap">
+        <canvas id="blockCanvas" aria-label="Bakawali Block Drop game board"></canvas>
+        <div id="blockStart" class="block-overlay"><div class="runner-logo">🧩</div><h3>READY?</h3><p>Move, rotate and drop the blocks to clear lines.</p><button id="blockStartBtn" class="primary">▶ START GAME</button><small>← → Move · ↑ Rotate · ↓ Drop · SPACE Hard Drop · P Pause</small></div>
+        <div id="blockOver" class="block-overlay hidden"><div class="runner-logo">💥</div><h3>GAME OVER</h3><p>Score: <b id="blockFinal">0</b></p><button id="blockAgain" class="primary">↻ PLAY AGAIN</button></div>
+        <div id="blockPause" class="block-overlay hidden"><h3>⏸ PAUSED</h3><button id="blockResume" class="primary">CONTINUE</button></div>
+      </div>
+      <div class="tetris-side">
+        <div class="block-stat"><span>SCORE</span><b id="blockScore">0</b></div>
+        <div class="block-stat"><span>LINES</span><b id="blockLines">0</b></div>
+        <div class="block-stat"><span>LEVEL</span><b id="blockLevel">1</b></div>
+        <div class="next-box"><span>NEXT</span><div id="blockNextPreview"></div></div>
+        <button id="blockPauseBtn" class="runner-touch">Ⅱ PAUSE</button>
+      </div>
+    </div>
+    <div class="block-touch"><button data-block-left>◀</button><button data-block-rotate>↻</button><button data-block-right>▶</button><button data-block-down>▼</button><button data-block-drop>⤓</button></div>
+    <div class="runner-help">Desktop: <b>← →</b> Move · <b>↑</b> Rotate · <b>↓</b> Soft Drop · <b>SPACE</b> Hard Drop · <b>P</b> Pause</div>
+  </div>
+
 </section>
 
 <section id="collection" class="page">
