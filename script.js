@@ -156,7 +156,7 @@ const UI_TEXT={
   ms:{filterAll:"Semua",filterLanguage:"Bahasa",filterMath:"Matematik",filterExplore:"Teroka",filterAnimals:"Haiwan",filterScience:"Sains",soundOn:"Bunyi ON",soundOff:"Bunyi OFF",hear:"Dengar",next:"SETERUSNYA →",readAloud:"Baca kuat",correct:"🎉 Betul!",wrong:"Cuba lagi! 💪",great:"Syabas!",complete:"🌟 Modul selesai!",chooseAnswer:"Pilih jawapan.",listenChoose:"Dengar baik-baik, kemudian pilih.",languageName:"Bahasa Melayu",langButton:"🇲🇾 BM"}
 };
 const MODULE_BM={
- abc:["Jelajah Abjad","Belajar A–Z dan dengar setiap huruf."], phonics:["Bunyi Huruf","Dengar bunyi pertama dalam perkataan mudah."], spelling:["Eja Perkataan","Bina perkataan 3 huruf mudah."], sight:["Perkataan Mudah","Kenali perkataan mudah untuk membaca awal."], reading:["Baca Ayat","Baca ayat pendek dengan petunjuk gambar."], story:["Cerita Mini","Baca cerita pendek dan jawab soalan."], picture:["Padankan Gambar","Pilih perkataan yang sepadan dengan gambar."], wordmatch:["Padan Perkataan & Gambar","Padankan perkataan mudah dengan gambar."],
+ abc:["Jelajah Abjad","Belajar A–Z dan dengar setiap huruf."], phonics:["Bunyi Huruf","Dengar bunyi pertama dalam perkataan mudah."], spelling:["Eja Perkataan","Bina perkataan mudah."], sight:["Perkataan Mudah","Kenali perkataan mudah untuk membaca awal."], reading:["Baca Ayat","Baca ayat pendek dengan petunjuk gambar."], story:["Cerita Mini","Baca cerita pendek dan jawab soalan."], picture:["Padankan Gambar","Pilih perkataan yang sepadan dengan gambar."], wordmatch:["Padan Perkataan & Gambar","Padankan perkataan mudah dengan gambar."],
  count:["Kira Objek","Kira sehingga 10."], addition:["Tambah Mudah","Tambah nombor kecil bersama-sama."], subtraction:["Tolak Mudah","Tolak nombor kecil."], shapes:["Detektif Bentuk","Cari bulatan, segi empat, segi tiga dan lain-lain."], patterns:["Kuasa Corak","Cari apa yang datang seterusnya."], compare:["Lebih atau Kurang","Bandingkan kumpulan dan nombor."], time:["Jelajah Masa","Belajar masa tepat yang mudah."], money:["Kedai Kecil","Kira duit syiling dan harga mudah."],
  memory:["Padanan Memori","Ingat dan padankan pasangan gambar."], sorting:["Asingkan","Masukkan benda ke kumpulan yang betul."], sequence:["Apa Berlaku Seterusnya?","Susun tindakan mudah mengikut urutan."],
  animals:["Detektif Haiwan","50 cabaran tentang bunyi, badan, makanan, pergerakan dan tempat tinggal haiwan."], animalhabitat:["Habitat Haiwan","50 misi tentang tempat haiwan hidup dan keperluan mereka."], scientist:["Saintis Kecil","50 eksperimen mini tentang sains harian."], scienceexplorer:["Jelajah Sains","50 misi tentang cuaca, angkasa, cahaya dan alam semula jadi."]
@@ -166,6 +166,21 @@ const WORD_BM={
  "Apple":"Epal","Ball":"Bola","Sun":"Matahari","Tree":"Pokok","Grass":"Rumput","Leaves":"Daun","Bamboo":"Buluh","Meat":"Daging","Berries":"Buah beri","Pond":"Kolam","Ocean":"Laut","Garden":"Taman","Forest":"Hutan","Jungle":"Hutan rimba","Farm":"Ladang","Desert":"Gurun","Arctic":"Artik","Savanna":"Savana","Grassland":"Padang rumput","River":"Sungai","Rivers":"Sungai","Wetlands":"Tanah lembap","Water":"Air","Food":"Makanan","Shelter":"Tempat berlindung","Flowers":"Bunga","Warm water":"Air suam","Cold regions":"Kawasan sejuk","Australia":"Australia","Moon":"Bulan","Earth":"Bumi","Sunlight":"Cahaya matahari","Wind":"Angin","Rain":"Hujan","Clouds":"Awan","Ice":"Ais","Snow":"Salji","Rock":"Batu","Plant":"Tumbuhan","Roots":"Akar","Flower":"Bunga","Milk":"Susu","Juice":"Jus","Time":"Masa","Weight":"Berat","Temperature":"Suhu","Direction":"Arah",
  "The Sun":"Matahari","A ball":"Bola","A planet":"Planet","A star":"Bintang","Stars":"Bintang","Planets":"Planet","Rocket":"Roket","Spring":"Musim bunga","Summer":"Musim panas","Autumn":"Musim luruh","Winter":"Musim sejuk","Raincoat":"Baju hujan","Thunder":"Guruh","Wind":"Angin","Lava":"Lava","Mountain":"Gunung","Energy":"Tenaga","Air":"Udara","Vibrations":"Getaran","Sound":"Bunyi","Ears":"Telinga","Eyes":"Mata","Nose":"Hidung","Tongue":"Lidah","Touch":"Sentuhan","Sight":"Penglihatan","Thermometer":"Termometer","Ruler":"Pembaris","Roots":"Akar","Sponge":"Span","Wood":"Kayu","Boat":"Bot","Shadow":"Bayang-bayang","Magnet":"Magnet","Direction":"Arah"
 };
+const SPELL_BM={CAT:"KUCING",DOG:"ANJING",SUN:"MATAHARI",BUS:"BAS",HAT:"TOPI"};
+const SPELL_PIC_BM={CAT:"🐱",DOG:"🐶",SUN:"☀️",BUS:"🚌",HAT:"🧢"};
+function localizedSpellData(m){
+  if(bakawaliLanguage!=="ms" || m.id!=="spelling") return m.words;
+  return m.words.map(([word,pic])=>[SPELL_BM[word]||word,SPELL_PIC_BM[word]||pic]);
+}
+function localizedSpellFeedback(word){
+  return bakawaliLanguage==="ms"?`Eja perkataan: ${word}`:`Spell the word: ${word}`;
+}
+function localizedCorrectSpell(){
+  return bakawaliLanguage==="ms"?"🎉 Ejaan betul!":"🎉 Spelled correctly!";
+}
+function localizedKeepSpelling(){
+  return bakawaliLanguage==="ms"?"Bagus! Teruskan!":"Great! Keep going!";
+}
 function bmAnimalPhrase(s){
   let out=s;
   Object.keys(WORD_BM).sort((a,b)=>b.length-a.length).forEach(k=>{out=out.replace(new RegExp('\\b'+k.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')+'\\b','gi'),WORD_BM[k]);});
@@ -187,8 +202,40 @@ function localizeActivityText(s){
 function localizeChoice(s){return localizeActivityText(s);}
 function moduleTitle(m){return bakawaliLanguage==='ms'?(MODULE_BM[m.id]?.[0]||m.title):m.title;}
 function moduleDesc(m){return bakawaliLanguage==='ms'?(MODULE_BM[m.id]?.[1]||m.desc):m.desc;}
-function setBakawaliLanguage(lang){bakawaliLanguage=lang==='ms'?'ms':'en';profileSet(BAK_LANGUAGE_KEY,bakawaliLanguage);document.documentElement.lang=bakawaliLanguage==='ms'?'ms':'en';const btn=document.getElementById('languageToggle');if(btn)btn.textContent=UI_TEXT[bakawaliLanguage].langButton;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(UI_TEXT[bakawaliLanguage][k])el.innerHTML=el.innerHTML.replace(/^[^A-Za-zÀ-ÿ]*\s*/,match=>match)+UI_TEXT[bakawaliLanguage][k];});renderTrainingCards(document.querySelector('.training-filter.active')?.dataset.filter||'all');}
-function initLanguage(){const b=document.getElementById('languageToggle');if(!b)return;const sync=()=>{const isMs=bakawaliLanguage==='ms';b.innerHTML=`🌐 <span>${isMs?'BM':'EN'}</span>`;b.classList.toggle('active',isMs);b.setAttribute('aria-label',isMs?'Tukar ke English':'Tukar ke Bahasa Melayu');b.setAttribute('aria-pressed',String(isMs));document.documentElement.lang=isMs?'ms':'en';};sync();b.onclick=()=>{setBakawaliLanguage(bakawaliLanguage==='en'?'ms':'en');sync();};}
+function updateLanguageUI(){
+  const isMs=bakawaliLanguage==='ms';
+  document.documentElement.lang=isMs?'ms':'en';
+  const b=document.getElementById('languageToggle');
+  if(b){
+    b.innerHTML=`🌐 <span>${isMs?'BM':'EN'}</span>`;
+    b.classList.toggle('active',isMs);
+    b.setAttribute('aria-label',isMs?'Tukar ke English':'Tukar ke Bahasa Melayu');
+    b.setAttribute('aria-pressed',String(isMs));
+    b.title=isMs?'Tukar ke English':'Tukar ke Bahasa Melayu';
+  }
+  const icons={filterAll:'🌟',filterLanguage:'🔤',filterMath:'🔢',filterExplore:'🌍',filterAnimals:'🐾',filterScience:'🔬'};
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.dataset.i18n;
+    if(UI_TEXT[bakawaliLanguage][k]) el.textContent=(icons[k]?icons[k]+' ':'')+UI_TEXT[bakawaliLanguage][k];
+  });
+}
+function setBakawaliLanguage(lang){
+  bakawaliLanguage=lang==='ms'?'ms':'en';
+  profileSet(BAK_LANGUAGE_KEY,bakawaliLanguage);
+  updateLanguageUI();
+  const activeFilter=document.querySelector('.training-filter.active')?.dataset.filter||'all';
+  renderTrainingCards(activeFilter);
+}
+function initLanguage(){
+  const b=document.getElementById('languageToggle');
+  if(!b)return;
+  updateLanguageUI();
+  b.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    setBakawaliLanguage(bakawaliLanguage==='en'?'ms':'en');
+  });
+}
 
 function buildLearning(){
   const letters=[...Array(26)].map((_,i)=>String.fromCharCode(65+i));
@@ -383,8 +430,8 @@ function renderTrainingCards(filter="all"){
   wrap.innerHTML=trainingModules.filter(m=>filter==="all"||m.cat===filter).map((m,i)=>{
     const done=trainingState.has(m.id);
     return `<button class="training-module ${done?"complete":""}" data-training-id="${m.id}">
-      <span class="module-icon">${m.icon}</span><span class="module-copy"><b>${m.title}</b><small>${m.desc}</small></span>
-      <span class="module-status">${done?"✓ DONE":"PLAY →"}</span>
+      <span class="module-icon">${m.icon}</span><span class="module-copy"><b>${moduleTitle(m)}</b><small>${moduleDesc(m)}</small></span>
+      <span class="module-status">${done?(bakawaliLanguage==='ms'?"✓ SELESAI":"✓ DONE"):(bakawaliLanguage==='ms'?"MAIN →":"PLAY →")}</span>
     </button>`;
   }).join("");
   wrap.querySelectorAll("[data-training-id]").forEach(b=>b.addEventListener("click",()=>openTraining(b.dataset.trainingId)));
@@ -513,9 +560,10 @@ function wireTraining(m){
    if(m.type==="spell"){
     let i=0;const stage=document.getElementById("spellStage");
     const show=()=>{
-      const [word,pic]=m.words[i%m.words.length];
+      const words=localizedSpellData(m);
+      const [word,pic]=words[i%words.length];
       const shuffled=[...word].sort(()=>Math.random()-.5);
-      stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word" id="spellWordDisplay">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button type="button" data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;
+      stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word" id="spellWordDisplay">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button type="button" data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">${localizedSpellFeedback(word)}</p>`;
       let chosen=[];
       const updateDisplay=()=>{document.getElementById("spellWordDisplay").innerHTML=word.split("").map((_,idx)=>chosen[idx]||"_").join(" ");};
       stage.querySelectorAll(".letter-choices button").forEach(b=>b.onclick=()=>{
@@ -532,9 +580,9 @@ function wireTraining(m){
         chosen.push(b.dataset.letter);
         b.disabled=true;
         updateDisplay();
-        document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Great! Keep going!";
+        document.getElementById("trainFeedback").textContent=chosen.length===word.length?localizedCorrectSpell():localizedKeepSpelling();
         if(chosen.length===word.length){
-          trainingFeedback("correct","🎉 Spelled correctly!");
+          trainingFeedback("correct",localizedCorrectSpell());
           stage.querySelectorAll(".letter-choices button").forEach(x=>x.disabled=true);
           trainingComplete(m.id);
           setTimeout(()=>{i++;show()},700);
