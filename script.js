@@ -101,94 +101,95 @@ document.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",(
 }));
 document.querySelectorAll("[data-speak]").forEach(b=>b.addEventListener("click",()=>{speak(b.dataset.speak);earnStar("🎵 Music time!")}));
 buildLearning();nextQuiz();renderStats();
-// Phase 4 mini-game engine
+
+// Phase 4.5 Adventure Arcade
 document.querySelectorAll(".game-choice").forEach(btn=>btn.addEventListener("click",()=>{
   document.querySelectorAll(".game-choice").forEach(x=>x.classList.remove("active"));
   document.querySelectorAll(".game-panel").forEach(x=>x.classList.remove("active"));
-  btn.classList.add("active");
-  document.getElementById(btn.dataset.gamePanel).classList.add("active");
+  btn.classList.add("active");document.getElementById(btn.dataset.gamePanel).classList.add("active");
 }));
 
-function syncGameStars(){const el=document.getElementById("gameStars");if(el)el.textContent=stars}
-const originalEarnStar=earnStar;
-earnStar=function(msg="⭐ Quest complete!"){originalEarnStar(msg);syncGameStars()};
-syncGameStars();
+const oldEarnStar=earnStar;
+earnStar=function(msg="⭐ Quest complete!"){oldEarnStar(msg);const g=document.getElementById("gameStars");if(g)g.textContent=stars};
+document.getElementById("gameStars").textContent=stars;
 
-// Memory Match
-const memoryIcons=["🍎","🍎","⭐","⭐","🐟","🐟","⚡","⚡"];
-let memoryFirst=null,memoryLock=false,memoryMatched=0;
-function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function buildMemory(){
-  memoryFirst=null;memoryLock=false;memoryMatched=0;
-  const board=document.getElementById("memoryBoard");
-  board.innerHTML=shuffle(memoryIcons).map((icon,i)=>`<button class="memory-card" data-icon="${icon}" data-i="${i}">?</button>`).join("");
-  document.getElementById("memoryStatus").textContent="Find a pair!";
-  board.querySelectorAll(".memory-card").forEach(card=>card.addEventListener("click",memoryClick));
+// MONSTER CHASE
+let chaseRunning=false,chaseX=15,chaseScore=0,chaseTimer;
+const chasePlayer=document.getElementById("chasePlayer"),chaseItem=document.getElementById("chaseItem"),chaseMessage=document.getElementById("chaseMessage");
+function moveChase(dir){if(!chaseRunning)return;chaseX=Math.max(4,Math.min(82,chaseX+(dir==="left"?-5:5)));chasePlayer.style.left=chaseX+"%";checkChase();}
+function spawnChase(){chaseItem.style.left=(20+Math.random()*65)+"%";chaseItem.style.top=(15+Math.random()*55)+"%"}
+function checkChase(){
+ const a=chasePlayer.getBoundingClientRect(),b=chaseItem.getBoundingClientRect();
+ if(Math.abs((a.left+a.width/2)-(b.left+b.width/2))<55&&Math.abs((a.top+a.height/2)-(b.top+b.height/2))<65){
+   chaseScore++;document.getElementById("chaseScore").textContent=chaseScore;spawnChase();
+   if(chaseScore%5===0){earnStar("⚡ Energy collected!");chaseMessage.textContent="SUPER! +1 ⭐";setTimeout(()=>chaseMessage.textContent="",700)}
+ }
 }
-function memoryClick(){
-  if(memoryLock||this.classList.contains("flipped")||this.classList.contains("matched"))return;
-  this.classList.add("flipped");this.textContent=this.dataset.icon;
-  if(!memoryFirst){memoryFirst=this;return}
-  if(memoryFirst.dataset.icon===this.dataset.icon){
-    memoryFirst.classList.add("matched");this.classList.add("matched");memoryMatched++;memoryFirst=null;
-    if(memoryMatched===4){document.getElementById("memoryStatus").textContent="🎉 All pairs found!";earnStar("🧠 Memory master!")}
-    else document.getElementById("memoryStatus").textContent="Nice pair! Find another.";
-  }else{
-    memoryLock=true;document.getElementById("memoryStatus").textContent="Try another pair!";
-    const first=memoryFirst,second=this;
-    setTimeout(()=>{first.classList.remove("flipped");second.classList.remove("flipped");first.textContent="?";second.textContent="?";memoryFirst=null;memoryLock=false},650);
-  }
-}
-document.getElementById("memoryReset").addEventListener("click",buildMemory);
-buildMemory();
+document.querySelectorAll("[data-move]").forEach(b=>b.addEventListener("click",()=>moveChase(b.dataset.move)));
+document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")moveChase("left");if(e.key==="ArrowRight")moveChase("right")});
+document.getElementById("chaseStart").addEventListener("click",()=>{
+ if(chaseRunning)return;chaseRunning=true;chaseScore=0;chaseX=15;document.getElementById("chaseScore").textContent=0;
+ chaseMessage.textContent="GO!";spawnChase();setTimeout(()=>chaseMessage.textContent="",500);
+ clearInterval(chaseTimer);chaseTimer=setInterval(()=>{if(chaseRunning){spawnChase();}},1800);
+ setTimeout(()=>{chaseRunning=false;clearInterval(chaseTimer);chaseMessage.textContent="RUN COMPLETE!";if(chaseScore>=3)earnStar("🏃 Monster Chase cleared!");setTimeout(()=>chaseMessage.textContent="",1200)},30000);
+});
 
-// Number Dash
-const numberQs=[{q:"Which number comes after 6?",a:["5","7","8"],c:"7"},{q:"Which number comes before 4?",a:["2","3","5"],c:"3"},{q:"How many stars? ⭐⭐⭐",a:["2","3","4"],c:"3"},{q:"What is 2 + 2?",a:["3","4","5"],c:"4"},{q:"Which is the biggest?",a:["1","9","5"],c:"9"}];
-let nIndex=0,nScore=0;
-function buildNumberGame(){
- const q=numberQs[nIndex%numberQs.length];
- document.getElementById("numberGameQuestion").textContent=q.q;
- document.getElementById("dashOptions").innerHTML=shuffle(q.a).map(a=>`<button>${a}</button>`).join("");
- document.querySelectorAll("#dashOptions button").forEach(b=>b.addEventListener("click",()=>{
-   if(b.textContent===q.c){nScore++;document.getElementById("numberScore").textContent=nScore;document.getElementById("numberGameStatus").textContent="🎉 Correct!";if(nScore===5){earnStar("🔢 Number Dash cleared!");nScore=0;document.getElementById("numberScore").textContent=0}nIndex++;setTimeout(buildNumberGame,500)}
-   else document.getElementById("numberGameStatus").textContent="Almost! Try again.";
- }));
-}
-buildNumberGame();
+// SKY BLASTER
+let blastRunning=false,blastScore=0,blastCombo=0,blastTimer;
+const target=document.getElementById("skyTarget"),skyStage=document.getElementById("skyStage");
+function moveTarget(){target.style.left=(8+Math.random()*78)+"%";target.style.top=(10+Math.random()*70)+"%"}
+target.addEventListener("click",()=>{
+ if(!blastRunning)return;blastScore++;blastCombo++;document.getElementById("blastScore").textContent=blastScore;document.getElementById("blastCombo").textContent="x"+blastCombo;
+ if(blastCombo>=3){document.getElementById("skyMessage").textContent="🔥 COMBO!";setTimeout(()=>document.getElementById("skyMessage").textContent="",450)}
+ if(blastScore%8===0)earnStar("🚀 Sky Blaster cleared!");
+ moveTarget();
+});
+document.getElementById("blastStart").addEventListener("click",()=>{
+ if(blastRunning)return;blastRunning=true;blastScore=0;blastCombo=0;document.getElementById("blastScore").textContent=0;document.getElementById("blastCombo").textContent="x0";
+ document.getElementById("skyMessage").textContent="BLAST OFF!";moveTarget();setTimeout(()=>document.getElementById("skyMessage").textContent="",500);
+ clearInterval(blastTimer);blastTimer=setInterval(()=>{moveTarget();blastCombo=0;document.getElementById("blastCombo").textContent="x0"},950);
+ setTimeout(()=>{blastRunning=false;clearInterval(blastTimer);document.getElementById("skyMessage").textContent="MISSION COMPLETE!";if(blastScore>=5)earnStar("🎯 Sky mission cleared!");setTimeout(()=>document.getElementById("skyMessage").textContent="",1200)},25000);
+});
 
-// Colour Blast
-const colourSet=[["RED","#ef5545"],["BLUE","#3e83d8"],["YELLOW","#e6b92f"],["GREEN","#48a85e"]];
-let cScore=0,cRound=0;
-function buildColourGame(){
- const target=colourSet[Math.floor(Math.random()*colourSet.length)];
- document.getElementById("colourQuestion").textContent="Tap "+target[0]+"!";
- const options=shuffle(colourSet);
- document.getElementById("blastOptions").innerHTML=options.map(c=>`<button style="background:${c[1]}" data-col="${c[0]}">${c[0]}</button>`).join("");
- document.querySelectorAll("#blastOptions button").forEach(b=>b.addEventListener("click",()=>{
-   if(b.dataset.col===target[0]){cScore++;cRound++;document.getElementById("colourScore").textContent=cScore;document.getElementById("colourGameStatus").textContent="🎨 Great match!";if(cScore===5){earnStar("🎨 Colour Blast cleared!");cScore=0;document.getElementById("colourScore").textContent=0}setTimeout(buildColourGame,450)}
-   else document.getElementById("colourGameStatus").textContent="Not that one — look at the name!";
- }));
-}
-buildColourGame();
+// TREASURE HUNT
+let hasKey=false;
+document.querySelectorAll("[data-path]").forEach(btn=>btn.addEventListener("click",()=>{
+ const path=btn.dataset.path;
+ const messages={
+  forest:["🌲 You found footprints! Follow them...","no"],
+  cave:["💎 A crystal shines! You found the KEY!","yes"],
+  river:["🌊 Splash! The current carried you back to camp.","no"]
+ };
+ document.getElementById("treasureResult").textContent=messages[path][0];
+ if(messages[path][1]==="yes"){hasKey=true;document.getElementById("treasureKeys").textContent="1";document.getElementById("openChest").disabled=false;earnStar("🔑 Key found!")}
+}));
+document.getElementById("openChest").addEventListener("click",()=>{
+ if(!hasKey)return;document.getElementById("treasureResult").textContent="🎉 TREASURE FOUND! A new adventure badge is yours!";
+ document.getElementById("openChest").textContent="🏆 TREASURE CLAIMED";document.getElementById("openChest").disabled=true;earnStar("💎 Treasure Quest complete!");
+});
 
-// Buddy Battle
-let playerHP=100,enemyHP=100,battleXP=0;
+// MONSTER BATTLE
+let playerHP=100,enemyHP=100,energy=0;
+function battleUI(){document.getElementById("playerHp").style.width=playerHP+"%";document.getElementById("enemyHp").style.width=enemyHP+"%";document.getElementById("energyBar").style.width=energy+"%";document.getElementById("superSpark").disabled=energy<100}
+function enemyMove(){
+ if(enemyHP<=0)return;
+ const hit=8+Math.floor(Math.random()*9);playerHP=Math.max(0,playerHP-hit);battleUI();
+ if(playerHP<=0){document.getElementById("battleStatus").textContent="💪 Zapko needs a rest! Try again.";playerHP=100;enemyHP=100;energy=0;battleUI()}
+}
 function battleAction(type){
  if(enemyHP<=0)return;
- const dmg=type==="spark"?22:type==="learn"?17:12;
- enemyHP=Math.max(0,enemyHP-dmg);
- document.getElementById("enemyHp").style.width=enemyHP+"%";
- const messages={spark:"⚡ Zapko used SPARK!",learn:"📚 Zapko learned a clever move!",encourage:"👏 Zapko feels brave!"};
- document.getElementById("battleStatus").textContent=messages[type];
- if(enemyHP<=0){battleXP++;document.getElementById("battleStatus").textContent="🏆 Wild Bot is defeated! Great teamwork.";earnStar("⚔️ Battle cleared!");enemyHP=100;playerHP=100;document.getElementById("enemyHp").style.width="100%";document.getElementById("playerHp").style.width="100%";document.getElementById("battleLevel").textContent=Math.floor(stars/3)+1;return}
- setTimeout(()=>{
-   const hit=10+Math.floor(Math.random()*9);playerHP=Math.max(0,playerHP-hit);
-   document.getElementById("playerHp").style.width=playerHP+"%";
-   document.getElementById("battleStatus").textContent="Wild Bot makes a move!";
-   if(playerHP<=0){document.getElementById("battleStatus").textContent="💪 Zapko needs a rest. Try again!";playerHP=100;enemyHP=100;document.getElementById("playerHp").style.width="100%";document.getElementById("enemyHp").style.width="100%";}
- },450);
+ if(type==="charge"){energy=Math.min(100,energy+35);document.getElementById("battleStatus").textContent="🔋 Zapko is charging!";battleUI();setTimeout(enemyMove,400);return}
+ const dmg=22;enemyHP=Math.max(0,enemyHP-dmg);energy=Math.min(100,energy+20);document.getElementById("battleStatus").textContent="⚡ SPARK HIT!";battleUI();
+ if(enemyHP<=0){document.getElementById("battleStatus").textContent="🏆 Victory! Wild Bot is down!";earnStar("⚔️ Battle victory!");enemyHP=100;playerHP=100;energy=0;battleUI();return}
+ setTimeout(enemyMove,450)
 }
 document.querySelectorAll("[data-battle]").forEach(b=>b.addEventListener("click",()=>battleAction(b.dataset.battle)));
+document.getElementById("superSpark").addEventListener("click",()=>{
+ if(energy<100||enemyHP<=0)return;enemyHP=0;energy=0;document.getElementById("battleStatus").textContent="💥 SUPER SPARK!!!";battleUI();earnStar("💥 SUPER SPARK victory!");
+ setTimeout(()=>{enemyHP=100;playerHP=100;battleUI()},900);
+});
+document.getElementById("battleLevel").textContent=Math.floor(stars/3)+1;
+battleUI();
 
 const hash=location.hash.replace("#","");
 if(hash && document.getElementById(hash)) showPage(hash);
