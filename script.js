@@ -324,10 +324,22 @@ document.addEventListener("DOMContentLoaded",()=>{
   const wrap=canvas.parentElement;
   const start=document.getElementById('runnerStart'), over=document.getElementById('runnerOver'), pause=document.getElementById('runnerPause');
   const scoreEl=document.getElementById('runnerScore'), energyEl=document.getElementById('runnerEnergy'), bestEl=document.getElementById('runnerBest'), finalEl=document.getElementById('runnerFinal');
+  const fullBtn=document.getElementById('runnerFullBtn');
   let W=900,H=500,dpr=1,raf=0,state='start',score=0,best=Number(localStorage.getItem('bakawaliRunnerBest')||0),energy=100,speed=5,frame=0,obs=[],starsR=[],particles=[];
   const player={x:100,y:0,w:38,h:50,vy:0,jumps:0,dashing:0};
   bestEl.textContent=Math.floor(best);
-  function resize(){const r=wrap.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=Math.max(320,r.width);H=Math.max(280,r.height);canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);if(state==='start')player.y=ground()-player.h}
+  function resize(){
+    const r=wrap.getBoundingClientRect();
+    dpr=Math.min(devicePixelRatio||1,2);
+    W=Math.max(320,Math.floor(r.width));
+    H=Math.max(280,Math.floor(r.height));
+    canvas.width=W*dpr;
+    canvas.height=H*dpr;
+    canvas.style.width='100%';
+    canvas.style.height='100%';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    if(state==='start'||state==='over')player.y=ground()-player.h;
+  }
   function ground(){return H-62}
   window.addEventListener('resize',resize); resize();
   function reset(){score=0;energy=100;speed=5;frame=0;obs=[];starsR=[];particles=[];player.x=100;player.y=ground()-player.h;player.vy=0;player.jumps=0;player.dashing=0;hud();}
@@ -365,10 +377,31 @@ document.addEventListener("DOMContentLoaded",()=>{
     ctx.save();ctx.shadowBlur=player.dashing?22:8;ctx.shadowColor=player.dashing?'#ec4899':'#ffd83d';ctx.fillStyle=player.dashing?'#ec4899':'#ffd83d';ctx.beginPath();ctx.arc(player.x+19,player.y+18,18,0,Math.PI*2);ctx.fill();ctx.fillStyle='#18344a';ctx.fillRect(player.x+8,player.y+36,22,14);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(player.x+12,player.y+17,4,0,Math.PI*2);ctx.arc(player.x+25,player.y+17,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#222';ctx.beginPath();ctx.arc(player.x+13,player.y+17,2,0,Math.PI*2);ctx.arc(player.x+26,player.y+17,2,0,Math.PI*2);ctx.fill();ctx.restore();
   }
   function loop(){if(state!=='play')return;update();draw();raf=requestAnimationFrame(loop)}
-  function startGame(){cancelAnimationFrame(raf);reset();state='play';start.classList.add('hidden');over.classList.add('hidden');pause.classList.add('hidden');loop()}
+  function enterRunnerMode(){document.body.classList.add('runner-fullscreen');setTimeout(resize,60)}
+  function exitRunnerMode(){document.body.classList.remove('runner-fullscreen');setTimeout(resize,60)}
+  async function toggleBrowserFullscreen(){
+    try{
+      if(!document.fullscreenElement){await document.documentElement.requestFullscreen()}
+      else{await document.exitFullscreen()}
+    }catch(e){}
+  }
+  function startGame(){cancelAnimationFrame(raf);reset();state='play';start.classList.add('hidden');over.classList.add('hidden');pause.classList.add('hidden');enterRunnerMode();loop()}
   function gameOver(){state='over';cancelAnimationFrame(raf);if(score>best){best=score;localStorage.setItem('bakawaliRunnerBest',best);bestEl.textContent=Math.floor(best)}finalEl.textContent=Math.floor(score);over.classList.remove('hidden');draw()}
   function togglePause(){if(state==='play'){state='pause';pause.classList.remove('hidden');cancelAnimationFrame(raf)}else if(state==='pause'){state='play';pause.classList.add('hidden');loop()}}
-  document.getElementById('runnerStartBtn').onclick=startGame;document.getElementById('runnerAgain').onclick=startGame;document.getElementById('runnerResume').onclick=togglePause;document.getElementById('runnerPauseBtn').onclick=togglePause;document.getElementById('runnerJump').onclick=jump;document.getElementById('runnerDash').onclick=dash;
+  document.getElementById('runnerStartBtn').onclick=startGame;
+  document.getElementById('runnerAgain').onclick=startGame;
+  document.getElementById('runnerResume').onclick=togglePause;
+  document.getElementById('runnerPauseBtn').onclick=togglePause;
+  document.getElementById('runnerJump').onclick=jump;
+  document.getElementById('runnerDash').onclick=dash;
+  if(fullBtn) fullBtn.onclick=toggleBrowserFullscreen;
   window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump()}if(e.code==='ShiftLeft'||e.code==='ShiftRight'||e.code==='KeyX'){e.preventDefault();dash()}if(e.code==='KeyP'||e.code==='Escape'){e.preventDefault();togglePause()}});
   draw();
 })();
+
+// Leave runner viewport mode when another main navigation item is selected.
+document.querySelectorAll('[data-go]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(btn.dataset.go !== 'games') document.body.classList.remove('runner-fullscreen');
+  });
+});

@@ -14,3 +14,28 @@ footer{text-align:center;padding:22px;color:#7b86a1;font-size:11px;letter-spacin
 .runner-wrap{position:relative;width:100%;max-width:1000px;margin:auto;overflow:hidden;border-radius:17px;border:3px solid #173b4d;background:#64c7e7;aspect-ratio:16/9;min-height:300px}.runner-wrap canvas{display:block;width:100%;height:100%}
 .runner-overlay{position:absolute;inset:0;background:rgba(3,13,23,.78);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px;z-index:3}.runner-overlay.hidden{display:none}.runner-overlay h3{font-size:32px;margin:6px 0}.runner-overlay p{max-width:520px;color:#c9dce4;margin:5px 0 18px}.runner-overlay small{margin-top:13px;color:#9bb2bd}.runner-logo{font-size:64px}.runner-actions{display:flex;justify-content:center;gap:10px;margin-top:12px}.runner-touch{border:0;border-radius:13px;padding:11px 17px;background:#17394a;color:white;font-weight:900;cursor:pointer}.runner-touch.jump{background:#ffd83d;color:#18220f}.runner-touch.dash{background:#ec4899}.runner-help{text-align:center;margin-top:10px;color:#8199a5;font-size:12px}
 @media(max-width:600px){.runner-top{flex-direction:column;align-items:flex-start}.runner-wrap{aspect-ratio:4/3;min-height:280px}.runner-actions{position:relative}.runner-touch{flex:1}.runner-help{display:none}}
+
+/* ---------- Runner Fullscreen Mode ---------- */
+body.runner-fullscreen{overflow:hidden}
+body.runner-fullscreen .topbar,
+body.runner-fullscreen footer,
+body.runner-fullscreen .page:not(#games){display:none!important}
+body.runner-fullscreen main{padding:0!important;margin:0!important;max-width:none!important}
+body.runner-fullscreen #games{display:block!important;position:fixed;inset:0;z-index:9999;background:#061522;padding:0!important}
+body.runner-fullscreen #games .page-head,
+body.runner-fullscreen #games .runner-help{display:none!important}
+body.runner-fullscreen .runner-card{position:absolute;inset:0;width:100%;height:100%;max-width:none;margin:0;border:0;border-radius:0;padding:14px;background:#061522;box-shadow:none;display:flex;flex-direction:column}
+body.runner-fullscreen .runner-top{flex:0 0 auto;max-width:none;margin:0 0 8px;padding:0 2px}
+body.runner-fullscreen .runner-top h3{font-size:20px}
+body.runner-fullscreen .runner-wrap{flex:1 1 auto;width:100%;height:auto;max-width:none;min-height:0;aspect-ratio:auto;border-radius:14px}
+body.runner-fullscreen .runner-wrap canvas{width:100%;height:100%}
+body.runner-fullscreen .runner-actions{flex:0 0 auto;margin:9px 0 0}
+body.runner-fullscreen .runner-touch{padding:12px 18px}
+.runner-touch.full{background:#23485a}
+@media(max-width:600px){
+ body.runner-fullscreen .runner-card{padding:8px}
+ body.runner-fullscreen .runner-top h3{font-size:16px}
+ body.runner-fullscreen .runner-hud span{padding:6px 9px}
+ body.runner-fullscreen .runner-actions{gap:7px}
+ body.runner-fullscreen .runner-touch{font-size:12px;padding:10px 8px}
+}
