@@ -1,0 +1,45 @@
+*{box-sizing:border-box}
+:root{
+  --ink:#3f3540;--muted:#756b75;--cream:#fffaf1;--paper:#fff;
+  --pink:#f49ab5;--pink2:#ffe1ea;--green:#a9d8b2;--yellow:#ffe39a;
+  --blue:#a9d9ee;--purple:#c9b5e8;--shadow:0 12px 30px rgba(85,55,70,.10)
+}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+button{font:inherit}
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 5%;background:rgba(255,250,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid #f0e4d9}
+.brand{color:var(--ink);text-decoration:none;font-weight:900;font-size:1.35rem}
+.brand span{margin-right:7px}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav button,.topic{border:0;background:transparent;color:var(--muted);padding:9px 12px;border-radius:999px;cursor:pointer;font-weight:700}
+nav button:hover,.topic:hover,.topic.active{background:var(--pink2);color:var(--ink)}
+main{max-width:1100px;margin:auto;padding:28px 5% 70px}
+.page{display:none}.page.active{display:block}
+.hero{min-height:430px;display:flex;align-items:center;justify-content:space-between;gap:30px;padding:45px;border-radius:32px;background:linear-gradient(135deg,#ffe9ef,#fff3cf 55%,#e3f5e8);box-shadow:var(--shadow)}
+.eyebrow{letter-spacing:.16em;font-size:.75rem;font-weight:900;color:#a46b80;margin:0 0 8px}
+h1{font-size:clamp(3rem,8vw,6rem);line-height:.95;margin:0 0 20px}
+h1 span{font-size:.65em}.hero-copy{max-width:520px;font-size:1.15rem;color:var(--muted);line-height:1.6}
+.primary{border:0;border-radius:999px;padding:14px 22px;background:var(--ink);color:#fff;cursor:pointer;font-weight:800;box-shadow:0 8px 20px rgba(63,53,64,.2)}
+.hero-art{font-size:clamp(5rem,15vw,10rem);line-height:1.1;text-align:center;filter:drop-shadow(0 10px 12px rgba(100,70,80,.12))}
+.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.feature-card{border:0;background:var(--paper);border-radius:22px;padding:22px;text-align:left;box-shadow:var(--shadow);cursor:pointer;color:var(--ink);transition:.18s}
+.feature-card:hover{transform:translateY(-3px)}
+.feature-card span{display:block;font-size:2rem;margin-bottom:12px}.feature-card b,.feature-card small{display:block}
+.feature-card small{color:var(--muted);margin-top:6px;line-height:1.4}
+.section-heading{margin:12px 0 22px}.section-heading h2{font-size:2rem;margin:0}
+.topic-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.lesson{background:var(--paper);border-radius:28px;padding:28px;box-shadow:var(--shadow);min-height:360px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px}
+.learn-card{border:2px solid #f0e8e3;background:#fffdf9;border-radius:22px;padding:22px 12px;cursor:pointer;text-align:center;color:var(--ink)}
+.learn-card:hover{border-color:var(--pink);transform:translateY(-2px)}
+.learn-card .big{font-size:3rem;font-weight:900;display:block}.learn-card small{color:var(--muted)}
+.number-card .big{font-size:2.7rem}
+.colour-dot{height:72px;width:72px;border-radius:50%;margin:0 auto 10px;border:4px solid #fff;box-shadow:0 3px 10px #0001}
+.shape{height:70px;width:70px;margin:0 auto 10px;background:#f49ab5}
+.circle{border-radius:50%}.square{border-radius:12px}.triangle{clip-path:polygon(50% 0,100% 100%,0 100%);background:#a9d9ee!important}
+.lesson-title{margin-top:0}.hint{color:var(--muted);line-height:1.5}
+.quiz{max-width:650px;margin:auto;text-align:center}.quiz-emoji{font-size:4rem}.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.quiz-options button{border:2px solid #eee0e5;background:#fffafc;border-radius:18px;padding:15px;cursor:pointer;font-weight:800}.quiz-options button:hover{border-color:var(--pink)}.feedback{min-height:30px;font-weight:800;margin-top:18px}
+.empty-state{text-align:center;background:#fff;border-radius:28px;padding:80px 25px;box-shadow:var(--shadow)}.empty-state div{font-size:4rem}.empty-state h2{margin-bottom:8px}.empty-state p{color:var(--muted)}
+footer{text-align:center;color:#988b93;padding:25px}
+@media(max-width:750px){.topbar{align-items:flex-start;flex-direction:column}.hero{padding:30px;min-height:0}.hero-art{display:none}.feature-grid{grid-template-columns:1fr 1fr}.quiz-options{grid-template-columns:1fr}}
+@media(max-width:430px){.feature-grid{grid-template-columns:1fr}.hero{border-radius:24px}main{padding-left:4%;padding-right:4%}}
