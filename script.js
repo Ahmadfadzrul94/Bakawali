@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   const fullBtn=document.getElementById('runnerFullBtn');
   let W=900,H=500,dpr=1,raf=0,state='start',score=0,best=Number(localStorage.getItem('bakawaliRunnerBest')||0),energy=100,speed=5,frame=0,obs=[],starsR=[],particles=[];
   const player={x:100,y:0,w:38,h:50,vy:0,jumps:0,dashing:0};
-  bestEl.textContent=Math.floor(best);
+  if(bestEl) bestEl.textContent=Math.floor(best);
   function resize(){
     const r=wrap.getBoundingClientRect();
     dpr=Math.min(devicePixelRatio||1,2);
@@ -396,6 +396,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   function gameOver(){state='over';cancelAnimationFrame(raf);if(score>best){best=score;localStorage.setItem('bakawaliRunnerBest',best);bestEl.textContent=Math.floor(best)}finalEl.textContent=Math.floor(score);over.classList.remove('hidden');draw()}
   function togglePause(){if(state==='play'){state='pause';pause.classList.remove('hidden');cancelAnimationFrame(raf)}else if(state==='pause'){state='play';pause.classList.add('hidden');loop()}}
   document.getElementById('runnerStartBtn').onclick=startGame;
+document.getElementById('runnerStartBtn').addEventListener('pointerup',()=>startGame(),{passive:true});
   document.getElementById('runnerAgain').onclick=startGame;
   document.getElementById('runnerResume').onclick=togglePause;
   document.getElementById('runnerPauseBtn').onclick=togglePause;
