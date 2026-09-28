@@ -1,18 +1,12 @@
-# Project Bakawali — Phase 2
+# Project Bakawali — Monster Trainer Redesign
 
-Learning module added to the Phase 1 foundation.
+Kid-focused redesign for a 5-year-old who enjoys monster-training adventures.
+The visual direction is original and does not use Pokémon artwork, logos, characters, or other proprietary assets.
 
-## Included
-- ABC cards with browser text-to-speech
-- Numbers 1–10
-- Colours
-- Shapes
-- Mini quiz with score
-- Responsive mobile layout
-- No external libraries or paid services
-
-## Run
-Open `index.html` in a modern browser.
-
-## Next
-Phase 3 — Games.
+Includes:
+- Trainer-style homepage
+- XP/stars visual system
+- Original monster mascots
+- Learning modules: ABC, Numbers, Colours, Shapes, Quiz
+- Games/Gallery/Songs placeholders
+- Responsive mobile design
