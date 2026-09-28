@@ -4,6 +4,71 @@ let stars=Number(localStorage.getItem("bakawaliStars")||0);
 let badges=Number(localStorage.getItem("bakawaliBadges")||0);
 const learned=new Set(JSON.parse(localStorage.getItem("bakawaliLearned")||"[]"));
 
+/* =========================
+   BAKAWALI AUDIO HUB
+   Three independent channels: Music / Training / Games
+   Background tune is generated locally with Web Audio, so no external audio file is needed.
+   ========================= */
+const bakAudio={
+  music: localStorage.getItem('bakawaliMusicOn')!=='0',
+  training: localStorage.getItem('bakawaliTrainingSoundOn')!=='0',
+  game: localStorage.getItem('bakawaliGameSoundOn')!=='0',
+  ctx:null, master:null, musicTimer:null, musicStep:0, musicReady:false
+};
+function audioContext(){
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return null;
+  if(!bakAudio.ctx){bakAudio.ctx=new AC();bakAudio.master=bakAudio.ctx.createGain();bakAudio.master.gain.value=.72;bakAudio.master.connect(bakAudio.ctx.destination);}
+  if(bakAudio.ctx.state==='suspended')bakAudio.ctx.resume().catch(()=>{});
+  bakAudio.musicReady=true;
+  return bakAudio.ctx;
+}
+function tone(freq,dur=.09,type='sine',gain=.045,channel='game',delay=0){
+  if(channel==='music'&&!bakAudio.music || channel==='training'&&!bakAudio.training || channel==='game'&&!bakAudio.game)return;
+  const c=audioContext(); if(!c||!bakAudio.master)return;
+  const now=c.currentTime+delay, o=c.createOscillator(), g=c.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,now);g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(Math.max(.001,gain),now+.012);g.gain.exponentialRampToValueAtTime(.0001,now+dur);o.connect(g);g.connect(bakAudio.master);o.start(now);o.stop(now+dur+.03);
+}
+function trainingClickSound(){tone(560,.055,'sine',.035,'training')}
+function trainingCorrectSound(){tone(523,.10,'sine',.055,'training');tone(659,.11,'sine',.055,'training',.08);tone(784,.16,'sine',.06,'training',.17)}
+function trainingWrongSound(){tone(220,.13,'sawtooth',.035,'training');tone(175,.16,'sawtooth',.03,'training',.10)}
+function trainingCompleteSound(){tone(523,.09,'sine',.055,'training');tone(659,.09,'sine',.055,'training',.08);tone(784,.10,'sine',.055,'training',.16);tone(1047,.22,'sine',.065,'training',.25)}
+function gameClickSound(){tone(420,.045,'square',.025,'game')}
+function gameCollectSound(){tone(740,.07,'triangle',.045,'game');tone(980,.11,'triangle',.05,'game',.06)}
+function gameHitSound(){tone(130,.12,'square',.04,'game')}
+function musicTick(){
+  if(!bakAudio.music)return;
+  const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23,261.63,329.63,392,523.25,392,349.23,293.66,261.63];
+  const n=notes[bakAudio.musicStep%notes.length];
+  tone(n,.22,'sine',.018,'music');
+  if(bakAudio.musicStep%4===0)tone(n/2,.30,'triangle',.009,'music');
+  bakAudio.musicStep++;
+}
+function startBakawaliMusic(){
+  audioContext();
+  if(!bakAudio.music)return;
+  if(bakAudio.musicTimer)return;
+  musicTick();bakAudio.musicTimer=setInterval(musicTick,430);
+}
+function stopBakawaliMusic(){if(bakAudio.musicTimer){clearInterval(bakAudio.musicTimer);bakAudio.musicTimer=null;}}
+function updateAudioButtons(){
+  document.querySelectorAll('[data-audio-toggle]').forEach(b=>{const k=b.dataset.audioToggle,on=!!bakAudio[k];b.classList.toggle('off',!on);b.setAttribute('aria-pressed',String(on));const labels={music:['🎵','Music'],training:['📚','Training'],game:['🎮','Games']};const [icon,label]=labels[k];b.innerHTML=on?`${icon} <span>${label}</span>`:`🔇 <span>${label}</span>`;});
+}
+function initAudioHub(){
+  updateAudioButtons();
+  document.querySelectorAll('[data-audio-toggle]').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.audioToggle;audioContext();bakAudio[k]=!bakAudio[k];localStorage.setItem('bakawali'+k.charAt(0).toUpperCase()+k.slice(1)+'On',bakAudio[k]?'1':'0');
+    updateAudioButtons();
+    if(k==='music'){if(bakAudio.music)startBakawaliMusic();else stopBakawaliMusic();}
+    else if(k==='training'&&bakAudio.training){trainingStartSound?.();trainingSay?.('Training sound on');}
+    else if(k==='game'&&bakAudio.game)gameClickSound();
+  }));
+  const unlock=()=>{audioContext();if(bakAudio.music)startBakawaliMusic();};
+  document.addEventListener('pointerdown',unlock,{once:true,passive:true});
+  document.addEventListener('keydown',unlock,{once:true});
+}
+initAudioHub();
+
 function renderStats(){
   document.querySelectorAll("#stars").forEach(x=>x.textContent=stars);
   document.querySelectorAll("#badges").forEach(x=>x.textContent=badges);
@@ -102,6 +167,13 @@ document.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",(
 document.querySelectorAll("[data-speak]").forEach(b=>b.addEventListener("click",()=>{speak(b.dataset.speak);earnStar("🎵 Music time!")}));
 renderStats();
 
+// Lightweight game UI feedback without touching game logic.
+document.addEventListener('click',e=>{
+  const b=e.target.closest('#games button');
+  if(!b || b.matches('.audio-btn'))return;
+  gameClickSound();
+});
+
 
 
 /* =========================
@@ -168,44 +240,53 @@ function renderTrainingCards(filter="all"){
   wrap.querySelectorAll("[data-training-id]").forEach(b=>b.addEventListener("click",()=>openTraining(b.dataset.trainingId)));
 }
 /* =========================
-   TRAINING SOUND ENGINE
-   Browser-only sounds + speech; no external audio files.
+   TRAINING SOUND ENGINE — robust user-gesture audio
    ========================= */
-let trainingSoundOn = true;
+let trainingSoundOn = bakAudio.training;
 let trainingAudioCtx = null;
-function trainingAudio(){
+function trainingAudio(){ if(!bakAudio.training)return;
   try{
-    if(!trainingAudioCtx) trainingAudioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    if(trainingAudioCtx.state === "suspended") trainingAudioCtx.resume();
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return null;
+    if(!trainingAudioCtx) trainingAudioCtx=new AC();
+    if(trainingAudioCtx.state==='suspended') trainingAudioCtx.resume();
     return trainingAudioCtx;
-  }catch(e){ return null; }
+  }catch(e){return null;}
 }
-function trainingTone(freq=520,duration=.08,type="sine",gain=.045,delay=0){
+function trainingTone(freq=520,duration=.10,type='sine',gain=.075,delay=0){
   if(!trainingSoundOn)return;
   const ctx=trainingAudio(); if(!ctx)return;
   const now=ctx.currentTime+delay;
   const osc=ctx.createOscillator(), g=ctx.createGain();
   osc.type=type; osc.frequency.setValueAtTime(freq,now);
-  g.gain.setValueAtTime(0.0001,now);
-  g.gain.exponentialRampToValueAtTime(gain,now+.01);
-  g.gain.exponentialRampToValueAtTime(0.0001,now+duration);
-  osc.connect(g);g.connect(ctx.destination);osc.start(now);osc.stop(now+duration+.02);
+  g.gain.setValueAtTime(.0001,now);
+  g.gain.exponentialRampToValueAtTime(gain,now+.012);
+  g.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  osc.connect(g);g.connect(ctx.destination);
+  osc.start(now);osc.stop(now+duration+.025);
 }
-function trainingClickSound(){ trainingTone(620,.055,"square",.028); }
-function trainingStartSound(){ trainingTone(440,.09,"sine",.035,0); trainingTone(660,.11,"sine",.04,.09); trainingTone(880,.14,"sine",.045,.19); }
-function trainingCorrectSound(){ trainingTone(660,.10,"sine",.04,0); trainingTone(880,.13,"sine",.045,.10); trainingTone(1100,.18,"sine",.05,.23); }
-function trainingWrongSound(){ trainingTone(220,.14,"sawtooth",.035,0); trainingTone(170,.18,"sawtooth",.03,.12); }
-function trainingCompleteSound(){ trainingTone(523,.10,"sine",.04,0); trainingTone(659,.10,"sine",.04,.10); trainingTone(784,.12,"sine",.045,.20); trainingTone(1047,.20,"sine",.05,.32); }
-function trainingSay(text){
-  if(!trainingSoundOn || !("speechSynthesis" in window))return;
-  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate=.86; u.pitch=1.08; u.volume=.95; speechSynthesis.speak(u); }catch(e){}
+function trainingClickSound(){if(!trainingSoundOn)return;trainingTone(720,.07,'square',.055);}
+function trainingStartSound(){ if(!bakAudio.training)return;trainingTone(440,.10,'sine',.065,0);trainingTone(660,.12,'sine',.07,.10);trainingTone(880,.16,'sine',.075,.22);}
+function trainingCorrectSound(){trainingTone(660,.11,'sine',.07,0);trainingTone(880,.13,'sine',.075,.11);trainingTone(1100,.20,'sine',.08,.24);}
+function trainingWrongSound(){trainingTone(220,.16,'triangle',.065,0);trainingTone(165,.20,'triangle',.06,.14);}
+function trainingCompleteSound(){trainingTone(523,.11,'sine',.07,0);trainingTone(659,.11,'sine',.07,.11);trainingTone(784,.13,'sine',.075,.22);trainingTone(1047,.24,'sine',.08,.35);}
+function trainingSay(text){ if(!bakAudio.training)return;
+  if(!trainingSoundOn || !('speechSynthesis' in window))return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=.86;u.pitch=1.08;u.volume=1;
+    speechSynthesis.speak(u);
+  }catch(e){}
 }
 function trainingFeedback(kind,text){
-  if(kind==="correct"){trainingCorrectSound();trainingSay("Correct!");}
-  if(kind==="wrong"){trainingWrongSound();trainingSay("Wrong. Try again!");}
-  if(kind==="complete"){trainingCompleteSound();trainingSay("Great job! Module complete!");}
-  if(text){const el=document.getElementById("trainFeedback");if(el)el.textContent=text;}
+  if(kind==='correct'){trainingCorrectSound();trainingSay('Correct!');}
+  else if(kind==='wrong'){trainingWrongSound();trainingSay('Wrong. Try again!');}
+  else if(kind==='complete'){trainingCompleteSound();trainingSay('Great job! Module complete!');}
+  if(text){const el=document.getElementById('trainFeedback');if(el)el.textContent=text;}
 }
+// Prime/resume Web Audio on the first real user interaction.
+document.addEventListener('pointerdown',()=>{if(trainingSoundOn)trainingAudio();},{once:false,passive:true});
 function speakTraining(text){speak(text);}
 
 function openTraining(id){
@@ -218,6 +299,9 @@ function openTraining(id){
     soundToggle.onclick=(ev)=>{
       ev.stopPropagation();
       trainingSoundOn=!trainingSoundOn;
+      bakAudio.training=trainingSoundOn;
+      localStorage.setItem('bakawaliTrainingSoundOn',trainingSoundOn?'1':'0');
+      updateAudioButtons();
       soundToggle.textContent=trainingSoundOn?"🔊 Sound ON":"🔇 Sound OFF";
       soundToggle.setAttribute("aria-pressed",String(trainingSoundOn));
       if(trainingSoundOn){trainingStartSound();trainingSay("Sound on");}else if("speechSynthesis" in window)speechSynthesis.cancel();
@@ -256,6 +340,7 @@ function doneActivity(id,feedback="🎉 Great job!"){
 }
 
 function wireTraining(m){
+  document.querySelectorAll('#trainingModalBody button').forEach(btn=>btn.addEventListener('click',()=>{if(btn.id!=='trainingSoundToggle')trainingClickSound()},{once:false}));
   if(m.type==="flash"){
     let i=0;const stage=document.getElementById("trainingStage");
     const show=()=>{const [a,b]=m.items[i%m.items.length];stage.innerHTML=`<div class="flash-card"><strong>${a}</strong><span>${b}</span></div>`;speakTraining(a+" "+b);};
@@ -263,13 +348,13 @@ function wireTraining(m){
     document.getElementById("trainNext").onclick=()=>{i++;if(i>=m.items.length){doneActivity(m.id,"🌟 Module complete!");i=0;}show();};
   }
   if(m.type==="quiz"){
-    document.querySelectorAll(".activity-options button").forEach(b=>b.onclick=()=>{
-      const good=b.dataset.correct==="true";const f=document.getElementById("trainFeedback");
-      if(good){f.textContent="🎉 Correct!";trainingComplete(m.id);document.querySelectorAll(".activity-options button").forEach(x=>x.disabled=true);}
-      else f.textContent="Try again! 💪";
-    });
-  }
-  if(m.type==="spell"){
+      document.querySelectorAll(".activity-options button").forEach(b=>b.onclick=()=>{
+        const good=b.dataset.correct==="true";
+        if(good){trainingFeedback("correct","🎉 Correct!");trainingComplete(m.id);document.querySelectorAll(".activity-options button").forEach(x=>x.disabled=true);}
+        else trainingFeedback("wrong","Try again! 💪");
+      });
+   }
+   if(m.type==="spell"){
     let i=0;const stage=document.getElementById("spellStage");
     const show=()=>{const [word,pic]=m.words[i%m.words.length];const shuffled=[...word].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;let chosen=[];stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{chosen.push(b.dataset.letter);b.disabled=true;const target=word.slice(0,chosen.length);if(chosen.join("")!==target){trainingFeedback("wrong","Try the next letter carefully!");chosen=[];stage.querySelectorAll("button").forEach(x=>x.disabled=false);}else{document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Good!";if(chosen.length===word.length){trainingComplete(m.id);setTimeout(()=>{i++;show()},500);}}});};show();
   }
@@ -313,6 +398,9 @@ function wireTraining(m){
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
+  const trainingRoot=document.getElementById("trainingModal");
+  if(trainingRoot){trainingRoot.addEventListener("click",e=>{const btn=e.target.closest("button");if(btn&&!btn.id.includes("trainingSoundToggle")){trainingClickSound();}});}
+
   const modal=document.getElementById("trainingModal");
   const close=document.getElementById("trainingClose");
   if(close)close.onclick=closeTraining;
@@ -590,8 +678,8 @@ document.addEventListener("DOMContentLoaded",()=>{
   window.addEventListener('resize',resize); resize();
   function reset(){score=0;energy=100;speed=5;frame=0;obs=[];starsR=[];particles=[];player.x=100;player.y=ground()-player.h;player.vy=0;player.jumps=0;player.dashing=0;hud();}
   function hud(){scoreEl.textContent=Math.floor(score);energyEl.textContent=Math.floor(energy)}
-  function jump(){if(state!=='play')return;if(player.jumps<2){player.vy=-12;player.jumps++;}}
-  function dash(){if(state!=='play'||energy<30||player.dashing)return;energy-=30;player.dashing=18;hud()}
+  function jump(){if(state!=='play')return;if(player.jumps<2){player.vy=-12;player.jumps++;tone(520,.07,'square',.03,'game');tone(760,.08,'square',.025,'game',.05)}}
+  function dash(){if(state!=='play'||energy<30||player.dashing)return;energy-=30;player.dashing=18;hud();tone(180,.16,'sawtooth',.035,'game');tone(360,.12,'sawtooth',.025,'game',.08)}
   function rect(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
   function spawn(){
     if(frame%Math.max(48,90-Math.floor(score/100)*4)===0)obs.push({x:W+30,w:26+Math.random()*20,h:35+Math.random()*35});
@@ -604,8 +692,8 @@ document.addEventListener("DOMContentLoaded",()=>{
     else {player.vy+=.62;player.y+=player.vy}
     const gy=ground()-player.h;if(player.y>=gy){player.y=gy;player.vy=0;player.jumps=0}
     spawn();
-    for(let i=obs.length-1;i>=0;i--){const o=obs[i];o.x-=speed;const b={x:o.x,y:ground()-o.h,w:o.w,h:o.h};if(rect(player,b)){if(player.dashing){burst(o.x+o.w/2,ground()-o.h/2,'#ec4899',15);obs.splice(i,1);score+=20}else{return gameOver()}}if(o.x+o.w<-30)obs.splice(i,1)}
-    for(let i=starsR.length-1;i>=0;i--){const s=starsR[i];s.x-=speed;s.p+=.1;if(Math.hypot(player.x+player.w/2-s.x,player.y+player.h/2-s.y)<28){score+=15;energy=Math.min(100,energy+18);burst(s.x,s.y,'#ffd83d',10);starsR.splice(i,1)}else if(s.x<-30)starsR.splice(i,1)}
+    for(let i=obs.length-1;i>=0;i--){const o=obs[i];o.x-=speed;const b={x:o.x,y:ground()-o.h,w:o.w,h:o.h};if(rect(player,b)){if(player.dashing){gameHitSound();burst(o.x+o.w/2,ground()-o.h/2,'#ec4899',15);obs.splice(i,1);score+=20}else{return gameOver()}}if(o.x+o.w<-30)obs.splice(i,1)}
+    for(let i=starsR.length-1;i>=0;i--){const s=starsR[i];s.x-=speed;s.p+=.1;if(Math.hypot(player.x+player.w/2-s.x,player.y+player.h/2-s.y)<28){score+=15;energy=Math.min(100,energy+18);gameCollectSound();burst(s.x,s.y,'#ffd83d',10);starsR.splice(i,1)}else if(s.x<-30)starsR.splice(i,1)}
     for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.x+=p.vx;p.y+=p.vy;p.l-=.035;if(p.l<=0)particles.splice(i,1)}
     hud();
   }
@@ -683,7 +771,7 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
 
   spinBtn.addEventListener('click',()=>{
     if(spinning)return;
-    spinning=true;selected=Math.floor(Math.random()*rewards.length);
+    spinning=true;selected=Math.floor(Math.random()*rewards.length);gameClickSound();
     const slice=360/rewards.length;
     // Pointer is at top. Land the selected slice under the pointer.
     const target=(360-(selected*slice+slice/2))%360;
@@ -749,10 +837,10 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   function clearLines(){let cleared=0;outer:for(let y=ROWS-1;y>=0;y--){for(let x=0;x<COLS;x++)if(!board[y][x])continue outer;board.splice(y,1);board.unshift(Array(COLS).fill(0));cleared++;y++;}if(cleared){lines+=cleared;score += [0,100,300,500,800][cleared]*level;level=1+Math.floor(lines/5);updateHud();}}
   function spawn(){piece=next;piece.x=Math.floor(COLS/2)-Math.ceil(piece.shape[0].length/2);piece.y=0;next=makePiece();if(collide(piece)){gameOver();}drawNext();}
   function lock(){merge();clearLines();spawn();}
-  function move(dx){if(state!=='play')return;if(!collide(piece,dx,0)){piece.x+=dx;draw();}}
+  function move(dx){if(state!=='play')return;if(!collide(piece,dx,0)){piece.x+=dx;gameClickSound();draw();}}
   function soft(){if(state!=='play')return;if(!collide(piece,0,1)){piece.y++;score++;}else lock();updateHud();draw();}
   function rotate(){if(state!=='play')return;const old=piece.shape;const rotated=old[0].map((_,i)=>old.map(row=>row[i]).reverse());const oldX=piece.x;for(const kick of [0,-1,1,-2,2]){piece.shape=rotated;piece.x=oldX+kick;if(!collide(piece)){draw();return;}}piece.shape=old;piece.x=oldX;}
-  function hardDrop(){if(state!=='play')return;let d=0;while(!collide(piece,0,1)){piece.y++;d++;}score+=d*2;lock();updateHud();draw();}
+  function hardDrop(){if(state!=='play')return;gameClickSound();let d=0;while(!collide(piece,0,1)){piece.y++;d++;}score+=d*2;lock();updateHud();draw();}
   function updateHud(){scoreEl.textContent=score;linesEl.textContent=lines;levelEl.textContent=level;}
   function resize(){const r=canvas.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.floor(r.width*dpr);canvas.height=Math.floor(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);draw();}
   window.addEventListener('resize',resize);

@@ -219,3 +219,12 @@ body.runner-fullscreen .runner-touch{padding:12px 18px}
 
 /* Training sound control */
 .training-sound-toggle{margin-top:10px;font-size:.85rem;padding:8px 12px;min-height:40px}
+
+
+/* ---------- AUDIO CONTROLS ---------- */
+.audio-controls{display:flex;gap:7px;position:absolute;right:18px;top:12px;z-index:20}
+.audio-btn{border:1px solid rgba(255,255,255,.18);background:rgba(7,20,34,.78);color:#eef7ff;border-radius:999px;padding:7px 10px;font-weight:800;font-size:12px;cursor:pointer;backdrop-filter:blur(8px);transition:.18s ease}
+.audio-btn:hover{transform:translateY(-1px);border-color:rgba(255,216,61,.7)}
+.audio-btn.off{opacity:.55;filter:grayscale(.5)}
+.audio-btn span{margin-left:2px}
+@media(max-width:900px){.audio-controls{right:10px;top:8px}.audio-btn span{display:none}.audio-btn{width:40px;height:36px;padding:0;font-size:16px}}
