@@ -188,7 +188,7 @@ function localizeChoice(s){return localizeActivityText(s);}
 function moduleTitle(m){return bakawaliLanguage==='ms'?(MODULE_BM[m.id]?.[0]||m.title):m.title;}
 function moduleDesc(m){return bakawaliLanguage==='ms'?(MODULE_BM[m.id]?.[1]||m.desc):m.desc;}
 function setBakawaliLanguage(lang){bakawaliLanguage=lang==='ms'?'ms':'en';profileSet(BAK_LANGUAGE_KEY,bakawaliLanguage);document.documentElement.lang=bakawaliLanguage==='ms'?'ms':'en';const btn=document.getElementById('languageToggle');if(btn)btn.textContent=UI_TEXT[bakawaliLanguage].langButton;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(UI_TEXT[bakawaliLanguage][k])el.innerHTML=el.innerHTML.replace(/^[^A-Za-zÀ-ÿ]*\s*/,match=>match)+UI_TEXT[bakawaliLanguage][k];});renderTrainingCards(document.querySelector('.training-filter.active')?.dataset.filter||'all');}
-function initLanguage(){const b=document.getElementById('languageToggle');if(!b)return;b.textContent=UI_TEXT[bakawaliLanguage].langButton;b.onclick=()=>setBakawaliLanguage(bakawaliLanguage==='en'?'ms':'en');document.documentElement.lang=bakawaliLanguage==='ms'?'ms':'en';}
+function initLanguage(){const b=document.getElementById('languageToggle');if(!b)return;const sync=()=>{const isMs=bakawaliLanguage==='ms';b.innerHTML=`🌐 <span>${isMs?'BM':'EN'}</span>`;b.classList.toggle('active',isMs);b.setAttribute('aria-label',isMs?'Tukar ke English':'Tukar ke Bahasa Melayu');b.setAttribute('aria-pressed',String(isMs));document.documentElement.lang=isMs?'ms':'en';};sync();b.onclick=()=>{setBakawaliLanguage(bakawaliLanguage==='en'?'ms':'en');sync();};}
 
 function buildLearning(){
   const letters=[...Array(26)].map((_,i)=>String.fromCharCode(65+i));
