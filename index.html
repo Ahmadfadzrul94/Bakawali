@@ -115,59 +115,41 @@
 
 <section id="games" class="page">
   <div class="page-head">
-    <div><span class="eyebrow">ADVENTURE ARCADE</span><h2>Game Zone</h2><p>Pick a mission, help your buddy and collect rewards!</p></div>
-    <div class="level-pill">⭐ <b id="gameStars">0</b> STARS</div>
+    <div><span class="eyebrow">ADVENTURE ARCADE</span><h2>Bakawali Sky Runner</h2><p>Lari, lompat, dash dan kumpul Star. Simple to play, susah nak berhenti! 😎</p></div>
+    <div class="level-pill">⭐ <b id="runnerBest">0</b> BEST</div>
   </div>
 
-  <div class="game-select">
-    <button class="game-choice active" data-game-panel="chase-game"><span>⚡</span><b>Monster Chase</b><small>Run • dodge • collect</small></button>
-    <button class="game-choice" data-game-panel="blaster-game"><span>🚀</span><b>Sky Blaster</b><small>Hit targets • combo</small></button>
-    <button class="game-choice" data-game-panel="treasure-game"><span>💎</span><b>Treasure Hunt</b><small>Explore • find • unlock</small></button>
-    <button class="game-choice" data-game-panel="battle-game"><span>⚔️</span><b>Monster Battle</b><small>Attack • charge • win</small></button>
-  </div>
-
-  <div id="chase-game" class="game-panel active arcade-panel">
-    <div class="arcade-head"><div><span class="eyebrow">FOREST RUN</span><h3>⚡ Monster Chase</h3><p>Help Zapko catch energy stars. Move with ◀ ▶ or the buttons.</p></div><div class="score-chip">⭐ <span id="chaseScore">0</span></div></div>
-    <div class="chase-stage" id="chaseStage">
-      <div class="chase-bg tree-a">🌲</div><div class="chase-bg tree-b">🌳</div>
-      <div class="chase-player" id="chasePlayer">⚡</div>
-      <div class="chase-item" id="chaseItem">⭐</div>
-      <div class="chase-obstacle o1">🪨</div><div class="chase-obstacle o2">🪵</div>
-      <div class="chase-message" id="chaseMessage">READY?</div>
+  <div class="runner-card">
+    <div class="runner-top">
+      <div><span class="eyebrow">FOREST SKYWAY</span><h3>🌿 Bakawali Sky Runner</h3></div>
+      <div class="runner-hud"><span>⭐ <b id="runnerScore">0</b></span><span>⚡ <b id="runnerEnergy">100</b>%</span></div>
     </div>
-    <div class="arcade-controls"><button data-move="left">◀</button><button class="go-button" id="chaseStart">START RUN</button><button data-move="right">▶</button></div>
-  </div>
 
-  <div id="blaster-game" class="game-panel arcade-panel">
-    <div class="arcade-head"><div><span class="eyebrow">SKY TRAINING</span><h3>🚀 Sky Blaster</h3><p>Tap the flying targets. Build a combo before they disappear!</p></div><div class="score-chip">🎯 <span id="blastScore">0</span> <small id="blastCombo">x0</small></div></div>
-    <div class="sky-stage" id="skyStage"><div class="sky-cloud">☁️</div><div class="sky-target" id="skyTarget">🎯</div><div class="sky-message" id="skyMessage">READY?</div></div>
-    <div class="arcade-controls"><button class="go-button" id="blastStart">START BLAST</button></div>
-  </div>
-
-  <div id="treasure-game" class="game-panel arcade-panel">
-    <div class="arcade-head"><div><span class="eyebrow">LOST TEMPLE</span><h3>💎 Treasure Hunt</h3><p>Choose a path. Find the key, then open the treasure chest!</p></div><div class="score-chip">🔑 <span id="treasureKeys">0</span>/1</div></div>
-    <div class="treasure-map">
-      <div class="treasure-node start-node">🏕️<small>START</small></div>
-      <div class="path-line"></div>
-      <div class="treasure-choices">
-        <button data-path="forest">🌲<b>Forest</b><small>Something is hiding...</small></button>
-        <button data-path="cave">🕳️<b>Crystal Cave</b><small>A shiny clue!</small></button>
-        <button data-path="river">🌊<b>River</b><small>Follow the water...</small></button>
+    <div class="runner-wrap">
+      <canvas id="runnerCanvas"></canvas>
+      <div id="runnerStart" class="runner-overlay">
+        <div class="runner-logo">🐾</div>
+        <h3>READY TO RUN?</h3>
+        <p>Jump over obstacles, collect Stars and use DASH to smash through barriers.</p>
+        <button id="runnerStartBtn" class="primary">▶ START RUN</button>
+        <small>SPACE / ↑ = Jump · SHIFT / X = Dash</small>
       </div>
-      <div class="treasure-result" id="treasureResult">Choose your path!</div>
-      <button class="chest-button" id="openChest" disabled>🔒 TREASURE CHEST</button>
+      <div id="runnerPause" class="runner-overlay hidden">
+        <h3>⏸ PAUSED</h3><button id="runnerResume" class="primary">CONTINUE</button>
+      </div>
+      <div id="runnerOver" class="runner-overlay hidden">
+        <div class="runner-logo">💥</div><h3>GAME OVER</h3>
+        <p>Score: <b id="runnerFinal">0</b></p>
+        <button id="runnerAgain" class="primary">↻ PLAY AGAIN</button>
+      </div>
     </div>
-  </div>
 
-  <div id="battle-game" class="game-panel arcade-panel">
-    <div class="battle-head"><div><span class="eyebrow">BUDDY ARENA</span><h3>⚔️ Zapko vs. Wild Bot</h3><p>Fill the energy meter, then unleash SUPER SPARK!</p></div><div class="battle-level">LV. <b id="battleLevel">1</b></div></div>
-    <div class="battle-arena">
-      <div class="fighter player"><div class="battle-monster zap-battle"><span class="ear e1"></span><span class="ear e2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="bolt"></span></div><b>Zapko</b><div class="hp"><i id="playerHp"></i></div><div class="energy"><i id="energyBar"></i></div></div>
-      <div class="vs">VS</div>
-      <div class="fighter enemy"><div class="battle-monster wild-battle"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div><b>Wild Bot</b><div class="hp enemyhp"><i id="enemyHp"></i></div></div>
+    <div class="runner-actions">
+      <button id="runnerJump" class="runner-touch jump">⬆ JUMP</button>
+      <button id="runnerDash" class="runner-touch dash">⚡ DASH</button>
+      <button id="runnerPauseBtn" class="runner-touch">Ⅱ</button>
     </div>
-    <div class="battle-actions"><button class="primary small" data-battle="spark">⚡ SPARK</button><button class="secondary small" data-battle="charge">🔋 CHARGE</button><button class="primary small super-btn" id="superSpark" disabled>💥 SUPER SPARK</button></div>
-    <div class="game-status" id="battleStatus">Choose an action!</div>
+    <div class="runner-help">Desktop: <b>SPACE / ↑</b> Jump · <b>SHIFT / X</b> Dash · <b>P / ESC</b> Pause</div>
   </div>
 </section>
 
