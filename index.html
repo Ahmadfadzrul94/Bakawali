@@ -41,9 +41,41 @@
       <button class="start-btn" data-page="learning">START ADVENTURE <span>▶</span></button>
     </div>
 
-    <div class="monster buddy-a">⚡</div>
-    <div class="monster buddy-b">💧</div>
-    <div class="monster buddy-c">🔥</div>
+    <div class="monster-svg zapko">
+      <svg viewBox="0 0 180 180" role="img" aria-label="Zapko electric monster">
+        <path class="outline" d="M48 116 Q25 92 39 57 Q51 26 82 34 Q112 10 141 39 Q164 62 145 101 Q139 139 101 146 Q67 151 48 116Z"/>
+        <path class="body-yellow" d="M49 114 Q31 90 44 61 Q57 33 84 41 Q110 20 136 45 Q155 66 137 99 Q132 128 101 137 Q68 141 49 114Z"/>
+        <path class="outline" d="M73 35 L62 12 L84 27 L94 7 L101 34"/>
+        <path class="outline" d="M119 40 L132 16 L139 39"/>
+        <circle class="eye" cx="73" cy="82" r="9"/><circle class="eye" cx="119" cy="82" r="9"/>
+        <circle class="shine" cx="70" cy="79" r="3"/><circle class="shine" cx="116" cy="79" r="3"/>
+        <path class="mouth" d="M78 105 Q96 119 116 102"/>
+        <path class="bolt" d="M94 61 L78 91 L94 88 L86 113 L111 78 L96 81Z"/>
+      </svg>
+    </div>
+    <div class="monster-svg bubblu">
+      <svg viewBox="0 0 180 180" role="img" aria-label="Bubblu water monster">
+        <path class="outline" d="M42 113 Q27 78 50 51 Q70 28 91 39 Q116 20 141 45 Q161 67 146 105 Q137 139 96 145 Q56 144 42 113Z"/>
+        <path class="body-blue" d="M48 111 Q35 82 55 57 Q72 38 93 47 Q114 29 135 50 Q151 69 138 102 Q130 129 97 136 Q61 136 48 111Z"/>
+        <path class="outline" d="M53 66 Q24 57 29 33 Q53 38 66 51"/>
+        <path class="outline" d="M127 57 Q155 43 160 24 Q174 47 142 73"/>
+        <circle class="eye" cx="73" cy="84" r="9"/><circle class="eye" cx="119" cy="84" r="9"/>
+        <circle class="shine" cx="70" cy="81" r="3"/><circle class="shine" cx="116" cy="81" r="3"/>
+        <path class="mouth" d="M78 106 Q96 117 116 105"/>
+        <circle class="bubble" cx="137" cy="72" r="7"/><circle class="bubble" cx="145" cy="56" r="4"/>
+        <path class="fin" d="M83 43 Q93 20 105 44Z"/>
+      </svg>
+    </div>
+    <div class="monster-svg flammi">
+      <svg viewBox="0 0 180 180" role="img" aria-label="Flammi fire monster">
+        <path class="outline" d="M47 119 Q25 91 43 59 Q55 37 75 42 Q69 20 87 8 Q91 29 107 40 Q117 22 132 20 Q126 45 145 61 Q161 82 145 112 Q129 143 96 145 Q61 145 47 119Z"/>
+        <path class="body-red" d="M52 116 Q35 91 50 65 Q60 47 80 52 Q77 35 86 25 Q94 43 110 53 Q119 38 126 34 Q123 53 139 66 Q152 85 138 108 Q125 133 96 135 Q65 136 52 116Z"/>
+        <path class="flame" d="M78 110 Q67 94 77 77 Q83 69 89 77 Q88 61 99 51 Q100 69 112 77 Q122 87 115 103 Q108 118 96 120 Q83 120 78 110Z"/>
+        <circle class="eye" cx="72" cy="87" r="8"/><circle class="eye" cx="119" cy="87" r="8"/>
+        <circle class="shine" cx="69" cy="84" r="3"/><circle class="shine" cx="116" cy="84" r="3"/>
+        <path class="mouth" d="M78 108 Q96 120 115 107"/>
+      </svg>
+    </div>
 
     <div class="map-path">
       <div class="path-line"></div>
@@ -65,9 +97,9 @@
 
   <div class="buddy-section">
     <div><small>MEET THE TEAM</small><h2>Choose your adventure buddy</h2></div>
-    <button class="buddy-card yellow"><span>⚡</span><b>Zapko</b><small>Electric Buddy</small></button>
-    <button class="buddy-card blue"><span>💧</span><b>Bubblu</b><small>Water Buddy</small></button>
-    <button class="buddy-card red"><span>🔥</span><b>Flammi</b><small>Fire Buddy</small></button>
+    <button class="buddy-card yellow"><span class="mini-monster">⚡</span><b>Zapko</b><small>Electric Buddy</small></button>
+    <button class="buddy-card blue"><span class="mini-monster">💧</span><b>Bubblu</b><small>Water Buddy</small></button>
+    <button class="buddy-card red"><span class="mini-monster">🔥</span><b>Flammi</b><small>Fire Buddy</small></button>
   </div>
 </section>
 

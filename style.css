@@ -26,3 +26,16 @@ footer{background:var(--navy);color:#aeb9da;text-align:center;padding:25px;font-
 @keyframes float{0%,100%{translate:0 0}50%{translate:0 -9px}}@keyframes cloud{0%{translate:-20px 0}50%{translate:30px 0}100%{translate:-20px 0}}
 @media(max-width:800px){.topbar{height:auto;align-items:flex-start;flex-direction:column}.stats{display:none}.adventure-world{height:650px}.world-title{left:5%;top:5%}.map-path{bottom:70px}.map-node{width:90px;height:90px}.node1{left:3%}.node2{left:27%}.node3{left:52%}.node4{right:2%}.buddy-a{right:17%;bottom:175px}.buddy-b{left:35%;bottom:125px}.buddy-c{right:0;bottom:120px}.buddy-section{grid-template-columns:1fr 1fr}.buddy-section>div{grid-column:1/-1}.game-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){main{padding-left:3%;padding-right:3%}.adventure-world{height:680px}.world-title h1{font-size:3.25rem}.world-title p{font-size:.8rem}.monster{width:82px;height:82px;font-size:2.5rem}.map-path{bottom:85px}.map-node{width:72px;height:72px;border-width:4px}.map-node i{font-size:1.25rem}.map-node b{font-size:.46rem}.map-node small{font-size:.38rem}.node1{left:1%}.node2{left:26%;top:25px}.node3{left:52%;top:45px}.node4{right:0;top:20px}.path-line{top:92px;left:5%;right:5%}.buddy-a{right:18%;bottom:190px}.buddy-b{left:27%;bottom:140px}.buddy-c{right:-2%;bottom:130px}.quest-copy span{display:none}.buddy-section{grid-template-columns:1fr}.buddy-section>div{grid-column:auto}.game-grid{grid-template-columns:1fr}.cards{grid-template-columns:repeat(3,1fr)}}
+
+/* Original Bakawali monster art */
+.monster-svg{position:absolute;z-index:7;width:135px;height:135px;animation:float 2.8s ease-in-out infinite;filter:drop-shadow(7px 9px 0 rgba(23,32,74,.35))}
+.monster-svg svg{width:100%;height:100%;overflow:visible}
+.monster-svg .outline{fill:#17204a}
+.monster-svg .body-yellow{fill:#ffd633}.monster-svg .body-blue{fill:#5cc9ed}.monster-svg .body-red{fill:#ed5a54}
+.monster-svg .eye{fill:#fff}.monster-svg .shine{fill:#17204a}.monster-svg .mouth{fill:none;stroke:#17204a;stroke-width:6;stroke-linecap:round}
+.monster-svg .bolt{fill:#fff}.monster-svg .bubble{fill:#dff8ff;stroke:#17204a;stroke-width:3}.monster-svg .fin{fill:#78d8f2;stroke:#17204a;stroke-width:5}.monster-svg .flame{fill:#ffd633}
+.zapko{right:16%;bottom:128px}.bubblu{left:38%;bottom:68px;transform:scale(.82);animation-delay:-1s}.flammi{right:3%;bottom:62px;transform:scale(.72);animation-delay:-.5s}
+.mini-monster{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:13px;background:#eef2ff;font-size:1.7rem;margin-bottom:5px}
+.buddy-card{transition:transform .16s, box-shadow .16s}.buddy-card:hover{transform:translateY(-4px);box-shadow:0 10px 22px #17204a20}
+@media(max-width:800px){.monster-svg{width:112px;height:112px}.zapko{right:15%;bottom:165px}.bubblu{left:34%;bottom:112px}.flammi{right:0;bottom:105px}}
+@media(max-width:520px){.monster-svg{width:88px;height:88px}.zapko{right:16%;bottom:185px}.bubblu{left:26%;bottom:138px}.flammi{right:-2%;bottom:126px}}

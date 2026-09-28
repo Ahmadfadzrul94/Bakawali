@@ -11,3 +11,6 @@ Visual direction:
 - No Pokémon artwork, logos, characters, or proprietary assets
 
 Learning modules remain functional: ABC, Numbers, Colours, Shapes and Challenge.
+
+
+Monster Art V1: Zapko, Bubblu and Flammi are original Bakawali vector characters created for this project.
