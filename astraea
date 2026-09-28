@@ -1,0 +1,6 @@
+<!-- Example Menu Card or Button -->
+<div class="game-card">
+  <h3>Astraea: Starfighter Defender</h3>
+  <p>Epic sci-fi space shooter with wave defense & special abilities.</p>
+  <a href="./astraea/" class="play-btn">Play Now</a>
+</div>
