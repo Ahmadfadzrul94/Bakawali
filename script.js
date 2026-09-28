@@ -210,40 +210,95 @@ document.addEventListener('click',e=>{
    TRAINING CAMP V2 — 20 MODULES
    ========================= */
 const trainingModules=[
-  {id:"abc",cat:"language",icon:"🔤",title:"ABC Explorer",desc:"Learn A–Z and hear each letter.",type:"flash",
-   items:[["A","Apple 🍎"],["B","Ball ⚽"],["C","Cat 🐱"],["D","Dog 🐶"],["E","Egg 🥚"],["F","Fish 🐟"],["G","Grapes 🍇"],["H","Hat 🧢"],["I","Ice cream 🍦"],["J","Juice 🧃"],["K","Kite 🪁"],["L","Lion 🦁"],["M","Moon 🌙"],["N","Nose 👃"],["O","Orange 🍊"],["P","Pig 🐷"],["Q","Queen 👑"],["R","Rabbit 🐰"],["S","Sun ☀️"],["T","Tree 🌳"],["U","Umbrella ☂️"],["V","Van 🚐"],["W","Whale 🐳"],["X","X-ray 🩻"],["Y","Yo-yo 🪀"],["Z","Zebra 🦓"]]},
-  {id:"phonics",cat:"language",icon:"🔊",title:"Phonics Fun",desc:"Hear the first sound in simple words.",type:"quiz",
-   q:"What sound starts the word “sun”?",a:["S","M","T"],correct:"S"},
+  {id:"abc",cat:"language",icon:"🔤",title:"ABC Explorer",desc:"Learn A–Z and hear each letter.",type:"flash",items:[["A","Apple 🍎"],["B","Ball ⚽"],["C","Cat 🐱"],["D","Dog 🐶"],["E","Egg 🥚"],["F","Fish 🐟"],["G","Grapes 🍇"],["H","Hat 🧢"],["I","Ice cream 🍦"],["J","Juice 🧃"],["K","Kite 🪁"],["L","Lion 🦁"],["M","Moon 🌙"],["N","Nose 👃"],["O","Orange 🍊"],["P","Pig 🐷"],["Q","Queen 👑"],["R","Rabbit 🐰"],["S","Sun ☀️"],["T","Tree 🌳"],["U","Umbrella ☂️"],["V","Van 🚐"],["W","Whale 🐳"],["X","X-ray 🩻"],["Y","Yo-yo 🪀"],["Z","Zebra 🦓"]]},
+  {id:"phonics",cat:"language",icon:"🔊",title:"Phonics Fun",desc:"Hear the first sound in simple words.",type:"quiz",q:"What sound starts the word “sun”?",a:["S","M","T"],correct:"S"},
   {id:"spelling",cat:"language",icon:"✏️",title:"Spell It!",desc:"Build simple 3-letter words.",type:"spell",words:[["CAT","🐱"],["DOG","🐶"],["SUN","☀️"],["BUS","🚌"],["HAT","🧢"]]},
   {id:"sight",cat:"language",icon:"👀",title:"Sight Words",desc:"Recognise common early reading words.",type:"flash",items:[["I","I"],["AM","am"],["THE","the"],["A","a"],["MY","my"],["SEE","see"],["CAN","can"],["LIKE","like"]]},
-  {id:"reading",cat:"language",icon:"📖",title:"Read a Sentence",desc:"Read short sentences with picture clues.",type:"reading",
-   items:[["I see a cat.","🐱"],["The sun is hot.","☀️"],["I like my dog.","🐶"],["The fish can swim.","🐟"],["This is a big bus.","🚌"]]},
-  {id:"story",cat:"language",icon:"📚",title:"Mini Story",desc:"Read a tiny story and answer a question.",type:"quiz",
-   q:"Milo has a red ball. What colour is Milo's ball?",a:["Red 🔴","Blue 🔵","Green 🟢"],correct:"Red 🔴"},
-  {id:"picture",cat:"language",icon:"🖼️",title:"Match Picture",desc:"Choose the word that matches the picture.",type:"picture",
-   items:[["🐱",["CAT","DOG","SUN"],"CAT"],["🍎",["APPLE","BALL","FISH"],"APPLE"],["🚗",["CAR","HAT","TREE"],"CAR"],["🐟",["FISH","BIRD","BUS"],"FISH"],["🌳",["TREE","MOON","CAT"],"TREE"]]},
-  {id:"wordmatch",cat:"language",icon:"🧩",title:"Word & Picture Match",desc:"Match a simple word to its picture.",type:"picture",
-   items:[["DOG",["🐶","🐱","🐟"],"🐶"],["SUN",["🌙","☀️","⭐"],"☀️"],["BALL",["🍎","⚽","🧢"],"⚽"],["BIRD",["🐶","🐦","🐰"],"🐦"]]},
+  {id:"reading",cat:"language",icon:"📖",title:"Read a Sentence",desc:"Read short sentences with picture clues.",type:"reading",items:[["I see a cat.","🐱"],["The sun is hot.","☀️"],["I like my dog.","🐶"],["The fish can swim.","🐟"],["This is a big bus.","🚌"]]},
+  {id:"story",cat:"language",icon:"📚",title:"Mini Story",desc:"Read a tiny story and answer a question.",type:"quiz",q:"Milo has a red ball. What colour is Milo's ball?",a:["Red 🔴","Blue 🔵","Green 🟢"],correct:"Red 🔴"},
+  {id:"picture",cat:"language",icon:"🖼️",title:"Match Picture",desc:"Choose the word that matches the picture.",type:"picture",items:[["🐱",["CAT","DOG","SUN"],"CAT"],["🍎",["APPLE","BALL","FISH"],"APPLE"],["🚗",["CAR","HAT","TREE"],"CAR"],["🐟",["FISH","BIRD","BUS"],"FISH"],["🌳",["TREE","MOON","CAT"],"TREE"]]},
+  {id:"wordmatch",cat:"language",icon:"🧩",title:"Word & Picture Match",desc:"Match a simple word to its picture.",type:"picture",items:[["DOG",["🐶","🐱","🐟"],"🐶"],["SUN",["🌙","☀️","⭐"],"☀️"],["BALL",["🍎","⚽","🧢"],"⚽"],["BIRD",["🐶","🐦","🐰"],"🐦"]]},
   {id:"count",cat:"math",icon:"🔢",title:"Count the Objects",desc:"Count up to 10.",type:"count"},
-  {id:"addition",cat:"math",icon:"➕",title:"Easy Addition",desc:"Add small numbers together.",type:"math",ops:[
-    [2,1,3],[1,3,4],[2,2,4],[3,2,5],[4,1,5],[2,3,5]
-  ]},
+  {id:"addition",cat:"math",icon:"➕",title:"Easy Addition",desc:"Add small numbers together.",type:"math",ops:[[2,1,3],[1,3,4],[2,2,4],[3,2,5],[4,1,5],[2,3,5]]},
   {id:"subtraction",cat:"math",icon:"➖",title:"Easy Subtraction",desc:"Take away small numbers.",type:"sub"},
-  {id:"shapes",cat:"math",icon:"🔷",title:"Shape Detective",desc:"Find circles, squares, triangles and more.",type:"quiz",
-   q:"Which shape has 3 sides?",a:["🔵 Circle","🔺 Triangle","⬛ Square"],correct:"🔺 Triangle"},
+  {id:"shapes",cat:"math",icon:"🔷",title:"Shape Detective",desc:"Find circles, squares, triangles and more.",type:"quiz",q:"Which shape has 3 sides?",a:["🔵 Circle","🔺 Triangle","⬛ Square"],correct:"🔺 Triangle"},
   {id:"patterns",cat:"math",icon:"🟡",title:"Pattern Power",desc:"Find what comes next.",type:"pattern"},
   {id:"compare",cat:"math",icon:"⚖️",title:"More or Less",desc:"Compare groups and numbers.",type:"compare"},
-  {id:"time",cat:"math",icon:"⏰",title:"Time Explorer",desc:"Learn simple o'clock times.",type:"quiz",
-   q:"Which clock shows 3 o'clock?",a:["🕒 3:00","🕕 6:00","🕘 9:00"],correct:"🕒 3:00"},
+  {id:"time",cat:"math",icon:"⏰",title:"Time Explorer",desc:"Learn simple o'clock times.",type:"quiz",q:"Which clock shows 3 o'clock?",a:["🕒 3:00","🕕 6:00","🕘 9:00"],correct:"🕒 3:00"},
   {id:"money",cat:"math",icon:"🪙",title:"Little Shop",desc:"Count simple coins and prices.",type:"money"},
   {id:"memory",cat:"world",icon:"🧠",title:"Memory Match",desc:"Remember and match picture pairs.",type:"memory"},
   {id:"sorting",cat:"world",icon:"📦",title:"Sort It Out",desc:"Put things into the right group.",type:"sort"},
   {id:"sequence",cat:"world",icon:"🔁",title:"What Happens Next?",desc:"Put a simple action in order.",type:"sequence"},
-  {id:"animals",cat:"world",icon:"🐾",title:"Animal Detective",desc:"Match animals with where they belong.",type:"animal",
-   animals:[["🐶","Dog","BARK!","Farm / Home"],["🐱","Cat","MEOW!","Home"],["🦁","Lion","ROAR!","Savanna"],["🐘","Elephant","TRUMPET!","Grassland"],["🐸","Frog","RIBBIT!","Pond"]]},
-  {id:"animalhabitat",cat:"world",icon:"🌎",title:"Animal Habitat",desc:"Explore where animals live and what they need.",type:"animalhabitat"},
-  {id:"scientist",cat:"world",icon:"🔬",title:"Little Scientist",desc:"Discover simple science through moving experiments.",type:"science"},
-  {id:"scienceexplorer",cat:"world",icon:"🚀",title:"Science Explorer",desc:"Explore weather, space, light and nature.",type:"scienceexplorer"}
+  {id:"animals",cat:"animal",icon:"🐾",title:"Animal Detective",desc:"50 animal challenges: sounds, bodies, food, movement and homes.",type:"animal50"},
+  {id:"animalhabitat",cat:"animal",icon:"🌎",title:"Animal Habitat",desc:"50 habitat missions: where animals live and what they need.",type:"animalhabitat50"},
+  {id:"scientist",cat:"science",icon:"🔬",title:"Little Scientist",desc:"50 mini experiments about everyday science.",type:"science50"},
+  {id:"scienceexplorer",cat:"science",icon:"🚀",title:"Science Explorer",desc:"50 discovery missions about weather, space, light and nature.",type:"scienceexplorer50"}
+];
+
+const animal50=[
+ ["sound","🐶","Which animal says BARK?",["Dog 🐶","Cat 🐱","Cow 🐮"],"Dog 🐶","BARK!"],
+ ["sound","🐱","Which animal says MEOW?",["Cat 🐱","Lion 🦁","Frog 🐸"],"Cat 🐱","MEOW!"],
+ ["sound","🐮","Which animal says MOO?",["Cow 🐮","Dog 🐶","Duck 🦆"],"Cow 🐮","MOO!"],
+ ["sound","🦁","Which animal can ROAR?",["Lion 🦁","Rabbit 🐰","Fish 🐟"],"Lion 🦁","ROAR!"],
+ ["sound","🐸","Which animal says RIBBIT?",["Frog 🐸","Horse 🐴","Cat 🐱"],"Frog 🐸","RIBBIT!"],
+ ["sound","🦆","Which animal says QUACK?",["Duck 🦆","Dog 🐶","Sheep 🐑"],"Duck 🦆","QUACK!"],
+ ["sound","🐴","Which animal neighs?",["Horse 🐴","Cow 🐮","Pig 🐷"],"Horse 🐴","NEIGH!"],
+ ["sound","🐑","Which animal says BAA?",["Sheep 🐑","Goat 🐐","Duck 🦆"],"Sheep 🐑","BAA!"],
+ ["choose","🐘","Which animal has a long trunk?",["Elephant 🐘","Zebra 🦓","Tiger 🐯"],"Elephant 🐘"],
+ ["choose","🦒","Which animal has a very long neck?",["Giraffe 🦒","Bear 🐻","Fox 🦊"],"Giraffe 🦒"],
+ ["choose","🐢","Which animal has a shell?",["Turtle 🐢","Dog 🐶","Horse 🐴"],"Turtle 🐢"],
+ ["choose","🐟","Which animal lives in water and has fins?",["Fish 🐟","Cat 🐱","Chicken 🐔"],"Fish 🐟"],
+ ["choose","🦋","Which animal has colourful wings?",["Butterfly 🦋","Elephant 🐘","Cow 🐮"],"Butterfly 🦋"],
+ ["choose","🐙","Which animal has eight arms?",["Octopus 🐙","Crab 🦀","Whale 🐳"],"Octopus 🐙"],
+ ["choose","🦓","Which animal has black and white stripes?",["Zebra 🦓","Lion 🦁","Camel 🐪"],"Zebra 🦓"],
+ ["choose","🐯","Which animal has stripes and sharp claws?",["Tiger 🐯","Rabbit 🐰","Cow 🐮"],"Tiger 🐯"],
+ ["choose","🐰","Which animal has long ears?",["Rabbit 🐰","Hippo 🦛","Penguin 🐧"],"Rabbit 🐰"],
+ ["choose","🐼","Which animal loves to munch bamboo?",["Panda 🐼","Lion 🦁","Horse 🐴"],"Panda 🐼"],
+ ["choose","🐨","Which animal likes eucalyptus leaves?",["Koala 🐨","Tiger 🐯","Duck 🦆"],"Koala 🐨"],
+ ["choose","🐪","Which animal can live in a hot desert?",["Camel 🐪","Penguin 🐧","Seal 🦭"],"Camel 🐪"],
+ ["choose","🐧","Which animal is built for cold places?",["Penguin 🐧","Camel 🐪","Monkey 🐵"],"Penguin 🐧"],
+ ["choose","🦭","Which animal swims and rests on ice?",["Seal 🦭","Giraffe 🦒","Chicken 🐔"],"Seal 🦭"],
+ ["choose","🐬","Which animal is a sea mammal?",["Dolphin 🐬","Shark 🦈","Tuna 🐟"],"Dolphin 🐬"],
+ ["choose","🐳","Which animal is the biggest here?",["Blue whale 🐳","Rabbit 🐰","Frog 🐸"],"Blue whale 🐳"],
+ ["choose","🦅","Which animal can fly high with wings?",["Eagle 🦅","Elephant 🐘","Turtle 🐢"],"Eagle 🦅"],
+ ["choose","🐝","Which tiny animal makes honey?",["Bee 🐝","Ant 🐜","Spider 🕷️"],"Bee 🐝"],
+ ["choose","🐜","Which tiny animal lives in a colony?",["Ant 🐜","Giraffe 🦒","Whale 🐳"],"Ant 🐜"],
+ ["choose","🕷️","How many legs does a spider have?",["8 🕷️","6 🐝","4 🐕"],"8 🕷️"],
+ ["choose","🐔","What does a chicken have?",["Feathers 🪶","Fins 🐟","Scales 🐠"],"Feathers 🪶"],
+ ["choose","🐊","Which animal has strong jaws and lives near water?",["Crocodile 🐊","Rabbit 🐰","Sheep 🐑"],"Crocodile 🐊"],
+ ["choose","🦒","What does a giraffe mostly eat?",["Leaves 🌿","Pizza 🍕","Fish 🐟"],"Leaves 🌿"],
+ ["choose","🐮","What does a cow eat?",["Grass 🌱","Chocolate 🍫","Rocks 🪨"],"Grass 🌱"],
+ ["choose","🐼","What does a panda eat a lot of?",["Bamboo 🎋","Meat 🍖","Bread 🍞"],"Bamboo 🎋"],
+ ["choose","🦁","What kind of food does a lion eat?",["Meat 🍖","Grass 🌱","Berries 🍓"],"Meat 🍖"],
+ ["choose","🐸","Where can a frog often be found?",["Pond 💧","Desert 🌵","Iceberg 🧊"],"Pond 💧"],
+ ["choose","🐒","Which animal loves to climb trees?",["Monkey 🐒","Whale 🐳","Penguin 🐧"],"Monkey 🐒"],
+ ["choose","🐙","Where does an octopus live?",["Ocean 🌊","Farm 🚜","Desert 🌵"],"Ocean 🌊"],
+ ["choose","🐝","Where does a bee find flowers?",["Garden 🌸","Ice cave 🧊","Ocean 🌊"],"Garden 🌸"],
+ ["choose","🐴","Which animal can run fast on a farm?",["Horse 🐴","Fish 🐟","Frog 🐸"],"Horse 🐴"],
+ ["choose","🦆","Which animal has webbed feet for swimming?",["Duck 🦆","Cat 🐱","Rabbit 🐰"],"Duck 🦆"],
+ ["choose","🐘","Which animal uses its trunk to grab food?",["Elephant 🐘","Zebra 🦓","Fox 🦊"],"Elephant 🐘"],
+ ["choose","🐍","Which animal moves by slithering?",["Snake 🐍","Horse 🐴","Penguin 🐧"],"Snake 🐍"],
+ ["choose","🦘","Which animal can hop with strong back legs?",["Kangaroo 🦘","Whale 🐳","Turtle 🐢"],"Kangaroo 🦘"],
+ ["choose","🐢","Which animal moves slowly?",["Tortoise 🐢","Cheetah 🐆","Eagle 🦅"],"Tortoise 🐢"],
+ ["choose","🐆","Which animal is known for running very fast?",["Cheetah 🐆","Snail 🐌","Koala 🐨"],"Cheetah 🐆"],
+ ["choose","🦇","Which animal is active at night and can fly?",["Bat 🦇","Chicken 🐔","Cow 🐮"],"Bat 🦇"],
+ ["choose","🐌","Which animal carries its home on its back?",["Snail 🐌","Dog 🐶","Lion 🦁"],"Snail 🐌"],
+ ["choose","🦜","Which animal can copy sounds and has feathers?",["Parrot 🦜","Frog 🐸","Rabbit 🐰"],"Parrot 🦜"],
+ ["choose","🐐","Which animal has horns and can live on a farm?",["Goat 🐐","Dolphin 🐬","Penguin 🐧"],"Goat 🐐"],
+ ["choose","🦊","Which animal has a bushy tail?",["Fox 🦊","Whale 🐳","Frog 🐸"],"Fox 🦊"],
+
+];
+
+const animalHabitat50=[
+ ["🐧","Where does a penguin live?",["Cold regions ❄️","Desert 🌵","Farm 🚜"],"Cold regions ❄️"],["🐪","Where does a camel live?",["Desert 🌵","Arctic ❄️","Pond 💧"],"Desert 🌵"],["🐬","Where does a dolphin live?",["Ocean 🌊","Forest 🌳","Farm 🚜"],"Ocean 🌊"],["🐒","Where does a monkey often live?",["Jungle 🌴","Ice cave 🧊","Desert 🌵"],"Jungle 🌴"],["🐄","Where does a cow live?",["Farm 🚜","Ocean 🌊","Arctic ❄️"],"Farm 🚜"],["🦁","Where does a lion often live?",["Savanna 🌾","Ocean 🌊","Snowy city 🏙️"],"Savanna 🌾"],["🐸","Where does a frog often live?",["Pond 💧","Desert 🌵","Glacier 🧊"],"Pond 💧"],["🐻‍❄️","Where does a polar bear live?",["Arctic ❄️","Jungle 🌴","Farm 🚜"],"Arctic ❄️"],["🐙","Where does an octopus live?",["Ocean 🌊","Barn 🚜","Mountain top ⛰️"],"Ocean 🌊"],["🦒","Where does a giraffe live?",["Grassland 🌾","Ocean 🌊","Arctic ❄️"],"Grassland 🌾"],["🐘","Where does an elephant need?",["Water and food 💧🌿","Snow only ❄️","Candy 🍬"],"Water and food 💧🌿"],["🐟","What does a fish need?",["Water 💧","A tree 🌳","Sandwich 🥪"],"Water 💧"],["🐝","What does a bee visit?",["Flowers 🌸","Snowmen ⛄","Cars 🚗"],"Flowers 🌸"],["🐰","What does a rabbit need?",["Food and water 🌿💧","A television 📺","Ice cream 🍦"],"Food and water 🌿💧"],["🦆","Where can ducks swim?",["Pond 💧","Desert 🌵","Volcano 🌋"],"Pond 💧"],["🐢","Where can sea turtles live?",["Ocean 🌊","Farm barn 🚜","Tree top 🌳"],"Ocean 🌊"],["🦭","What place suits a seal?",["Cold ocean 🧊🌊","Hot desert 🌵","Dry farm 🚜"],"Cold ocean 🧊🌊"],["🐪","Why is a camel suited to desert life?",["It can handle dry conditions 🌵","It needs ice all day 🧊","It lives underwater 🌊"],"It can handle dry conditions 🌵"],["🦋","Where can butterflies find food?",["Flower garden 🌸","Deep ocean 🌊","Ice cave 🧊"],"Flower garden 🌸"],["🐠","Which place is best for a tropical fish?",["Warm water 🌊","Snow field ❄️","Dry sand 🌵"],"Warm water 🌊"],["🐺","Where might a wolf live?",["Forest 🌲","Aquarium 🐠","Kitchen 🍳"],"Forest 🌲"],["🦌","Where might a deer live?",["Forest 🌲","Ocean 🌊","Desert dune 🌵"],"Forest 🌲"],["🦜","Where might a parrot live?",["Tropical forest 🌴","Arctic ice ❄️","Deep cave 🪨"],"Tropical forest 🌴"],["🦘","Where is a kangaroo native to?",["Australia 🌏","Arctic ❄️","Moon 🌙"],"Australia 🌏"],["🐨","Where does a koala live?",["Australian woodland 🌿","Ocean 🌊","Desert ice ❄️"],"Australian woodland 🌿"],["🦓","What does a zebra need?",["Grass and water 🌱💧","Candy and soda 🍬🥤","Snow only ❄️"],"Grass and water 🌱💧"],["🐊","Where can crocodiles live?",["Rivers and wetlands 💧","Ice caves 🧊","Dry rooftops 🏠"],"Rivers and wetlands 💧"],["🦈","Where does a shark live?",["Ocean 🌊","Farm 🚜","Forest 🌳"],"Ocean 🌊"],["🐋","Where does a whale live?",["Ocean 🌊","Desert 🌵","Barn 🚜"],"Ocean 🌊"],["🦅","Where can an eagle build a nest?",["High trees or cliffs ⛰️🌳","Underwater 🌊","Inside a shoe 👟"],"High trees or cliffs ⛰️🌳"],["🕷️","Where can a spider make a web?",["On a plant or corner 🌿","Under the sea 🌊","Inside a cloud ☁️"],"On a plant or corner 🌿"],["🐜","Where do ants often live?",["Colony or nest 🐜","Ocean floor 🌊","Iceberg 🧊"],"Colony or nest 🐜"],["🐝","Why do bees need flowers?",["For nectar and pollen 🌸","For snow ❄️","For rocks 🪨"],"For nectar and pollen 🌸"],["🐔","Where does a chicken usually live?",["Farm or coop 🚜","Ocean 🌊","Glacier 🧊"],"Farm or coop 🚜"],["🐑","Where does a sheep live?",["Farm and grassland 🚜🌱","Deep ocean 🌊","Ice cave 🧊"],"Farm and grassland 🚜🌱"],["🐐","Where does a goat often live?",["Farm or rocky hills 🚜⛰️","Ocean 🌊","Snow cave ❄️"],"Farm or rocky hills 🚜⛰️"],["🐧","What helps a penguin in cold water?",["Warm feathers and body fat 🪶","A wool sweater 🧥","A bicycle 🚲"],"Warm feathers and body fat 🪶"],["🐻","What does a bear need in its habitat?",["Food, water and shelter 🍓💧🏕️","A television 📺","A toy car 🚗"],"Food, water and shelter 🍓💧🏕️"],["🦒","Why does a giraffe have a long neck?",["It helps reach high leaves 🌿","It helps swim underwater 🌊","It stores toys 🧸"],"It helps reach high leaves 🌿"],["🐘","Why do elephants visit water?",["To drink and cool down 💧","To fly 🚀","To make snow ❄️"],"To drink and cool down 💧"],["🐬","Why do dolphins need the ocean?",["It is their home 🌊","They grow trees there 🌳","They build nests in sand only 🏜️"],"It is their home 🌊"],["🐒","What can a jungle give monkeys?",["Trees, fruit and shelter 🌴🍌🏠","Snow and ice ❄️","Cars and roads 🚗"],"Trees, fruit and shelter 🌴🍌🏠"],["🦁","What does a savanna give lions?",["Space, water and prey 🌾💧","Ice caves 🧊","Coral reefs 🪸"],"Space, water and prey 🌾💧"],["🐢","What should we do to help wild animals?",["Keep habitats clean 🌿","Leave rubbish everywhere 🗑️","Chase them 🚗"],"Keep habitats clean 🌿"],["🐟","What happens if a pond is dirty?",["Animals can be harmed 💧","Fish get bigger instantly 📈","The pond becomes a desert 🌵"],"Animals can be harmed 💧"],["🌳","Why are trees important to animals?",["They can provide food and shelter 🌳","They make candy 🍬","They remove all water 💧"],"They can provide food and shelter 🌳"],["🌊","Which habitat has salty water?",["Ocean 🌊","Farm 🚜","Forest 🌳"],"Ocean 🌊"],["🌵","Which habitat is very dry?",["Desert 🌵","Pond 💧","Rainforest 🌴"],"Desert 🌵"],["🌴","Which habitat is warm and rainy?",["Rainforest 🌴","Arctic ❄️","Desert 🌵"],"Rainforest 🌴"],["❄️","Which habitat is very cold?",["Arctic ❄️","Savanna 🌾","Tropical reef 🪸"],"Arctic ❄️"]
+];
+
+const science50=[
+ ["🧊","What happens to ice in a warm place?",["It melts 🫠","It grows 🌱","It flies 🚀"],"It melts 🫠"],["🪶","Which is lighter?",["Feather 🪶","Rock 🪨","Elephant 🐘"],"Feather 🪶"],["🧲","What can a magnet attract?",["Some metal 🧲","Water 💧","Sunlight ☀️"],"Some metal 🧲"],["🌱","What does a plant need to grow?",["Water 💧","A toy 🧸","A shoe 👟"],"Water 💧"],["💧","What happens when water gets very cold?",["It can freeze 🧊","It becomes fire 🔥","It becomes a rock 🪨"],"It can freeze 🧊"],["☀️","What warms Earth?",["The Sun ☀️","A snowball ❄️","A spoon 🥄"],"The Sun ☀️"],["🌧️","What falls from clouds when it rains?",["Water 💧","Sand 🏖️","Leaves 🍂"],"Water 💧"],["🌬️","Can we see air?",["Not usually 👀","Always clearly 👀","Only at night 🌙"],"Not usually 👀"],["🎈","What happens to a balloon when air goes inside?",["It gets bigger 🎈","It melts 🫠","It becomes ice 🧊"],"It gets bigger 🎈"],["🪨","Which feels hard?",["Rock 🪨","Cloud ☁️","Soap bubble 🫧"],"Rock 🪨"],["🧽","Which can soak up water?",["Sponge 🧽","Stone 🪨","Plastic ball ⚽"],"Sponge 🧽"],["🚢","Why can a boat float?",["It pushes water aside 🌊","It is always lighter than air ☁️","It has wings 🪽"],"It pushes water aside 🌊"],["🪵","Which may float in water?",["Wood 🪵","Heavy rock 🪨","Metal block 🔩"],"Wood 🪵"],["🔦","What makes a shadow?",["An object blocks light 💡","Water makes it","Sound makes it"],"An object blocks light 💡"],["🌑","When is a shadow often longest?",["When the light is low 🌅","At noon always ☀️","Inside water 💧"],"When the light is low 🌅"],["👂","Which body part helps us hear?",["Ears 👂","Eyes 👀","Feet 🦶"],"Ears 👂"],["👃","Which sense helps us smell?",["Nose 👃","Knees 🦵","Hair 💇"],"Nose 👃"],["👅","Which sense helps us taste?",["Tongue 👅","Elbow 💪","Ear 👂"],"Tongue 👅"],["✋","Which sense helps us feel texture?",["Touch ✋","Sight 👀","Hearing 👂"],"Touch ✋"],["👀","Which sense helps us see colours?",["Sight 👀","Smell 👃","Taste 👅"],"Sight 👀"],["🧊","Which is colder?",["Ice 🧊","Warm soup 🍲","Sunlight ☀️"],"Ice 🧊"],["🔥","Which is hotter?",["Fire 🔥","Ice 🧊","Snowman ⛄"],"Fire 🔥"],["🧼","Why do we wash hands?",["To remove dirt and germs 🧼","To make them glow ✨","To make them heavier"],"To remove dirt and germs 🧼"],["🦷","What helps keep teeth clean?",["Toothbrush 🪥","Paintbrush 🎨","Fork 🍴"],"Toothbrush 🪥"],["🌱","Which part of a plant grows underground?",["Roots 🌱","Flower 🌸","Fruit 🍎"],"Roots 🌱"],["🌸","Which part can make seeds?",["Flower 🌸","Rock 🪨","Cloud ☁️"],"Flower 🌸"],["☁️","What are clouds made from?",["Tiny water drops 💧","Sand grains 🏖️","Leaves 🍃"],"Tiny water drops 💧"],["🌈","What can make a rainbow appear?",["Sunlight and water 💧☀️","Only rocks 🪨","Only wind 🌬️"],"Sunlight and water 💧☀️"],["🌬️","What can wind move?",["Leaves 🍃","A mountain ⛰️","The Moon 🌙"],"Leaves 🍃"],["🧲","Do all metals stick to a magnet?",["No, only some 🧲","Yes, all","Only plastic"],"No, only some 🧲"],["⚖️","What happens when we push a toy car?",["It moves 🚗","It grows 🌱","It melts 🫠"],"It moves 🚗"],["🚪","What happens when we pull a door?",["It can open 🚪","It becomes water 💧","It flies 🚀"],"It can open 🚪"],["⚽","What can make a ball roll?",["A push 👋","A song 🎵","A colour 🎨"],"A push 👋"],["🪂","What helps a parachute slow down?",["Air 🌬️","Fire 🔥","Ice 🧊"],"Air 🌬️"],["🌙","Does the Moon make its own light?",["No, it reflects sunlight 🌙☀️","Yes, like a lamp","Only at noon"],"No, it reflects sunlight 🌙☀️"],["🌍","What is Earth?",["A planet 🌍","A star ⭐","A cloud ☁️"],"A planet 🌍"],["⭐","What is the Sun?",["A star ☀️","A planet 🪐","A moon 🌙"],"A star ☀️"],["🪐","Which is a planet?",["Saturn 🪐","Sun ☀️","Moon 🌙"],"Saturn 🪐"],["🌡️","What tool measures temperature?",["Thermometer 🌡️","Ruler 📏","Clock ⏰"],"Thermometer 🌡️"],["📏","What tool measures length?",["Ruler 📏","Spoon 🥄","Cup ☕"],"Ruler 📏"],["⏰","What does a clock measure?",["Time ⏰","Weight ⚖️","Temperature 🌡️"],"Time ⏰"],["🪴","What can happen if a plant gets no water?",["It can wilt 🥀","It grows faster","It becomes metal"],"It can wilt 🥀"],["🍎","What happens to a cut apple left in air?",["It can turn brown 🍎","It becomes ice","It starts singing"],"It can turn brown 🍎"],["🥛","Which is a liquid?",["Milk 🥛","Ice cube 🧊","Rock 🪨"],"Milk 🥛"],["🧊","Which is a solid?",["Ice 🧊","Water 💧","Juice 🧃"],"Ice 🧊"],["💨","Can air push things?",["Yes, wind can push 🌬️","No, never","Only at night"],"Yes, wind can push 🌬️"],["🌿","Which is living?",["Plant 🌿","Rock 🪨","Cup ☕"],"Plant 🌿"],["🪨","Which is non-living?",["Rock 🪨","Tree 🌳","Bird 🐦"],"Rock 🪨"],["🔍","What does a scientist do?",["Ask questions and test ideas 🔬","Only play games","Never observe"],"Ask questions and test ideas 🔬"],["🌱","Which thing can grow when it gets sunlight and water?",["A plant 🌱","A rock 🪨","A spoon 🥄"],"A plant 🌱"]
+];
+
+const scienceExplorer50=[
+ ["☀️","What gives us light in the daytime?",["The Sun ☀️","A rock 🪨","A fish 🐟"],"The Sun ☀️"],["🌧️","What do we wear when it rains?",["Raincoat 🧥","Swimsuit 🩱","Helmet 🪖"],"Raincoat 🧥"],["🌙","What do we often see at night?",["Moon 🌙","Rainbow 🌈","Sunflower 🌻"],"Moon 🌙"],["👀","Which sense helps us see?",["Eyes 👀","Ears 👂","Nose 👃"],"Eyes 👀"],["🌈","What colours can a rainbow have?",["Many colours 🌈","Only black","Only white"],"Many colours 🌈"],["☁️","What can clouds bring?",["Rain 🌧️","Sand 🏖️","Apples 🍎"],"Rain 🌧️"],["⛈️","What sound can lightning be followed by?",["Thunder ⛈️","Meow 🐱","Buzz 🐝"],"Thunder ⛈️"],["❄️","What is frozen water called?",["Ice ❄️","Steam 💨","Sand 🏖️"],"Ice ❄️"],["💨","What is moving air called?",["Wind 💨","Stone 🪨","Shadow 🌑"],"Wind 💨"],["🌦️","What is weather?",["What the air and sky are like ☀️🌧️","A kind of animal 🐶","A type of food 🍎"],"What the air and sky are like ☀️🌧️"],["🌞","Which is brighter?",["Sun ☀️","Moon 🌙","Rock 🪨"],"Sun ☀️"],["🌙","Does the Moon shine by making its own light?",["No, it reflects sunlight","Yes, like the Sun","Only when cloudy"],"No, it reflects sunlight"],["🌍","What is Earth shaped roughly like?",["A ball 🌍","A flat sheet 📄","A cube 🧊"],"A ball 🌍"],["🚀","What travels into space?",["Rocket 🚀","Submarine 🚢","Tractor 🚜"],"Rocket 🚀"],["🪐","What goes around the Sun?",["Planets 🪐","Only clouds ☁️","Only birds 🐦"],"Planets 🪐"],["🌌","What can we see in the night sky?",["Stars ⭐","Grass 🌱","Fish 🐟"],"Stars ⭐"],["☀️","Why do we have day and night?",["Earth spins 🌍","The Sun turns off","Clouds move the Earth"],"Earth spins 🌍"],["🌍","What is the Moon to Earth?",["A natural satellite 🌙","A star ⭐","A cloud ☁️"],"A natural satellite 🌙"],["🛰️","What can satellites do?",["Send information from space 📡","Grow trees 🌳","Make rainbows"],"Send information from space 📡"],["🌱","Which season can bring new plant growth?",["Spring 🌸","Only winter ❄️","Only night 🌙"],"Spring 🌸"],["🍂","What can happen to leaves in autumn?",["They can change colour 🍂","They turn into fish","They become clouds"],"They can change colour 🍂"],["❄️","Which season is usually coldest?",["Winter ❄️","Summer ☀️","Spring 🌸"],"Winter ❄️"],["☀️","Which season is usually warmest?",["Summer ☀️","Winter ❄️","Autumn 🍂"],"Summer ☀️"],["🌸","What happens to many plants in spring?",["They grow and bloom 🌸","They freeze forever","They disappear"],"They grow and bloom 🌸"],["🌊","What is a wave?",["Moving water 🌊","A mountain ⛰️","A cloud ☁️"],"Moving water 🌊"],["🏖️","What can wind move at a beach?",["Sand 🏖️","A mountain ⛰️","The Sun ☀️"],"Sand 🏖️"],["🌋","What can come from a volcano?",["Lava 🌋","Snow only ❄️","Milk 🥛"],"Lava 🌋"],["⛰️","What is a mountain?",["A high landform ⛰️","A type of cloud","A fish"],"A high landform ⛰️"],["🌳","Why are forests important?",["They provide homes for many living things 🌳","They make plastic","They stop all rain"],"They provide homes for many living things 🌳"],["🌊","Why is clean water important?",["People and animals need it 💧","It makes rocks fly","It makes the Sun colder"],"People and animals need it 💧"],["♻️","What can recycling help with?",["Reducing waste ♻️","Making more rubbish","Making oceans dirty"],"Reducing waste ♻️"],["🌱","What is one way to help plants?",["Give them water 💧","Pull all leaves off","Cover them with plastic"],"Give them water 💧"],["🐝","Why are bees helpful to plants?",["They help pollinate flowers 🌸","They eat all the roots","They make clouds"],"They help pollinate flowers 🌸"],["🦋","What starts as a caterpillar?",["Butterfly 🦋","Elephant 🐘","Fish 🐟"],"Butterfly 🦋"],["🥚","What can hatch from an egg?",["A chick 🐣","A tree 🌳","A cloud ☁️"],"A chick 🐣"],["🌳","Which part of a tree is usually underground?",["Roots 🌱","Leaves 🍃","Fruit 🍎"],"Roots 🌱"],["🌼","What do flowers attract?",["Some insects 🐝","Cars 🚗","Rocks 🪨"],"Some insects 🐝"],["🌊","What happens when rain falls into rivers?",["Water flows onward 💧","The river becomes fire","The river becomes a cloud instantly"],"Water flows onward 💧"],["☀️","What can solar energy come from?",["Sunlight ☀️","Rocks 🪨","Snowballs ❄️"],"Sunlight ☀️"],["💡","What does a lamp need to make light?",["Energy ⚡","Sand 🏖️","Leaves 🍃"],"Energy ⚡"],["🔋","What can a battery provide?",["Electrical energy 🔋","Water 💧","Grass 🌱"],"Electrical energy 🔋"],["📡","What can sound travel through?",["Air 🌬️","Only empty space","Only rocks"],"Air 🌬️"],["🎵","What makes a sound?",["Vibrations 🎵","A colour 🎨","A shadow 🌑"],"Vibrations 🎵"],["🔍","What does observing mean?",["Looking carefully 👀","Closing your eyes","Guessing without looking"],"Looking carefully 👀"],["🧪","What is a fair test?",["Change one thing and compare 🔬","Change everything at once","Do not observe"],"Change one thing and compare 🔬"],["🧠","What should a scientist do after a test?",["Look at the results 📊","Hide the results","Forget the question"],"Look at the results 📊"],["🌡️","What can a thermometer tell us?",["How hot or cold it is 🌡️","How fast we run","How loud music is"],"How hot or cold it is 🌡️"],["🧭","What can a compass help show?",["Direction 🧭","Temperature 🌡️","Weight ⚖️"],"Direction 🧭"],["🌎","Which is part of our natural world?",["Rivers 🌊","Plastic toy 🧸","Computer screen 💻"],"Rivers 🌊"],["⭐","What should a curious explorer do?",["Ask questions and investigate 🔎","Never ask questions","Always guess"],"Ask questions and investigate 🔎"]
 ];
 
 const trainingState=new Set(JSON.parse(profileGet("trainingDone","[]")));
@@ -255,6 +310,23 @@ function trainingSave(){
   const d=document.getElementById("trainingDone"), t=document.getElementById("trainingProgressText"), bar=document.getElementById("trainingProgressBar");
   if(d)d.textContent=done;if(t)t.textContent=pct+"%";if(bar)bar.style.width=pct+"%";
 }
+function seriesProgress(id,total=50){
+  const n=Math.max(0,Math.min(total,Number(profileGet("moduleProgress:"+id,0))||0));
+  return n;
+}
+function seriesSetProgress(id,n){profileSet("moduleProgress:"+id,Math.max(0,Math.min(50,n)));}
+function seriesAdvance(id,current,total=50,message="🎉 Correct!"){
+  const next=current+1;
+  seriesSetProgress(id,next);
+  const el=document.getElementById("trainFeedback"); if(el)el.textContent=message+`  ${next}/${total}`;
+  if(next>=total){localStorage.removeItem(pkey("moduleProgress:"+id));trainingComplete(id);return true;}
+  return false;
+}
+function seriesProgressMarkup(id,total=50){
+  const n=seriesProgress(id,total),pct=Math.round(n/total*100);
+  return `<div class="series-progress"><div><b>Mission Progress</b><span>${n}/${total}</span></div><div class="series-progress-bar"><span style="width:${pct}%"></span></div></div>`;
+}
+
 function trainingComplete(id){
   if(trainingState.has(id)) return;
   trainingState.add(id); trainingSave(); earnStar("⭐ Training module complete!");
@@ -364,10 +436,10 @@ function trainingTemplate(m){
   if(m.type==="memory") return head+`<div id="memoryStage"></div>`;
   if(m.type==="sort") return head+`<div id="sortStage"></div>`;
   if(m.type==="sequence") return head+`<div id="sequenceStage"></div>`;
-  if(m.type==="animal") return head+`<div id="animalStage"></div>`;
-  if(m.type==="animalhabitat") return head+`<div id="animalHabitatStage"></div>`;
-  if(m.type==="science") return head+`<div id="scienceStage"></div>`;
-  if(m.type==="scienceexplorer") return head+`<div id="scienceExplorerStage"></div>`;
+  if(m.type==="animal50") return head+`<div id="animalStage"></div>`;
+  if(m.type==="animalhabitat50") return head+`<div id="animalHabitatStage"></div>`;
+  if(m.type==="science50") return head+`<div id="scienceStage"></div>`;
+  if(m.type==="scienceexplorer50") return head+`<div id="scienceExplorerStage"></div>`;
   return head;
 }
 
@@ -432,22 +504,36 @@ function wireTraining(m){
   if(m.type==="sequence"){
     const qs=[["Wake up 🌞","Brush teeth 🪥","Eat breakfast 🍳","Go to bed 🛏️",1],["Plant seed 🌱","Water it 💧","It grows 🌿","Pick flower 🌸",2]];let i=0;const stage=document.getElementById("sequenceStage");const show=()=>{const q=qs[i%qs.length];const order=[q[0],q[1],q[2],q[3]];const correct=q[4];stage.innerHTML=`<div class="sequence-card"><p>What happens <b>first</b>?</p>${order.map((x,j)=>`<button data-c="${j===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose the first step.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Good thinking!");trainingComplete(m.id);i++;setTimeout(show,450)}else trainingFeedback("wrong","Think about what happens first.");});};show();
   }
-  if(m.type==="animal"){
-    let i=0; const stage=document.getElementById("animalStage");
-    const show=()=>{const a=m.animals[i%m.animals.length]; const opts=m.animals.map(x=>x[1]).sort(()=>Math.random()-.5); stage.innerHTML=`<div class="animal-live-card"><div class="animal-sky"><div class="animal-sun"></div><div class="animal-cloud"></div><div class="animal-ground"></div><button class="animal-character" id="animalSound" type="button" aria-label="Hear ${a[1]}">${a[0]}</button></div><div class="animal-name">${a[1]} <span>${a[3]}</span></div><div class="activity-options">${opts.map(x=>`<button data-c="${x===a[1]}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Listen to the animal sound, then choose.</p></div>`;
-      const sayAnimal=()=>{trainingClickSound();trainingSay(a[2]);};
-      document.getElementById("animalSound").onclick=sayAnimal; setTimeout(sayAnimal,160);
-      stage.querySelectorAll(".activity-options button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){b.classList.add("correct-choice");trainingFeedback("correct","🎉 Correct! It says "+a[2]);trainingComplete(m.id);i++;setTimeout(show,650)}else{b.classList.add("wrong-choice");trainingFeedback("wrong","Try again! Listen once more 👂");}});
+  if(m.type==="animal50"){
+    let i=seriesProgress(m.id,50); const stage=document.getElementById("animalStage");
+    const show=()=>{const q=animal50[i%50]; const [kind,icon,prompt,opts,ans,sound]=q; const shuffled=[...opts].sort(()=>Math.random()-.5);
+      stage.innerHTML=`${seriesProgressMarkup(m.id)}<div class="animal-live-card"><div class="animal-sky"><div class="animal-sun"></div><div class="animal-cloud"></div><div class="animal-ground"></div><button class="animal-character" id="animalSound" type="button" aria-label="Hear animal">${icon}</button></div><div class="animal-name">Animal Mission ${i+1}<span>${prompt}</span></div><div class="activity-options">${shuffled.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Listen to the animal, then choose. ${i}/50</p></div>`;
+      const sayAnimal=()=>{trainingClickSound();trainingSay(sound);};
+      document.getElementById("animalSound").onclick=sayAnimal;
+      setTimeout(sayAnimal,120);
+      stage.querySelectorAll(".activity-options button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){b.classList.add("correct-choice");trainingFeedback("correct","🎉 Correct! "+sound);i++;const finished=seriesAdvance(m.id,i-1,50,"🎉 Correct!");if(!finished)setTimeout(show,650)}else{b.classList.add("wrong-choice");trainingFeedback("wrong","Wrong. Try again! 👂");}});
     }; show();
   }
-  if(m.type==="animalhabitat"){
-    const qs=[["🐧","Penguin","❄️ Arctic",["❄️ Arctic","🌵 Desert","🌴 Jungle"]],["🐪","Camel","🌵 Desert",["🌊 Ocean","🌵 Desert","❄️ Arctic"]],["🐬","Dolphin","🌊 Ocean",["🌊 Ocean","🌳 Forest","🚜 Farm"]],["🐵","Monkey","🌴 Jungle",["🏜️ Desert","🌴 Jungle","🏠 Home"]]]; let i=0; const stage=document.getElementById("animalHabitatStage"); const show=()=>{const [a,n,h,opts]=qs[i%qs.length];stage.innerHTML=`<div class="habitat-live"><div class="habitat-animal">${a}</div><h3>Where does the ${n} live?</h3><div class="activity-options">${opts.map(x=>`<button data-c="${x===h}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose a habitat.</p></div>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Correct habitat!");trainingComplete(m.id);i++;setTimeout(show,550)}else trainingFeedback("wrong","Not quite. Try again!");});};show();
+  if(m.type==="animalhabitat50"){
+    let i=seriesProgress(m.id,50); const stage=document.getElementById("animalHabitatStage");
+    const show=()=>{const [icon,q,opts,ans]=animalHabitat50[i%50]; const shuffled=[...opts].sort(()=>Math.random()-.5);
+      stage.innerHTML=`${seriesProgressMarkup(m.id)}<div class="habitat-live"><div class="habitat-animal">${icon}</div><h3>Mission ${i+1}: ${q}</h3><div class="activity-options">${shuffled.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose the best answer. ${i}/50</p></div>`;
+      stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🎉 Correct habitat thinking!");i++;const finished=seriesAdvance(m.id,i-1,50,"🎉 Correct!");if(!finished)setTimeout(show,550)}else trainingFeedback("wrong","Wrong. Try again!");});
+    };show();
   }
-  if(m.type==="science"){
-    const qs=[["🧊","What happens to ice in a warm place?",["It melts 🫠","It grows 🌱","It flies 🚀"],"It melts 🫠"],["🪶","Which is lighter?",["Feather 🪶","Rock 🪨","Elephant 🐘"],"Feather 🪶"],["🧲","What can a magnet attract?",["Some metal 🧲","Water 💧","Sunlight ☀️"],"Some metal 🧲"],["🌱","What does a plant need to grow?",["Water 💧","A toy 🧸","A shoe 👟"],"Water 💧"]];let i=0;const stage=document.getElementById("scienceStage");const show=()=>{const [icon,q,opts,ans]=qs[i%qs.length];stage.innerHTML=`<div class="science-lab"><div class="science-object">${icon}</div><h3>${q}</h3><div class="activity-options">${opts.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Think like a little scientist!</p></div>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🔬 Correct! Great science thinking!");trainingComplete(m.id);i++;setTimeout(show,550)}else trainingFeedback("wrong","Hmm... test your idea again!");});};show();
+  if(m.type==="science50"){
+    let i=seriesProgress(m.id,50); const stage=document.getElementById("scienceStage");
+    const show=()=>{const [icon,q,opts,ans]=science50[i%50]; const shuffled=[...opts].sort(()=>Math.random()-.5);
+      stage.innerHTML=`${seriesProgressMarkup(m.id)}<div class="science-lab"><div class="science-object">${icon}</div><h3>Mission ${i+1}: ${q}</h3><div class="activity-options">${shuffled.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Think like a little scientist. ${i}/50</p></div>`;
+      stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🔬 Correct! Great science thinking!");i++;const finished=seriesAdvance(m.id,i-1,50,"🔬 Correct!");if(!finished)setTimeout(show,550)}else trainingFeedback("wrong","Wrong. Test your idea again!");});
+    };show();
   }
-  if(m.type==="scienceexplorer"){
-    const qs=[["☀️","What gives us light in the daytime?",["The Sun ☀️","A rock 🪨","A fish 🐟"],"The Sun ☀️"],["🌧️","What do we wear when it rains?",["Raincoat 🧥","Swimsuit 🩱","Helmet 🪖"],"Raincoat 🧥"],["🌙","What do we often see at night?",["Moon 🌙","Rainbow 🌈","Sunflower 🌻"],"Moon 🌙"],["👀","Which sense helps us see?",["Eyes 👀","Ears 👂","Nose 👃"],"Eyes 👀"]];let i=0;const stage=document.getElementById("scienceExplorerStage");const show=()=>{const [icon,q,opts,ans]=qs[i%qs.length];stage.innerHTML=`<div class="science-explorer"><div class="space-object">${icon}</div><h3>${q}</h3><div class="activity-options">${opts.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Explore and choose!</p></div>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🚀 Correct! Explorer level up!");trainingComplete(m.id);i++;setTimeout(show,550)}else trainingFeedback("wrong","Try another answer!");});};show();
+  if(m.type==="scienceexplorer50"){
+    let i=seriesProgress(m.id,50); const stage=document.getElementById("scienceExplorerStage");
+    const show=()=>{const [icon,q,opts,ans]=scienceExplorer50[i%50]; const shuffled=[...opts].sort(()=>Math.random()-.5);
+      stage.innerHTML=`${seriesProgressMarkup(m.id)}<div class="science-explorer"><div class="space-object">${icon}</div><h3>Mission ${i+1}: ${q}</h3><div class="activity-options">${shuffled.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Explore and choose. ${i}/50</p></div>`;
+      stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){trainingFeedback("correct","🚀 Correct! Explorer level up!");i++;const finished=seriesAdvance(m.id,i-1,50,"🚀 Correct!");if(!finished)setTimeout(show,550)}else trainingFeedback("wrong","Wrong. Try another answer!");});
+    };show();
   }
 }
 
