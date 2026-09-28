@@ -1,12 +1,13 @@
-# Project Bakawali — Monster Trainer Redesign
+# Project Bakawali — Adventure V2
 
-Kid-focused redesign for a 5-year-old who enjoys monster-training adventures.
-The visual direction is original and does not use Pokémon artwork, logos, characters, or other proprietary assets.
+A lively, game-like redesign for a young child who enjoys monster-training adventures.
 
-Includes:
-- Trainer-style homepage
-- XP/stars visual system
-- Original monster mascots
-- Learning modules: ABC, Numbers, Colours, Shapes, Quiz
-- Games/Gallery/Songs placeholders
-- Responsive mobile design
+Visual direction:
+- Adventure map
+- Mission nodes
+- Original monster buddies
+- Stars / badges / XP concepts
+- Bright game-like UI
+- No Pokémon artwork, logos, characters, or proprietary assets
+
+Learning modules remain functional: ABC, Numbers, Colours, Shapes and Challenge.

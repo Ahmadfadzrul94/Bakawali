@@ -1,106 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101a3a">
-  <title>Bakawali Trainer Academy ⚡</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#17204a">
+<title>Bakawali Adventure ⚡</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="sky-dots" aria-hidden="true"></div>
+<header class="topbar">
+  <a class="brand" href="#home" data-page="home"><span class="logo">⚡</span><span>BAKAWALI<small>ADVENTURE WORLD</small></span></a>
+  <nav>
+    <button data-page="home">🗺️ Map</button>
+    <button data-page="learning">📚 Training</button>
+    <button data-page="games">🎮 Games</button>
+    <button data-page="gallery">🏆 Collection</button>
+    <button data-page="songs">🎵 Music</button>
+  </nav>
+</header>
 
-  <header class="topbar">
-    <a class="brand" href="#home" data-page="home">
-      <span class="brand-orb">⚡</span>
-      <span>BAKAWALI<small>TRAINER ACADEMY</small></span>
-    </a>
-    <nav>
-      <button data-page="home">🏠 Home</button>
-      <button data-page="learning">📚 Learn</button>
-      <button data-page="games">🎮 Games</button>
-      <button data-page="gallery">🖼️ Gallery</button>
-      <button data-page="songs">🎵 Songs</button>
-    </nav>
-  </header>
+<main>
+<section id="home" class="page active">
+  <div class="top-status">
+    <div class="trainer">
+      <div class="avatar">🧢</div>
+      <div><small>TRAINER</small><b>Little Explorer</b></div>
+    </div>
+    <div class="stats"><span>⭐ <b>0</b> Stars</span><span>🏅 <b>0</b> Badges</span><span>⚡ LV. 1</span></div>
+  </div>
 
-  <main>
-    <section id="home" class="page active">
-      <div class="trainer-bar">
-        <div class="trainer-avatar">🧢</div>
-        <div class="trainer-copy"><small>TRAINER LEVEL 01</small><b>Ready for an adventure?</b></div>
-        <div class="xp"><span>⭐ 0 XP</span><div><i style="width:12%"></i></div></div>
-      </div>
+  <div class="adventure-world">
+    <div class="sun">☀️</div>
+    <div class="cloud cloud1">☁️</div><div class="cloud cloud2">☁️</div>
+    <div class="mountain m1"></div><div class="mountain m2"></div>
 
-      <div class="hero">
-        <div class="hero-text">
-          <div class="badge-label">⚡ BAKAWALI ADVENTURE</div>
-          <h1>Learn.<br><span>Play.</span><br>Become a <em>Trainer!</em></h1>
-          <p>Complete challenges, collect stars and discover your own little monster team.</p>
-          <button class="primary" data-page="learning">START ADVENTURE ▶</button>
-        </div>
-        <div class="monster-stage" aria-label="Original monster mascots">
-          <div class="cloud c1"></div><div class="cloud c2"></div>
-          <div class="monster monster-yellow">⚡</div>
-          <div class="monster monster-blue">💧</div>
-          <div class="monster monster-red">🔥</div>
-          <div class="ground"></div>
-        </div>
-      </div>
+    <div class="world-title">
+      <div class="tiny-title">WELCOME, TRAINER!</div>
+      <h1>BAKAWALI<br><span>ADVENTURE</span></h1>
+      <p>Explore • Learn • Play • Collect</p>
+      <button class="start-btn" data-page="learning">START ADVENTURE <span>▶</span></button>
+    </div>
 
-      <div class="section-title"><span>YOUR ADVENTURE</span><b>Choose a mission</b></div>
-      <div class="mission-grid">
-        <button class="mission learn" data-page="learning"><span>📚</span><b>Training School</b><small>ABC · Numbers · Colours</small><strong>GO ▶</strong></button>
-        <button class="mission game" data-page="games"><span>🎮</span><b>Battle Games</b><small>Play & earn XP</small><strong>PLAY ▶</strong></button>
-        <button class="mission gallery" data-page="gallery"><span>🏆</span><b>My Collection</b><small>Memories & badges</small><strong>OPEN ▶</strong></button>
-        <button class="mission songs" data-page="songs"><span>🎵</span><b>Music Camp</b><small>Sing & learn</small><strong>LISTEN ▶</strong></button>
-      </div>
+    <div class="monster buddy-a">⚡</div>
+    <div class="monster buddy-b">💧</div>
+    <div class="monster buddy-c">🔥</div>
 
-      <div class="starter-row">
-        <div><small>MEET YOUR TEAM</small><b>Pick your training buddy!</b></div>
-        <div class="starter-card"><span>⚡</span><b>Zapko</b><small>Electric</small></div>
-        <div class="starter-card"><span>💧</span><b>Bubblu</b><small>Water</small></div>
-        <div class="starter-card"><span>🔥</span><b>Flammi</b><small>Fire</small></div>
-      </div>
-    </section>
+    <div class="map-path">
+      <div class="path-line"></div>
+      <button class="map-node node1" data-page="learning"><i>🔤</i><b>ABC<br>FOREST</b><small>START</small></button>
+      <button class="map-node node2" data-page="learning"><i>🔢</i><b>NUMBER<br>MOUNTAIN</b><small>LOCKED</small></button>
+      <button class="map-node node3" data-page="learning"><i>🎨</i><b>COLOUR<br>CAVE</b><small>LOCKED</small></button>
+      <button class="map-node node4" data-page="games"><i>⚔️</i><b>BATTLE<br>ARENA</b><small>SOON</small></button>
+    </div>
 
-    <section id="learning" class="page">
-      <div class="section-heading">
-        <div class="badge-label">📚 TRAINING SCHOOL</div>
-        <h2>Choose your training</h2>
-        <p>Every lesson gives you XP. Let's power up!</p>
-      </div>
-      <div class="topic-tabs">
-        <button class="topic active" data-topic="abc">🔤 ABC</button>
-        <button class="topic" data-topic="numbers">🔢 Numbers</button>
-        <button class="topic" data-topic="colours">🎨 Colours</button>
-        <button class="topic" data-topic="shapes">🔷 Shapes</button>
-        <button class="topic" data-topic="quiz">⚔️ Challenge</button>
-      </div>
-      <div id="lesson" class="lesson"></div>
-    </section>
+    <div class="tree tree1">🌲</div><div class="tree tree2">🌳</div><div class="tree tree3">🌲</div>
+    <div class="grass"></div>
+  </div>
 
-    <section id="games" class="page">
-      <div class="section-heading"><div class="badge-label">🎮 BATTLE ZONE</div><h2>Games coming next!</h2><p>We're preparing your first monster challenges.</p></div>
-      <div class="coming-grid">
-        <div>🧠<b>Memory Battle</b><small>Find matching monsters</small></div>
-        <div>🎯<b>Number Attack</b><small>Hit the right number</small></div>
-        <div>🎨<b>Colour Power</b><small>Choose the right power</small></div>
-      </div>
-    </section>
+  <div class="quest-strip">
+    <div class="quest-icon">🎯</div>
+    <div class="quest-copy"><small>FIRST QUEST</small><b>Learn your ABCs</b><span>Complete your first lesson and earn your first ⭐</span></div>
+    <button data-page="learning">GO ▶</button>
+  </div>
 
-    <section id="gallery" class="page">
-      <div class="section-heading"><div class="badge-label">🏆 MY COLLECTION</div><h2>Memories & badges</h2><p>Your special Bakawali moments will live here.</p></div>
-      <div class="empty-state"><div>📸</div><h3>Collection is empty</h3><p>Gallery and achievement badges will be added soon.</p></div>
-    </section>
+  <div class="buddy-section">
+    <div><small>MEET THE TEAM</small><h2>Choose your adventure buddy</h2></div>
+    <button class="buddy-card yellow"><span>⚡</span><b>Zapko</b><small>Electric Buddy</small></button>
+    <button class="buddy-card blue"><span>💧</span><b>Bubblu</b><small>Water Buddy</small></button>
+    <button class="buddy-card red"><span>🔥</span><b>Flammi</b><small>Fire Buddy</small></button>
+  </div>
+</section>
 
-    <section id="songs" class="page">
-      <div class="section-heading"><div class="badge-label">🎵 MUSIC CAMP</div><h2>Ready to sing?</h2><p>We'll add songs and a kid-friendly music player here.</p></div>
-      <div class="empty-state"><div>🎧</div><h3>Music Camp is preparing</h3><p>Coming soon.</p></div>
-    </section>
-  </main>
+<section id="learning" class="page">
+  <div class="section-heading"><div class="ribbon">📚 TRAINING CAMP</div><h2>Power up your brain!</h2><p>Every lesson brings you closer to your next badge.</p></div>
+  <div class="topic-tabs">
+    <button class="topic active" data-topic="abc">🔤 ABC</button>
+    <button class="topic" data-topic="numbers">🔢 Numbers</button>
+    <button class="topic" data-topic="colours">🎨 Colours</button>
+    <button class="topic" data-topic="shapes">🔷 Shapes</button>
+    <button class="topic" data-topic="quiz">⚔️ Challenge</button>
+  </div>
+  <div id="lesson" class="lesson"></div>
+</section>
 
-  <footer>BAKAWALI TRAINER ACADEMY ⚡ Made for little adventures.</footer>
-  <script src="script.js"></script>
+<section id="games" class="page">
+  <div class="section-heading"><div class="ribbon">🎮 BATTLE ARENA</div><h2>Mini games are coming!</h2><p>Win stars, collect badges and unlock new places.</p></div>
+  <div class="game-grid">
+    <div class="game-card"><span>🧠</span><b>Memory Quest</b><small>Find the matching buddies.</small><em>COMING SOON</em></div>
+    <div class="game-card"><span>🎯</span><b>Number Attack</b><small>Hit the correct number.</small><em>COMING SOON</em></div>
+    <div class="game-card"><span>🎨</span><b>Colour Power</b><small>Choose the right power.</small><em>COMING SOON</em></div>
+  </div>
+</section>
+
+<section id="gallery" class="page">
+  <div class="section-heading"><div class="ribbon">🏆 COLLECTION</div><h2>Treasure & Memories</h2><p>Your badges, artwork and special memories.</p></div>
+  <div class="empty-state"><div>🎒</div><h3>Your backpack is empty!</h3><p>Badges and private family memories will appear here.</p></div>
+</section>
+
+<section id="songs" class="page">
+  <div class="section-heading"><div class="ribbon">🎵 MUSIC CAMP</div><h2>Sing on the adventure!</h2><p>Fun songs and learning music will live here.</p></div>
+  <div class="empty-state"><div>🎧</div><h3>Music Camp is getting ready</h3><p>Coming soon.</p></div>
+</section>
+</main>
+
+<footer>🌟 BAKAWALI ADVENTURE WORLD · A little world made with love 🌟</footer>
+<script src="script.js"></script>
 </body>
 </html>
