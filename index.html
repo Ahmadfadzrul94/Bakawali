@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" id="bakawaliHtml">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -20,7 +20,7 @@
     <button data-go="collection">🏆 <span>Collection</span></button>
     <button data-go="music">🎵 <span>Music</span></button>
   </nav>
-  <button id="profileButton" class="profile-mini" type="button"><span data-profile-avatar>🧢</span><span data-profile-name>Little Explorer</span><b>⌄</b></button>
+  <div class="topbar-actions"><button id="languageToggle" class="language-toggle" type="button" aria-label="Change language">🇬🇧 EN</button><button id="profileButton" class="profile-mini" type="button"><span data-profile-avatar>🧢</span><span data-profile-name>Little Explorer</span><b>⌄</b></button></div>
 </header>
 
 <div class="audio-bar" aria-label="Bakawali audio controls">
@@ -113,12 +113,12 @@
   </div>
 
   <div class="training-filters" role="tablist" aria-label="Learning subjects">
-    <button class="training-filter active" data-filter="all">🌟 All</button>
-    <button class="training-filter" data-filter="language">🔤 Language</button>
-    <button class="training-filter" data-filter="math">🔢 Math</button>
-    <button class="training-filter" data-filter="world">🌍 Explore</button>
-    <button class="training-filter" data-filter="animal">🐾 Animals</button>
-    <button class="training-filter" data-filter="science">🔬 Science</button>
+    <button class="training-filter active" data-filter="all" data-i18n="filterAll">🌟 All</button>
+    <button class="training-filter" data-filter="language" data-i18n="filterLanguage">🔤 Language</button>
+    <button class="training-filter" data-filter="math" data-i18n="filterMath">🔢 Math</button>
+    <button class="training-filter" data-filter="world" data-i18n="filterExplore">🌍 Explore</button>
+    <button class="training-filter" data-filter="animal" data-i18n="filterAnimals">🐾 Animals</button>
+    <button class="training-filter" data-filter="science" data-i18n="filterScience">🔬 Science</button>
   </div>
 
   <div id="trainingModules" class="training-modules"></div>
