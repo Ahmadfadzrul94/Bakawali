@@ -74,15 +74,41 @@
 </section>
 
 <section id="training" class="page">
-  <div class="page-head"><div><span class="eyebrow">TRAINING CAMP</span><h2>Learn & Level Up</h2><p>Every lesson earns stars. Finish a lesson to unlock your next badge.</p></div><div class="level-pill">⚡ LEVEL <b id="level2">1</b></div></div>
-  <div class="lesson-grid">
-    <article class="lesson"><div class="lesson-art abc">ABC</div><h3>ABC Forest</h3><p>Meet letters from A to Z and hear their sounds.</p><button class="primary small" data-lesson="abc">TRAIN +1 ⭐</button></article>
-    <article class="lesson"><div class="lesson-art nums">1 2 3</div><h3>Number Mountain</h3><p>Count from 1 to 10 with friendly challenges.</p><button class="primary small" data-lesson="numbers">TRAIN +1 ⭐</button></article>
-    <article class="lesson"><div class="lesson-art colors">● ■ ▲</div><h3>Colour Cave</h3><p>Explore colours and shapes hidden in the cave.</p><button class="primary small" data-lesson="colours">TRAIN +1 ⭐</button></article>
+  <div class="page-head">
+    <div><span class="eyebrow">TRAINING CAMP</span><h2>Learn & Level Up</h2><p>Pick a lesson, listen, practise, then earn your star.</p></div>
+    <div class="level-pill">⚡ LEVEL <b id="level2">1</b></div>
   </div>
+
+  <div class="learn-tabs">
+    <button class="learn-tab active" data-tab="abc-tab">🔤 ABC</button>
+    <button class="learn-tab" data-tab="number-tab">🔢 Numbers</button>
+    <button class="learn-tab" data-tab="colour-tab">🎨 Colours</button>
+    <button class="learn-tab" data-tab="shape-tab">🔷 Shapes</button>
+  </div>
+
+  <div id="abc-tab" class="learn-panel active">
+    <div class="panel-intro"><div><span class="eyebrow">ABC FOREST</span><h3>Letter Explorer</h3><p>Tap a letter to hear it.</p></div><div class="progress-mini"><span id="abcProgress">0/26</span></div></div>
+    <div class="letter-grid" id="letterGrid"></div>
+  </div>
+
+  <div id="number-tab" class="learn-panel">
+    <div class="panel-intro"><div><span class="eyebrow">NUMBER MOUNTAIN</span><h3>Counting Trail</h3><p>Tap a number to hear it and practise counting.</p></div><div class="progress-mini"><span id="numberProgress">0/10</span></div></div>
+    <div class="number-grid" id="numberGrid"></div>
+  </div>
+
+  <div id="colour-tab" class="learn-panel">
+    <div class="panel-intro"><div><span class="eyebrow">COLOUR CAVE</span><h3>Colour Hunt</h3><p>Tap a colour to hear its name.</p></div></div>
+    <div class="colour-grid" id="colourGrid"></div>
+  </div>
+
+  <div id="shape-tab" class="learn-panel">
+    <div class="panel-intro"><div><span class="eyebrow">SHAPE CAVE</span><h3>Shape Explorer</h3><p>Tap a shape to hear its name.</p></div></div>
+    <div class="shape-grid" id="shapeGrid"></div>
+  </div>
+
   <div class="mini-quiz">
-    <div><span class="eyebrow">QUICK CHECK</span><h3>What comes after 4?</h3></div>
-    <div class="quiz-options"><button data-answer="5">5</button><button data-answer="6">6</button><button data-answer="3">3</button></div>
+    <div><span class="eyebrow">QUICK CHECK</span><h3 id="quizQuestion">What comes after 4?</h3></div>
+    <div class="quiz-options" id="quizOptions"><button data-answer="5">5</button><button data-answer="6">6</button><button data-answer="3">3</button></div>
     <p id="quiz-result"></p>
   </div>
 </section>
