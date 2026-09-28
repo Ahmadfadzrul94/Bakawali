@@ -274,20 +274,46 @@
   </div>
 </section>
 
-<section id="collection" class="page">
-  <div class="page-head"><div><span class="eyebrow">MONSTER COLLECTION</span><h2>Bakawali Buddies</h2><p>Original creatures from the Bakawali world.</p></div></div>
-  <div class="monster-grid">
-    <article class="buddy-card electric"><div class="buddy-art zap-preview"><span class="ear e1"></span><span class="ear e2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="bolt"></span></div><div><span class="type">ELECTRIC</span><h3>Zapko</h3><p>A speedy little spark who loves letter hunts.</p></div></article>
-    <article class="buddy-card water"><div class="buddy-art bub-preview"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div><div><span class="type">WATER</span><h3>Bubblu</h3><p>A cheerful swimmer who counts bubbles all day.</p></div></article>
-    <article class="buddy-card fire"><div class="buddy-art flam-preview"><span class="flame f1"></span><span class="flame f2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span></div><div><span class="type">FIRE</span><h3>Flammi</h3><p>A warm-hearted buddy who lights up colour caves.</p></div></article>
+<section id="collection" class="page collection-page">
+  <div class="page-head collection-head">
+    <div>
+      <span class="eyebrow">MONSTER COLLECTION</span>
+      <h2>Bakawali Buddies</h2>
+      <p>Meet your original Bakawali creatures, then spend some time with your favourite buddy.</p>
+    </div>
+    <div class="collection-count">🐾 <b>3</b> Buddies</div>
+  </div>
+
+  <div class="monster-grid buddy-gallery">
+    <article class="buddy-card electric">
+      <div class="buddy-art zap-preview"><span class="ear e1"></span><span class="ear e2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="bolt"></span></div>
+      <div class="buddy-card-copy"><span class="type">ELECTRIC</span><h3>Zapko</h3><p>A speedy little spark who loves letter hunts.</p><button class="buddy-select" data-buddy="zapko">Choose Zapko →</button></div>
+    </article>
+    <article class="buddy-card water">
+      <div class="buddy-art bub-preview"><span class="fin"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span><span class="belly"></span></div>
+      <div class="buddy-card-copy"><span class="type">WATER</span><h3>Bubblu</h3><p>A cheerful swimmer who counts bubbles all day.</p><button class="buddy-select" data-buddy="bubblu">Choose Bubblu →</button></div>
+    </article>
+    <article class="buddy-card fire">
+      <div class="buddy-art flam-preview"><span class="flame f1"></span><span class="flame f2"></span><span class="eye left"></span><span class="eye right"></span><span class="mouth"></span></div>
+      <div class="buddy-card-copy"><span class="type">FIRE</span><h3>Flammi</h3><p>A warm-hearted buddy who lights up colour caves.</p><button class="buddy-select" data-buddy="flammi">Choose Flammi →</button></div>
+    </article>
   </div>
 
   <div class="buddy-camp-card">
-    <div class="buddy-camp-head"><div><span class="eyebrow">BUDDY CAMP</span><h3 id="buddyCampTitle">⚡ Zapko is waiting!</h3><p id="buddyCampDesc">Choose an action and make your buddy happy.</p></div><div class="buddy-mood" id="buddyMood">😊</div></div>
-    <div class="buddy-picker" id="buddyPicker"><button class="active" data-buddy="zapko">⚡ Zapko</button><button data-buddy="bubblu">💧 Bubblu</button><button data-buddy="flammi">🔥 Flammi</button></div>
-    <div class="buddy-stats"><span>❤️ Happiness <b id="buddyHappy">80</b></span><span>⚡ Energy <b id="buddyEnergy">80</b></span></div>
-    <div class="buddy-actions"><button class="secondary" data-buddy-action="feed">🍎 Feed</button><button class="secondary" data-buddy-action="play">🎾 Play</button><button class="secondary" data-buddy-action="rest">💤 Rest</button><button class="primary" id="buddyTalk">🎤 Talk</button></div>
-    <p class="buddy-response" id="buddyResponse">Zapko: "Let's explore!"</p>
+    <div class="buddy-camp-head">
+      <div><span class="eyebrow">BUDDY CAMP</span><h3 id="buddyCampTitle">⚡ Zapko is waiting!</h3><p id="buddyCampDesc">Choose an action and make your buddy happy.</p></div>
+      <div class="buddy-mood" id="buddyMood">😊</div>
+    </div>
+    <div class="buddy-camp-body">
+      <div class="buddy-camp-left">
+        <div class="buddy-picker" id="buddyPicker"><button class="active" data-buddy="zapko">⚡ Zapko</button><button data-buddy="bubblu">💧 Bubblu</button><button data-buddy="flammi">🔥 Flammi</button></div>
+        <div class="buddy-stats"><span>❤️ Happiness <b id="buddyHappy">80</b></span><span>⚡ Energy <b id="buddyEnergy">80</b></span></div>
+      </div>
+      <div class="buddy-camp-right">
+        <div class="buddy-actions"><button class="secondary" data-buddy-action="feed">🍎 <span>Feed</span></button><button class="secondary" data-buddy-action="play">🎾 <span>Play</span></button><button class="secondary" data-buddy-action="rest">💤 <span>Rest</span></button><button class="primary" id="buddyTalk">🎤 <span>Talk</span></button></div>
+        <p class="buddy-response" id="buddyResponse">Zapko: "Let's explore!"</p>
+      </div>
+    </div>
   </div>
 
   <div class="badge-room-card">
