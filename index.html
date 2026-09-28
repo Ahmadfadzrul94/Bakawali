@@ -75,41 +75,33 @@
 
 <section id="training" class="page">
   <div class="page-head">
-    <div><span class="eyebrow">TRAINING CAMP</span><h2>Learn & Level Up</h2><p>Pick a lesson, listen, practise, then earn your star.</p></div>
-    <div class="level-pill">⚡ LEVEL <b id="level2">1</b></div>
+    <div>
+      <span class="eyebrow">TRAINING CAMP</span>
+      <h2>Learn & Level Up</h2>
+      <p>20 learning adventures made for a curious 5-year-old explorer.</p>
+    </div>
+    <div class="level-pill">📚 <b id="trainingDone">0</b>/20 COMPLETE</div>
   </div>
 
-  <div class="learn-tabs">
-    <button class="learn-tab active" data-tab="abc-tab">🔤 ABC</button>
-    <button class="learn-tab" data-tab="number-tab">🔢 Numbers</button>
-    <button class="learn-tab" data-tab="colour-tab">🎨 Colours</button>
-    <button class="learn-tab" data-tab="shape-tab">🔷 Shapes</button>
+  <div class="training-progress">
+    <div class="training-progress-top"><b>Adventure Progress</b><span id="trainingProgressText">0%</span></div>
+    <div class="training-progress-bar"><span id="trainingProgressBar"></span></div>
   </div>
 
-  <div id="abc-tab" class="learn-panel active">
-    <div class="panel-intro"><div><span class="eyebrow">ABC FOREST</span><h3>Letter Explorer</h3><p>Tap a letter to hear it.</p></div><div class="progress-mini"><span id="abcProgress">0/26</span></div></div>
-    <div class="letter-grid" id="letterGrid"></div>
+  <div class="training-filters" role="tablist" aria-label="Learning subjects">
+    <button class="training-filter active" data-filter="all">🌟 All</button>
+    <button class="training-filter" data-filter="language">🔤 Language</button>
+    <button class="training-filter" data-filter="math">🔢 Math</button>
+    <button class="training-filter" data-filter="world">🌍 Explore</button>
   </div>
 
-  <div id="number-tab" class="learn-panel">
-    <div class="panel-intro"><div><span class="eyebrow">NUMBER MOUNTAIN</span><h3>Counting Trail</h3><p>Tap a number to hear it and practise counting.</p></div><div class="progress-mini"><span id="numberProgress">0/10</span></div></div>
-    <div class="number-grid" id="numberGrid"></div>
-  </div>
+  <div id="trainingModules" class="training-modules"></div>
 
-  <div id="colour-tab" class="learn-panel">
-    <div class="panel-intro"><div><span class="eyebrow">COLOUR CAVE</span><h3>Colour Hunt</h3><p>Tap a colour to hear its name.</p></div></div>
-    <div class="colour-grid" id="colourGrid"></div>
-  </div>
-
-  <div id="shape-tab" class="learn-panel">
-    <div class="panel-intro"><div><span class="eyebrow">SHAPE CAVE</span><h3>Shape Explorer</h3><p>Tap a shape to hear its name.</p></div></div>
-    <div class="shape-grid" id="shapeGrid"></div>
-  </div>
-
-  <div class="mini-quiz">
-    <div><span class="eyebrow">QUICK CHECK</span><h3 id="quizQuestion">What comes after 4?</h3></div>
-    <div class="quiz-options" id="quizOptions"><button data-answer="5">5</button><button data-answer="6">6</button><button data-answer="3">3</button></div>
-    <p id="quiz-result"></p>
+  <div id="trainingModal" class="training-modal hidden" aria-hidden="true">
+    <div class="training-modal-card">
+      <button id="trainingClose" class="training-close" aria-label="Close">×</button>
+      <div id="trainingModalBody"></div>
+    </div>
   </div>
 </section>
 

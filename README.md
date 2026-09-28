@@ -1,1 +1,2 @@
-# Bakawali Games V3 Fixed - Astraea is now inside the Games page.
+# Bakawali Training V2
+20 interactive learning modules for age 5, preserving the 4-game arcade.

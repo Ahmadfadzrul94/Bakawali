@@ -100,9 +100,177 @@ document.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",(
   out.innerHTML="<div>"+q+"<br><button class='primary small' style='margin-top:12px' onclick='earnStar(\"🏆 Game cleared!\")'>CLAIM STAR</button></div>";
 }));
 document.querySelectorAll("[data-speak]").forEach(b=>b.addEventListener("click",()=>{speak(b.dataset.speak);earnStar("🎵 Music time!")}));
-buildLearning();nextQuiz();renderStats();
+renderStats();
 
 
+
+/* =========================
+   TRAINING CAMP V2 — 20 MODULES
+   ========================= */
+const trainingModules=[
+  {id:"abc",cat:"language",icon:"🔤",title:"ABC Explorer",desc:"Learn A–Z and hear each letter.",type:"flash",
+   items:[["A","Apple 🍎"],["B","Ball ⚽"],["C","Cat 🐱"],["D","Dog 🐶"],["E","Egg 🥚"],["F","Fish 🐟"],["G","Grapes 🍇"],["H","Hat 🧢"],["I","Ice cream 🍦"],["J","Juice 🧃"],["K","Kite 🪁"],["L","Lion 🦁"],["M","Moon 🌙"],["N","Nose 👃"],["O","Orange 🍊"],["P","Pig 🐷"],["Q","Queen 👑"],["R","Rabbit 🐰"],["S","Sun ☀️"],["T","Tree 🌳"],["U","Umbrella ☂️"],["V","Van 🚐"],["W","Whale 🐳"],["X","X-ray 🩻"],["Y","Yo-yo 🪀"],["Z","Zebra 🦓"]]},
+  {id:"phonics",cat:"language",icon:"🔊",title:"Phonics Fun",desc:"Hear the first sound in simple words.",type:"quiz",
+   q:"What sound starts the word “sun”?",a:["S","M","T"],correct:"S"},
+  {id:"spelling",cat:"language",icon:"✏️",title:"Spell It!",desc:"Build simple 3-letter words.",type:"spell",words:[["CAT","🐱"],["DOG","🐶"],["SUN","☀️"],["BUS","🚌"],["HAT","🧢"]]},
+  {id:"sight",cat:"language",icon:"👀",title:"Sight Words",desc:"Recognise common early reading words.",type:"flash",items:[["I","I"],["AM","am"],["THE","the"],["A","a"],["MY","my"],["SEE","see"],["CAN","can"],["LIKE","like"]]},
+  {id:"reading",cat:"language",icon:"📖",title:"Read a Sentence",desc:"Read short sentences with picture clues.",type:"reading",
+   items:[["I see a cat.","🐱"],["The sun is hot.","☀️"],["I like my dog.","🐶"],["The fish can swim.","🐟"],["This is a big bus.","🚌"]]},
+  {id:"story",cat:"language",icon:"📚",title:"Mini Story",desc:"Read a tiny story and answer a question.",type:"quiz",
+   q:"Milo has a red ball. What colour is Milo's ball?",a:["Red 🔴","Blue 🔵","Green 🟢"],correct:"Red 🔴"},
+  {id:"picture",cat:"language",icon:"🖼️",title:"Match Picture",desc:"Choose the word that matches the picture.",type:"picture",
+   items:[["🐱",["CAT","DOG","SUN"],"CAT"],["🍎",["APPLE","BALL","FISH"],"APPLE"],["🚗",["CAR","HAT","TREE"],"CAR"],["🐟",["FISH","BIRD","BUS"],"FISH"],["🌳",["TREE","MOON","CAT"],"TREE"]]},
+  {id:"wordmatch",cat:"language",icon:"🧩",title:"Word & Picture Match",desc:"Match a simple word to its picture.",type:"picture",
+   items:[["DOG",["🐶","🐱","🐟"],"🐶"],["SUN",["🌙","☀️","⭐"],"☀️"],["BALL",["🍎","⚽","🧢"],"⚽"],["BIRD",["🐶","🐦","🐰"],"🐦"]]},
+  {id:"count",cat:"math",icon:"🔢",title:"Count the Objects",desc:"Count up to 10.",type:"count"},
+  {id:"addition",cat:"math",icon:"➕",title:"Easy Addition",desc:"Add small numbers together.",type:"math",ops:[
+    [2,1,3],[1,3,4],[2,2,4],[3,2,5],[4,1,5],[2,3,5]
+  ]},
+  {id:"subtraction",cat:"math",icon:"➖",title:"Easy Subtraction",desc:"Take away small numbers.",type:"sub"},
+  {id:"shapes",cat:"math",icon:"🔷",title:"Shape Detective",desc:"Find circles, squares, triangles and more.",type:"quiz",
+   q:"Which shape has 3 sides?",a:["🔵 Circle","🔺 Triangle","⬛ Square"],correct:"🔺 Triangle"},
+  {id:"patterns",cat:"math",icon:"🟡",title:"Pattern Power",desc:"Find what comes next.",type:"pattern"},
+  {id:"compare",cat:"math",icon:"⚖️",title:"More or Less",desc:"Compare groups and numbers.",type:"compare"},
+  {id:"time",cat:"math",icon:"⏰",title:"Time Explorer",desc:"Learn simple o'clock times.",type:"quiz",
+   q:"Which clock shows 3 o'clock?",a:["🕒 3:00","🕕 6:00","🕘 9:00"],correct:"🕒 3:00"},
+  {id:"money",cat:"math",icon:"🪙",title:"Little Shop",desc:"Count simple coins and prices.",type:"money"},
+  {id:"memory",cat:"world",icon:"🧠",title:"Memory Match",desc:"Remember and match picture pairs.",type:"memory"},
+  {id:"sorting",cat:"world",icon:"📦",title:"Sort It Out",desc:"Put things into the right group.",type:"sort"},
+  {id:"sequence",cat:"world",icon:"🔁",title:"What Happens Next?",desc:"Put a simple action in order.",type:"sequence"},
+  {id:"animals",cat:"world",icon:"🐾",title:"Animal Detective",desc:"Match animals with where they belong.",type:"quiz",
+   q:"Which animal lives in water?",a:["🐟 Fish","🐱 Cat","🐰 Rabbit"],correct:"🐟 Fish"}
+];
+
+const trainingState=new Set(JSON.parse(localStorage.getItem("bakawaliTrainingDone")||"[]"));
+let currentTraining=null;
+
+function trainingSave(){
+  localStorage.setItem("bakawaliTrainingDone",JSON.stringify([...trainingState]));
+  const done=trainingState.size, pct=Math.round(done/trainingModules.length*100);
+  const d=document.getElementById("trainingDone"), t=document.getElementById("trainingProgressText"), bar=document.getElementById("trainingProgressBar");
+  if(d)d.textContent=done;if(t)t.textContent=pct+"%";if(bar)bar.style.width=pct+"%";
+}
+function trainingComplete(id){
+  if(trainingState.has(id)) return;
+  trainingState.add(id); trainingSave(); earnStar("⭐ Training module complete!");
+  renderTrainingCards();
+}
+function renderTrainingCards(filter="all"){
+  const wrap=document.getElementById("trainingModules"); if(!wrap)return;
+  wrap.innerHTML=trainingModules.filter(m=>filter==="all"||m.cat===filter).map((m,i)=>{
+    const done=trainingState.has(m.id);
+    return `<button class="training-module ${done?"complete":""}" data-training-id="${m.id}">
+      <span class="module-icon">${m.icon}</span><span class="module-copy"><b>${m.title}</b><small>${m.desc}</small></span>
+      <span class="module-status">${done?"✓ DONE":"PLAY →"}</span>
+    </button>`;
+  }).join("");
+  wrap.querySelectorAll("[data-training-id]").forEach(b=>b.addEventListener("click",()=>openTraining(b.dataset.trainingId)));
+}
+function speakTraining(text){speak(text);}
+
+function openTraining(id){
+  currentTraining=trainingModules.find(m=>m.id===id); if(!currentTraining)return;
+  const modal=document.getElementById("trainingModal"), body=document.getElementById("trainingModalBody");
+  modal.classList.remove("hidden");modal.setAttribute("aria-hidden","false");
+  body.innerHTML=trainingTemplate(currentTraining);
+  wireTraining(currentTraining);
+}
+function closeTraining(){
+  const m=document.getElementById("trainingModal");if(m){m.classList.add("hidden");m.setAttribute("aria-hidden","true");}
+  currentTraining=null;
+}
+function trainingTemplate(m){
+  const head=`<div class="training-activity-head"><span class="eyebrow">${m.cat==="language"?"LANGUAGE":m.cat==="math"?"MATH":"EXPLORER"}</span><h3>${m.icon} ${m.title}</h3><p>${m.desc}</p></div>`;
+  if(m.type==="flash") return head+`<div class="flash-stage" id="trainingStage"></div><div class="activity-actions"><button class="secondary" id="trainHear">🔊 Hear</button><button class="primary" id="trainNext">NEXT →</button></div>`;
+  if(m.type==="quiz") return head+`<div class="activity-question">${m.q}</div><div class="activity-options">${m.a.map(x=>`<button data-correct="${x===m.correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback"></p>`;
+  if(m.type==="spell") return head+`<div id="spellStage"></div>`;
+  if(m.type==="reading") return head+`<div class="reading-stage" id="readingStage"></div><div class="activity-actions"><button class="secondary" id="readHear">🔊 Read aloud</button><button class="primary" id="readNext">NEXT →</button></div>`;
+  if(m.type==="picture") return head+`<div id="pictureStage"></div>`;
+  if(m.type==="count") return head+`<div id="countStage"></div>`;
+  if(m.type==="math") return head+`<div id="mathStage"></div>`;
+  if(m.type==="sub") return head+`<div id="subStage"></div>`;
+  if(m.type==="pattern") return head+`<div id="patternStage"></div>`;
+  if(m.type==="compare") return head+`<div id="compareStage"></div>`;
+  if(m.type==="money") return head+`<div id="moneyStage"></div>`;
+  if(m.type==="memory") return head+`<div id="memoryStage"></div>`;
+  if(m.type==="sort") return head+`<div id="sortStage"></div>`;
+  if(m.type==="sequence") return head+`<div id="sequenceStage"></div>`;
+  return head;
+}
+
+function doneActivity(id,feedback="🎉 Great job!"){
+  const el=document.getElementById("trainFeedback");if(el)el.textContent=feedback;
+  trainingComplete(id);
+}
+
+function wireTraining(m){
+  if(m.type==="flash"){
+    let i=0;const stage=document.getElementById("trainingStage");
+    const show=()=>{const [a,b]=m.items[i%m.items.length];stage.innerHTML=`<div class="flash-card"><strong>${a}</strong><span>${b}</span></div>`;speakTraining(a+" "+b);};
+    show();document.getElementById("trainHear").onclick=show;
+    document.getElementById("trainNext").onclick=()=>{i++;if(i>=m.items.length){doneActivity(m.id,"🌟 Module complete!");i=0;}show();};
+  }
+  if(m.type==="quiz"){
+    document.querySelectorAll(".activity-options button").forEach(b=>b.onclick=()=>{
+      const good=b.dataset.correct==="true";const f=document.getElementById("trainFeedback");
+      if(good){f.textContent="🎉 Correct!";trainingComplete(m.id);document.querySelectorAll(".activity-options button").forEach(x=>x.disabled=true);}
+      else f.textContent="Try again! 💪";
+    });
+  }
+  if(m.type==="spell"){
+    let i=0;const stage=document.getElementById("spellStage");
+    const show=()=>{const [word,pic]=m.words[i%m.words.length];const shuffled=[...word].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="spell-picture">${pic}</div><div class="spell-word">${word.split("").map(()=>"_").join(" ")}</div><div class="letter-choices">${shuffled.map((l,j)=>`<button data-letter="${l}" data-pos="${j}">${l}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Spell the word: ${word}</p>`;let chosen=[];stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{chosen.push(b.dataset.letter);b.disabled=true;const target=word.slice(0,chosen.length);if(chosen.join("")!==target){document.getElementById("trainFeedback").textContent="Try the next letter carefully!";chosen=[];stage.querySelectorAll("button").forEach(x=>x.disabled=false);}else{document.getElementById("trainFeedback").textContent=chosen.length===word.length?"🎉 Spelled correctly!":"Good!";if(chosen.length===word.length){trainingComplete(m.id);setTimeout(()=>{i++;show()},500);}}});};show();
+  }
+  if(m.type==="reading"){
+    let i=0;const stage=document.getElementById("readingStage");
+    const show=()=>{const [s,p]=m.items[i%m.items.length];stage.innerHTML=`<div class="reading-card"><span>${p}</span><strong>${s}</strong></div>`;};
+    show();document.getElementById("readHear").onclick=()=>{const [s]=m.items[i%m.items.length];speakTraining(s);};
+    document.getElementById("readNext").onclick=()=>{i++;if(i>=m.items.length){trainingComplete(m.id,"📖 Reading complete!");i=0;}show();};
+  }
+  if(m.type==="picture"){
+    let i=0;const stage=document.getElementById("pictureStage");
+    const show=()=>{const item=m.items[i%m.items.length];const [pic,opts,correct]=item;stage.innerHTML=`<div class="picture-big">${pic}</div><div class="activity-options">${opts.map(x=>`<button data-choice="${x}" data-correct="${x===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Which word matches?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.correct==="true"){b.disabled=true;document.getElementById("trainFeedback").textContent="🎉 Match!";trainingComplete(m.id);setTimeout(()=>{i++;show()},450)}else document.getElementById("trainFeedback").textContent="Look again 👀";});};show();
+  }
+  if(m.type==="count"){
+    let n=3;const stage=document.getElementById("countStage");const show=()=>{const opts=[n,n+1,n-1].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="count-objects">${"🍎".repeat(n)}</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===n}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">How many apples?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);n=n>=9?3:n+1;setTimeout(show,500)}else document.getElementById("trainFeedback").textContent="Count again ☝️";});};show();
+  }
+  if(m.type==="math"){
+    let i=0;const stage=document.getElementById("mathStage");const show=()=>{const [a,b,c]=m.ops[i%m.ops.length];const opts=[c,c+1,Math.max(0,c-1)].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="math-question">${a} + ${b} = ?</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===c}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Add the numbers.</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Try counting the two groups.";});};show();
+  }
+  if(m.type==="sub"){
+    const qs=[[5,2,3],[6,1,5],[7,3,4],[8,2,6],[5,1,4]];let i=0;const stage=document.getElementById("subStage");const show=()=>{const [a,b,c]=qs[i%qs.length];const opts=[c,c+1,Math.max(0,c-1)].sort(()=>Math.random()-.5);stage.innerHTML=`<div class="math-question">${a} − ${b} = ?</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===c}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Take away ${b}.</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Try again!";});};show();
+  }
+  if(m.type==="pattern"){
+    const patterns=[["🔴","🔵","🔴","🔵",["🔴","🟢","🟡"],"🔴"],["⭐","🌙","⭐","🌙",["⭐","☀️","🌙"],"⭐"],["🍎","🍎","🍌","🍎","🍎",["🍌","🍎","🍊"],"🍌"]];let i=0;const stage=document.getElementById("patternStage");const show=()=>{const p=patterns[i%patterns.length];const answer=p[p.length-1];const opts=p[p.length-2];stage.innerHTML=`<div class="pattern-row">${p.slice(0,-2).map(x=>`<span>${x}</span>`).join("")}<span>❓</span></div><div class="activity-options">${opts.map(x=>`<button data-c="${x===answer}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">What comes next?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Pattern complete!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Look at the repeating pattern.";});};show();
+  }
+  if(m.type==="compare"){
+    let i=0;const qs=[[3,5],[7,4],[2,6],[8,8]];const stage=document.getElementById("compareStage");const show=()=>{const [a,b]=qs[i%qs.length];const ans=a===b?"SAME":a>b?"LEFT":"RIGHT";stage.innerHTML=`<div class="compare-row"><span>${"🍎".repeat(a)}</span><span>${"🍎".repeat(b)}</span></div><div class="activity-options"><button data-a="LEFT">👈 More</button><button data-a="SAME">⚖️ Same</button><button data-a="RIGHT">More 👉</button></div><p class="activity-feedback" id="trainFeedback">Which side has more?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.a===ans){document.getElementById("trainFeedback").textContent="🎉 Correct!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Count the apples again.";});};show();
+  }
+  if(m.type==="money"){
+    const qs=[[1,2,3],[2,2,4],[1,1,2],[2,1,3]];let i=0;const stage=document.getElementById("moneyStage");const show=()=>{const [a,b,c]=qs[i%qs.length];stage.innerHTML=`<div class="money-coins">🪙 ${a} + 🪙 ${b} = ?</div><div class="activity-options">${[c,c+1,c+2].map(x=>`<button data-c="${x===c}">${x} coins</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">How many coins?</p>`;stage.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{if(btn.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🪙 Great counting!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Count the coins.";});};show();
+  }
+  if(m.type==="memory"){
+    const cards=["🐶","🐱","🐟","🐶","🐱","🐟"].sort(()=>Math.random()-.5);let open=[],matched=0;const stage=document.getElementById("memoryStage");const draw=()=>{stage.innerHTML=`<div class="memory-grid">${cards.map((x,i)=>`<button class="memory-card" data-i="${i}">${open.includes(i)?"<span>"+x+"</span>":"❔"}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Find all 3 pairs.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.i);if(open.includes(i))return;open.push(i);draw();if(open.length===2){const [a,c]=open;if(cards[a]===cards[c]){matched++;document.getElementById("trainFeedback").textContent="🎉 Pair!";open=[];if(matched===3)trainingComplete(m.id,"🧠 Memory master!");}else setTimeout(()=>{open=[];draw()},650)}});};draw();
+  }
+  if(m.type==="sort"){
+    const qs=[["🍎","FRUIT",["FRUIT","ANIMAL","TOY"]],["🐶","ANIMAL",["TOY","ANIMAL","FRUIT"]],["⚽","TOY",["FRUIT","TOY","ANIMAL"]]];let i=0;const stage=document.getElementById("sortStage");const show=()=>{const [item,ans,opts]=qs[i%qs.length];stage.innerHTML=`<div class="sort-item">${item}</div><div class="activity-options">${opts.map(x=>`<button data-c="${x===ans}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Where does it belong?</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Sorted!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Try another group.";});};show();
+  }
+  if(m.type==="sequence"){
+    const qs=[["Wake up 🌞","Brush teeth 🪥","Eat breakfast 🍳","Go to bed 🛏️",1],["Plant seed 🌱","Water it 💧","It grows 🌿","Pick flower 🌸",2]];let i=0;const stage=document.getElementById("sequenceStage");const show=()=>{const q=qs[i%qs.length];const order=[q[0],q[1],q[2],q[3]];const correct=q[4];stage.innerHTML=`<div class="sequence-card"><p>What happens <b>first</b>?</p>${order.map((x,j)=>`<button data-c="${j===correct}">${x}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback">Choose the first step.</p>`;stage.querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.c==="true"){document.getElementById("trainFeedback").textContent="🎉 Good thinking!";trainingComplete(m.id);i++;setTimeout(show,450)}else document.getElementById("trainFeedback").textContent="Think about what happens first.";});};show();
+  }
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const modal=document.getElementById("trainingModal");
+  const close=document.getElementById("trainingClose");
+  if(close)close.onclick=closeTraining;
+  if(modal)modal.addEventListener("click",e=>{if(e.target===modal)closeTraining();});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.classList.contains("hidden"))closeTraining();});
+  document.querySelectorAll(".training-filter").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll(".training-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderTrainingCards(b.dataset.filter);
+  }));
+  renderTrainingCards("all");trainingSave();
+});
 document.addEventListener("DOMContentLoaded",()=>{
   const safe=(fn)=>{try{fn()}catch(e){console.error("Bakawali game error:",e)}};
 
