@@ -217,6 +217,7 @@ function setBakawaliLanguage(lang){
   window.renderBadges?.();
   window.bakawaliRefreshStory?.();
   window.bakawaliUpdateParent?.();
+  window.bakawaliRefreshGallery?.();
 }
 function updateMusicLanguage(){
   const frame=document.getElementById("bakawaliYoutubePlayer");
@@ -1255,6 +1256,87 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   function loadCreator(){const stage=document.getElementById('creatorStage');if(!stage)return;stage.querySelectorAll('.creator-sticker').forEach(x=>x.remove());let arr=[];try{arr=JSON.parse(profileGet('creatorScene','[]'))||[]}catch(e){};arr.forEach(x=>addSticker(x.emoji,x.left,x.top,false));}
   function addSticker(emoji,left,top,save=true){const stage=document.getElementById('creatorStage');if(!stage)return;const el=document.createElement('button');el.type='button';el.className='creator-sticker';el.textContent=emoji;el.style.left=left||((15+Math.random()*70)+'%');el.style.top=top||((12+Math.random()*62)+'%');el.title='Drag me';stage.appendChild(el);let ox=0,oy=0,drag=false;el.addEventListener('pointerdown',e=>{drag=true;ox=e.clientX-el.getBoundingClientRect().left;oy=e.clientY-el.getBoundingClientRect().top;el.setPointerCapture?.(e.pointerId)});el.addEventListener('pointermove',e=>{if(!drag)return;const r=stage.getBoundingClientRect();el.style.left=Math.max(2,Math.min(94,((e.clientX-r.left-ox)/r.width)*100))+'%';el.style.top=Math.max(3,Math.min(78,((e.clientY-r.top-oy)/r.height)*100))+'%'});el.addEventListener('pointerup',()=>{drag=false;if(save)saveCreator()});el.addEventListener('click',()=>{if(!drag)el.classList.add('creator-pop');setTimeout(()=>el.classList.remove('creator-pop'),250)});}
 
+  // Photo Gallery — IndexedDB local image storage
+  const galleryDBName='BakawaliGalleryDB', galleryDBVersion=1, galleryStore='photos';
+  let galleryDBPromise=null, galleryObjectUrls=[];
+  const galleryText={
+    en:{title:'📸 Bakawali Gallery',desc:'Save your favourite Bakawali memories on this device.',add:'ADD PHOTOS',uploadTitle:'Add your photos',uploadText:'Choose photos from your phone or computer. You can add more than one.',storage:'🔒 Photos are saved privately in this browser on this device.',choose:'CHOOSE PHOTOS',clear:'CLEAR ALL',emptyTitle:'Your gallery is waiting!',emptyText:'Add a photo from your adventures and it will appear here.',hint:' · Add memories to your adventure book.',photos:'photos',photo:'photo',delete:'Delete',open:'Open photo',confirm:'Delete all saved photos from this device?',saved:'📸 Photos saved!',tooLarge:'This image is too large. Please choose an image under 12 MB.',imageOnly:'Please choose image files only.',failed:'Could not save this photo. Please try another image.'},
+    ms:{title:'📸 Galeri Bakawali',desc:'Simpan kenangan Bakawali kegemaran anda pada peranti ini.',add:'TAMBAH GAMBAR',uploadTitle:'Tambah gambar anda',uploadText:'Pilih gambar dari telefon atau komputer. Anda boleh tambah lebih daripada satu.',storage:'🔒 Gambar disimpan secara peribadi dalam pelayar pada peranti ini.',choose:'PILIH GAMBAR',clear:'PADAM SEMUA',emptyTitle:'Galeri anda sedang menunggu!',emptyText:'Tambah gambar daripada pengembaraan anda dan ia akan muncul di sini.',hint:' · Tambah kenangan ke dalam buku pengembaraan.',photos:'gambar',photo:'gambar',delete:'Padam',open:'Buka gambar',confirm:'Padam semua gambar yang disimpan pada peranti ini?',saved:'📸 Gambar disimpan!',tooLarge:'Gambar ini terlalu besar. Pilih gambar di bawah 12 MB.',imageOnly:'Sila pilih fail gambar sahaja.',failed:'Gambar tidak dapat disimpan. Cuba gambar lain.'}
+  };
+  function galleryOpenDB(){
+    if(galleryDBPromise)return galleryDBPromise;
+    galleryDBPromise=new Promise((resolve,reject)=>{
+      if(!window.indexedDB){reject(new Error('IndexedDB unavailable'));return;}
+      const req=indexedDB.open(galleryDBName,galleryDBVersion);
+      req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(galleryStore)){const store=db.createObjectStore(galleryStore,{keyPath:'id',autoIncrement:true});store.createIndex('createdAt','createdAt');}};
+      req.onsuccess=()=>resolve(req.result); req.onerror=()=>reject(req.error||new Error('Database error'));
+    });
+    return galleryDBPromise;
+  }
+  async function galleryTx(mode,fn){const db=await galleryOpenDB();return new Promise((resolve,reject)=>{const tx=db.transaction(galleryStore,mode),store=tx.objectStore(galleryStore);let result;try{result=fn(store);}catch(e){reject(e);return;}tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error||new Error('Storage error'));tx.onabort=()=>reject(tx.error||new Error('Storage aborted'));});}
+  async function galleryGetAll(){const db=await galleryOpenDB();return new Promise((resolve,reject)=>{const req=db.transaction(galleryStore,'readonly').objectStore(galleryStore).getAll();req.onsuccess=()=>resolve((req.result||[]).sort((a,b)=>b.createdAt-a.createdAt));req.onerror=()=>reject(req.error);});}
+  async function galleryAdd(record){return galleryTx('readwrite',store=>store.add(record));}
+  async function galleryRemove(id){return galleryTx('readwrite',store=>store.delete(id));}
+  async function galleryClear(){return galleryTx('readwrite',store=>store.clear());}
+  function galleryDate(ts){return new Date(ts).toLocaleDateString(bakawaliLanguage==='ms'?'ms-MY':'en-MY',{day:'numeric',month:'short',year:'numeric'});}
+  function galleryEsc(s){return String(s||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+  async function galleryResize(file){
+    const maxSide=1600, quality=.82;
+    let bmp=null;
+    try{if('createImageBitmap' in window)bmp=await createImageBitmap(file);}catch(e){}
+    let w=0,h=0,source=bmp;
+    if(source){w=source.width;h=source.height;}else{source=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=URL.createObjectURL(file);});w=source.naturalWidth;h=source.naturalHeight;}
+    const scale=Math.min(1,maxSide/Math.max(w,h));
+    const outW=Math.max(1,Math.round(w*scale)),outH=Math.max(1,Math.round(h*scale));
+    const canvas=document.createElement('canvas');canvas.width=outW;canvas.height=outH;const ctx=canvas.getContext('2d');ctx.drawImage(source,0,0,outW,outH);if(bmp?.close)bmp.close();
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Compression failed')),'image/jpeg',quality));
+    return {blob,width:outW,height:outH};
+  }
+  function gallerySetBusy(busy){const btn=document.getElementById('galleryAddBtn'),choose=document.getElementById('galleryChooseBtn');if(btn)btn.disabled=busy;if(choose)choose.disabled=busy;if(btn)btn.querySelector('span').textContent=busy?(bakawaliLanguage==='ms'?'MENYIMPAN...':'SAVING...'):galleryText[bakawaliLanguage].add;}
+  async function galleryHandleFiles(files){
+    const list=[...files].filter(f=>f.type.startsWith('image/'));
+    if(!list.length){if(files.length)alert(galleryText[bakawaliLanguage].imageOnly);return;}
+    gallerySetBusy(true);
+    let saved=0;
+    try{
+      for(const file of list){
+        if(file.size>12*1024*1024){alert(`${file.name}: ${galleryText[bakawaliLanguage].tooLarge}`);continue;}
+        try{const optimized=await galleryResize(file);await galleryAdd({name:file.name,caption:file.name.replace(/\.[^.]+$/,''),blob:optimized.blob,width:optimized.width,height:optimized.height,createdAt:Date.now()+(saved||0)});saved++;}
+        catch(e){console.error(e);alert(`${file.name}: ${galleryText[bakawaliLanguage].failed}`);}
+      }
+    }finally{gallerySetBusy(false);if(saved){toast.textContent=galleryText[bakawaliLanguage].saved;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1600);}await renderGallery();}
+  }
+  async function renderGallery(){
+    const grid=document.getElementById('galleryGrid'),empty=document.getElementById('galleryEmpty'),countEl=document.getElementById('galleryCount'),clear=document.getElementById('galleryClearAll');if(!grid)return;
+    galleryObjectUrls.forEach(u=>URL.revokeObjectURL(u));galleryObjectUrls=[];grid.innerHTML='';
+    let items=[];try{items=await galleryGetAll();}catch(e){console.error(e);items=[];}
+    const tx=galleryText[bakawaliLanguage];
+    if(countEl)countEl.textContent=`${items.length} ${items.length===1?tx.photo:tx.photos}`;
+    if(clear)clear.hidden=!items.length;
+    if(empty)empty.classList.toggle('hidden',!!items.length);
+    items.forEach(item=>{
+      const url=URL.createObjectURL(item.blob);galleryObjectUrls.push(url);
+      const card=document.createElement('article');card.className='photo-card';
+      card.innerHTML=`<div class="photo-thumb"><img src="${url}" alt="${galleryEsc(item.caption)}" loading="lazy"><button class="photo-open" type="button" title="${tx.open}" aria-label="${tx.open}">↗</button></div><div class="photo-info"><div class="photo-caption" title="${galleryEsc(item.caption)}">${galleryEsc(item.caption)}</div><div class="photo-meta">${galleryDate(item.createdAt)}</div><button class="photo-delete" type="button">🗑️ ${tx.delete}</button></div>`;
+      card.querySelector('.photo-thumb').addEventListener('click',e=>{if(e.target.closest('.photo-open')||e.currentTarget===e.target||e.target.tagName==='IMG')openGalleryLightbox(url,item.caption);});
+      card.querySelector('.photo-open').onclick=e=>{e.stopPropagation();openGalleryLightbox(url,item.caption);};
+      card.querySelector('.photo-delete').onclick=async()=>{await galleryRemove(item.id);await renderGallery();};
+      grid.appendChild(card);
+    });
+  }
+  function openGalleryLightbox(url,caption){const box=document.getElementById('galleryLightbox'),img=document.getElementById('galleryLightboxImg'),cap=document.getElementById('galleryLightboxCaption');if(!box||!img)return;img.src=url;cap.textContent=caption||'';box.classList.remove('hidden');box.setAttribute('aria-hidden','false');}
+  function closeGalleryLightbox(){const box=document.getElementById('galleryLightbox');if(!box)return;box.classList.add('hidden');box.setAttribute('aria-hidden','true');}
+  function renderGalleryLabels(){const t=galleryText[bakawaliLanguage];const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};set('galleryTitle',t.title);set('galleryDesc',t.desc);set('galleryAddLabel',t.add);set('galleryUploadTitle',t.uploadTitle);set('galleryUploadText',t.uploadText);set('galleryStorageNote',t.storage);set('galleryChooseLabel',t.choose);set('galleryClearLabel',t.clear);set('galleryEmptyTitle',t.emptyTitle);set('galleryEmptyText',t.emptyText);set('galleryHint',t.hint);}
+  window.bakawaliRefreshGallery=()=>{renderGalleryLabels();renderGallery();};
+  async function initGallery(){
+    const input=document.getElementById('galleryFileInput'),add=document.getElementById('galleryAddBtn'),choose=document.getElementById('galleryChooseBtn'),drop=document.getElementById('galleryDropZone'),clear=document.getElementById('galleryClearAll'),box=document.getElementById('galleryLightbox'),close=document.getElementById('galleryLightboxClose');if(!input)return;
+    renderGalleryLabels();renderGallery();
+    add.onclick=()=>input.click();choose.onclick=()=>input.click();input.addEventListener('change',()=>{if(input.files?.length)galleryHandleFiles(input.files);input.value='';});
+    ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag-over');}));['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag-over');}));drop.addEventListener('drop',e=>{if(e.dataTransfer.files?.length)galleryHandleFiles(e.dataTransfer.files);});
+    clear.onclick=async()=>{if(!confirm(galleryText[bakawaliLanguage].confirm))return;await galleryClear();await renderGallery();};
+    close.onclick=closeGalleryLightbox;box.addEventListener('click',e=>{if(e.target===box)closeGalleryLightbox();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGalleryLightbox();});
+  }
+
   // Parent corner
   function updateParentCorner(){const s=document.getElementById('parentStars'),b=document.getElementById('parentBadges'),t=document.getElementById('parentTraining'),g=document.getElementById('parentGames');if(!s)return;s.textContent=stars;b.textContent=badgeDefs.filter(x=>x.ok()).length;t.textContent=Math.round(trainingState.size/trainingModules.length*100)+'%';g.textContent=Number(profileGet('gamesPlayed',0));const cats={language:['abc','phonics','spelling','sight','reading','story','picture','wordmatch'],math:['count','addition','subtraction','shapes','patterns','compare','time','money'],animal:['animals','animalhabitat'],science:['scientist','scienceexplorer']};Object.entries(cats).forEach(([k,ids])=>{const el=document.getElementById('skill'+k.charAt(0).toUpperCase()+k.slice(1));if(el){const pct=Math.round(ids.filter(x=>trainingState.has(x)).length/ids.length*100);el.textContent=pct+'%';el.style.width=pct+'%';}});}
 
@@ -1262,7 +1344,7 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   window.bakawaliUpdateParent=updateParentCorner;
 
   function init(){
-    renderDailyQuest();renderBadges();renderBuddy();renderStory();loadCreator();updateParentCorner();
+    renderDailyQuest();renderBadges();renderBuddy();renderStory();loadCreator();updateParentCorner();initGallery();
     document.querySelectorAll('[data-buddy]').forEach(b=>b.addEventListener('click',()=>{activeBuddy=b.dataset.buddy;profileSet('activeBuddy',activeBuddy);renderBuddy();}));
     document.querySelectorAll('[data-buddy-action]').forEach(b=>b.addEventListener('click',()=>buddyAction(b.dataset.buddyAction)));
     const talk=document.getElementById('buddyTalk');if(talk)talk.onclick=talkBuddy;

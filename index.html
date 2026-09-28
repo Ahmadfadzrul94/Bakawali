@@ -18,6 +18,7 @@
     <button data-go="training">📚 <span>Training</span></button>
     <button data-go="games">🎮 <span>Games</span></button>
     <button data-go="collection">🏆 <span>Collection</span></button>
+    <button data-go="gallery">🖼️ <span>Gallery</span></button>
     <button data-go="music">🎵 <span>Music</span></button>
   </nav>
   <div class="topbar-actions"><button id="profileButton" class="profile-mini" type="button"><span data-profile-avatar>🧢</span><span data-profile-name>Little Explorer</span><b>⌄</b></button></div>
@@ -322,6 +323,40 @@
   </div>
 </section>
 
+<section id="gallery" class="page gallery-page">
+  <div class="page-head gallery-head">
+    <div>
+      <span class="eyebrow">PHOTO GALLERY</span>
+      <h2 id="galleryTitle">📸 Bakawali Gallery</h2>
+      <p id="galleryDesc">Save your favourite Bakawali memories on this device.</p>
+    </div>
+    <button class="primary gallery-upload-top" id="galleryAddBtn" type="button">＋ <span id="galleryAddLabel">ADD PHOTOS</span></button>
+  </div>
+
+  <div class="gallery-upload-card" id="galleryDropZone">
+    <div class="gallery-upload-icon">📷</div>
+    <div class="gallery-upload-copy">
+      <h3 id="galleryUploadTitle">Add your photos</h3>
+      <p id="galleryUploadText">Choose photos from your phone or computer. You can add more than one.</p>
+      <small id="galleryStorageNote">🔒 Photos are saved privately in this browser on this device.</small>
+    </div>
+    <button class="secondary" id="galleryChooseBtn" type="button">📁 <span id="galleryChooseLabel">CHOOSE PHOTOS</span></button>
+    <input id="galleryFileInput" type="file" accept="image/*" multiple hidden>
+  </div>
+
+  <div class="gallery-toolbar">
+    <div><b id="galleryCount">0 photos</b><span id="galleryHint"> · Add memories to your adventure book.</span></div>
+    <button class="secondary gallery-clear-all" id="galleryClearAll" type="button" hidden>🗑️ <span id="galleryClearLabel">CLEAR ALL</span></button>
+  </div>
+
+  <div id="galleryGrid" class="photo-grid"></div>
+  <div id="galleryEmpty" class="gallery-empty">
+    <div>🖼️</div>
+    <h3 id="galleryEmptyTitle">Your gallery is waiting!</h3>
+    <p id="galleryEmptyText">Add a photo from your adventures and it will appear here.</p>
+  </div>
+</section>
+
 <section id="story" class="page">
   <div class="page-head"><div><span class="eyebrow">STORY QUEST</span><h2>📖 Bakawali and the Lost Star</h2><p>Choose what the explorer should do next.</p></div><button class="secondary" data-go="home">← BACK TO MAP</button></div>
   <div class="story-card" id="storyCard">
@@ -365,6 +400,13 @@
 </section>
 </main>
 
+<div id="galleryLightbox" class="gallery-lightbox hidden" aria-hidden="true">
+  <div class="gallery-lightbox-inner">
+    <button id="galleryLightboxClose" class="gallery-lightbox-close" type="button" aria-label="Close">×</button>
+    <img id="galleryLightboxImg" alt="Bakawali memory">
+    <div id="galleryLightboxCaption" class="gallery-lightbox-caption"></div>
+  </div>
+</div>
 <div id="parentModal" class="profile-modal hidden" aria-hidden="true">
   <div class="profile-modal-card parent-card">
     <button id="parentClose" class="training-close" type="button" aria-label="Close">×</button>
@@ -376,6 +418,6 @@
 </div>
 <div id="toast" class="toast">⭐ Quest complete!</div>
 <footer>BAKAWALI ADVENTURE WORLD · Made for little explorers</footer>
-<script src="script.js?v=50"></script>
+<script src="script.js?v=52"></script>
 </body>
 </html>

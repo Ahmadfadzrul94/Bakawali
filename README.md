@@ -1,10 +1,22 @@
-# Bakawali Training V3.1 — Interaction Feedback Fix
+# Bakawali V5.2 — Photo Gallery
 
-This update improves the Training activity interaction feedback.
+This update adds a private photo gallery for Bakawali.
 
-## Spell It! improvements
-- Clicked letters visibly turn selected/green.
-- The word display updates immediately (D _ _ → D O _ → D O G).
-- Wrong letters visibly shake/turn red and remain available to retry.
-- Correct completion gives the existing Correct sound/voice feedback.
-- Existing Animal/Science 50-activity modules, profile system, games, Astraea, and audio controls are retained.
+## Photo Gallery
+- Upload multiple images from phone or computer.
+- Photos are resized in the browser for easier storage.
+- Images are stored locally in the browser using IndexedDB.
+- Photos remain after refreshing/reopening the site on the same browser/device.
+- Open photos in a larger lightbox view.
+- Delete individual photos or clear the whole gallery.
+- No photo is uploaded to a server by this feature.
+- Drag and drop is supported on desktop.
+
+## Existing features retained
+- Adventure Map
+- Training and EN/BM language switch
+- Sky Runner, Spin Quest, Block Drop and Astraea
+- Buddy Camp and Collection
+- Daily Quest, Badges, Story Quest and Little Creator
+- YouTube Music Player
+- Parent Corner
