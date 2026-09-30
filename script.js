@@ -187,8 +187,8 @@ function localizeActivityText(s){
   return exact[s]||bmAnimalPhrase(s);
 }
 function localizeChoice(s){return localizeActivityText(s);}
-function moduleTitle(m){return bakawaliLanguage==='ms'?(MODULE_BM[m.id]?.[0]||m.title):m.title;}
-function moduleDesc(m){return bakawaliLanguage==='ms'?(MODULE_BM[m.id]?.[1]||m.desc):m.desc;}
+function moduleTitle(m){return bakawaliLanguage==='ms'?(m.bmTitle||MODULE_BM[m.id]?.[0]||m.title):m.title;}
+function moduleDesc(m){return bakawaliLanguage==='ms'?(m.bmDesc||MODULE_BM[m.id]?.[1]||m.desc):m.desc;}
 function updateLanguageUI(){
   const isMs=bakawaliLanguage==='ms';
   document.documentElement.lang=isMs?'ms':'en';
@@ -302,31 +302,115 @@ document.addEventListener('click',e=>{
 /* =========================
    TRAINING CAMP V2 — 20 MODULES
    ========================= */
-const trainingModules=[
-  {id:"abc",cat:"language",icon:"🔤",title:"ABC Explorer",desc:"Learn A–Z and hear each letter.",type:"flash",items:[["A","Apple 🍎"],["B","Ball ⚽"],["C","Cat 🐱"],["D","Dog 🐶"],["E","Egg 🥚"],["F","Fish 🐟"],["G","Grapes 🍇"],["H","Hat 🧢"],["I","Ice cream 🍦"],["J","Juice 🧃"],["K","Kite 🪁"],["L","Lion 🦁"],["M","Moon 🌙"],["N","Nose 👃"],["O","Orange 🍊"],["P","Pig 🐷"],["Q","Queen 👑"],["R","Rabbit 🐰"],["S","Sun ☀️"],["T","Tree 🌳"],["U","Umbrella ☂️"],["V","Van 🚐"],["W","Whale 🐳"],["X","X-ray 🩻"],["Y","Yo-yo 🪀"],["Z","Zebra 🦓"]]},
-  {id:"phonics",cat:"language",icon:"🔊",title:"Phonics Fun",desc:"Hear the first sound in simple words.",type:"quiz",q:"What sound starts the word “sun”?",a:["S","M","T"],correct:"S"},
-  {id:"spelling",cat:"language",icon:"✏️",title:"Spell It!",desc:"Build simple 3-letter words.",type:"spell",words:[["CAT","🐱"],["DOG","🐶"],["SUN","☀️"],["BUS","🚌"],["HAT","🧢"]]},
-  {id:"sight",cat:"language",icon:"👀",title:"Sight Words",desc:"Recognise common early reading words.",type:"flash",items:[["I","I"],["AM","am"],["THE","the"],["A","a"],["MY","my"],["SEE","see"],["CAN","can"],["LIKE","like"]]},
-  {id:"reading",cat:"language",icon:"📖",title:"Read a Sentence",desc:"Read short sentences with picture clues.",type:"reading",items:[["I see a cat.","🐱"],["The sun is hot.","☀️"],["I like my dog.","🐶"],["The fish can swim.","🐟"],["This is a big bus.","🚌"]]},
-  {id:"story",cat:"language",icon:"📚",title:"Mini Story",desc:"Read a tiny story and answer a question.",type:"quiz",q:"Milo has a red ball. What colour is Milo's ball?",a:["Red 🔴","Blue 🔵","Green 🟢"],correct:"Red 🔴"},
-  {id:"picture",cat:"language",icon:"🖼️",title:"Match Picture",desc:"Choose the word that matches the picture.",type:"picture",items:[["🐱",["CAT","DOG","SUN"],"CAT"],["🍎",["APPLE","BALL","FISH"],"APPLE"],["🚗",["CAR","HAT","TREE"],"CAR"],["🐟",["FISH","BIRD","BUS"],"FISH"],["🌳",["TREE","MOON","CAT"],"TREE"]]},
-  {id:"wordmatch",cat:"language",icon:"🧩",title:"Word & Picture Match",desc:"Match a simple word to its picture.",type:"picture",items:[["DOG",["🐶","🐱","🐟"],"🐶"],["SUN",["🌙","☀️","⭐"],"☀️"],["BALL",["🍎","⚽","🧢"],"⚽"],["BIRD",["🐶","🐦","🐰"],"🐦"]]},
-  {id:"count",cat:"math",icon:"🔢",title:"Count the Objects",desc:"Count up to 10.",type:"count"},
-  {id:"addition",cat:"math",icon:"➕",title:"Easy Addition",desc:"Add small numbers together.",type:"math",ops:[[2,1,3],[1,3,4],[2,2,4],[3,2,5],[4,1,5],[2,3,5]]},
-  {id:"subtraction",cat:"math",icon:"➖",title:"Easy Subtraction",desc:"Take away small numbers.",type:"sub"},
-  {id:"shapes",cat:"math",icon:"🔷",title:"Shape Detective",desc:"Find circles, squares, triangles and more.",type:"quiz",q:"Which shape has 3 sides?",a:["🔵 Circle","🔺 Triangle","⬛ Square"],correct:"🔺 Triangle"},
-  {id:"patterns",cat:"math",icon:"🟡",title:"Pattern Power",desc:"Find what comes next.",type:"pattern"},
-  {id:"compare",cat:"math",icon:"⚖️",title:"More or Less",desc:"Compare groups and numbers.",type:"compare"},
-  {id:"time",cat:"math",icon:"⏰",title:"Time Explorer",desc:"Learn simple o'clock times.",type:"quiz",q:"Which clock shows 3 o'clock?",a:["🕒 3:00","🕕 6:00","🕘 9:00"],correct:"🕒 3:00"},
-  {id:"money",cat:"math",icon:"🪙",title:"Little Shop",desc:"Count simple coins and prices.",type:"money"},
-  {id:"memory",cat:"world",icon:"🧠",title:"Memory Match",desc:"Remember and match picture pairs.",type:"memory"},
-  {id:"sorting",cat:"world",icon:"📦",title:"Sort It Out",desc:"Put things into the right group.",type:"sort"},
-  {id:"sequence",cat:"world",icon:"🔁",title:"What Happens Next?",desc:"Put a simple action in order.",type:"sequence"},
-  {id:"animals",cat:"animal",icon:"🐾",title:"Animal Detective",desc:"50 animal challenges: sounds, bodies, food, movement and homes.",type:"animal50"},
-  {id:"animalhabitat",cat:"animal",icon:"🌎",title:"Animal Habitat",desc:"50 habitat missions: where animals live and what they need.",type:"animalhabitat50"},
-  {id:"scientist",cat:"science",icon:"🔬",title:"Little Scientist",desc:"50 mini experiments about everyday science.",type:"science50"},
-  {id:"scienceexplorer",cat:"science",icon:"🚀",title:"Science Explorer",desc:"50 discovery missions about weather, space, light and nature.",type:"scienceexplorer50"},
-  {id:"dragmatch",cat:"world",icon:"🖐️",title:"Drag & Match",desc:"Drag objects to the place where they belong.",type:"dragmatch"}
+let trainingModules=[
+  {id:"abc",cat:"language",icon:"🔤",title:"ABC Explorer",desc:"Learn letters and sounds.",bmTitle:"Jelajah Abjad",bmDesc:"Belajar huruf dan bunyi.",kind:"letters",mode:"tap"},
+  {id:"phonics",cat:"language",icon:"🔊",title:"Phonics Fun",desc:"Hear beginning sounds.",bmTitle:"Seronok Fonik",bmDesc:"Dengar bunyi awal perkataan.",kind:"phonics",mode:"tap"},
+  {id:"spelling",cat:"language",icon:"✏️",title:"Spell It!",desc:"Build simple words.",bmTitle:"Eja Perkataan",bmDesc:"Bina perkataan mudah.",kind:"spelling",mode:"tap"},
+  {id:"sight",cat:"language",icon:"👀",title:"Sight Words",desc:"Recognise common words.",bmTitle:"Perkataan Mudah",bmDesc:"Kenali perkataan biasa.",kind:"sight",mode:"tap"},
+  {id:"reading",cat:"language",icon:"📖",title:"Read & Choose",desc:"Read short sentences.",bmTitle:"Baca & Pilih",bmDesc:"Baca ayat pendek.",kind:"reading",mode:"tap"},
+  {id:"story",cat:"language",icon:"📚",title:"Mini Story Quest",desc:"Read, listen and answer.",bmTitle:"Misi Cerita Mini",bmDesc:"Baca, dengar dan jawab.",kind:"story",mode:"tap"},
+  {id:"picture",cat:"language",icon:"🖼️",title:"Picture Words",desc:"Match words to pictures.",bmTitle:"Perkataan Bergambar",bmDesc:"Padankan perkataan dengan gambar.",kind:"picture",mode:"tap"},
+  {id:"wordmatch",cat:"language",icon:"🧩",title:"Word & Picture Match",desc:"Match words and pictures.",bmTitle:"Padan Perkataan & Gambar",bmDesc:"Padankan perkataan dan gambar.",kind:"picture",mode:"drag"},
+  {id:"rhymes",cat:"language",icon:"🎵",title:"Rhyme Time",desc:"Find words that rhyme.",bmTitle:"Masa Berima",bmDesc:"Cari perkataan yang berima.",kind:"rhyme",mode:"tap"},
+  {id:"syllables",cat:"language",icon:"👏",title:"Syllable Clap",desc:"Count word beats.",bmTitle:"Tepuk Suku Kata",bmDesc:"Kira suku kata.",kind:"syllable",mode:"tap"},
+  {id:"vowels",cat:"language",icon:"🔤",title:"Vowel Hunt",desc:"Find A, E, I, O and U.",bmTitle:"Cari Vokal",bmDesc:"Cari A, E, I, O dan U.",kind:"vowels",mode:"tap"},
+  {id:"sounds",cat:"language",icon:"🎧",title:"Sound Detective",desc:"Listen for the right sound.",bmTitle:"Detektif Bunyi",bmDesc:"Dengar dan pilih bunyi yang betul.",kind:"phonics",mode:"tap"},
+  {id:"opposites",cat:"language",icon:"↔️",title:"Opposite World",desc:"Find the opposite word.",bmTitle:"Dunia Lawan",bmDesc:"Cari perkataan berlawanan.",kind:"opposites",mode:"tap"},
+  {id:"actionwords",cat:"language",icon:"🏃",title:"Action Words",desc:"Spot words that show action.",bmTitle:"Kata Kerja",bmDesc:"Kenal pasti perkataan yang menunjukkan tindakan.",kind:"action",mode:"tap"},
+  {id:"describing",cat:"language",icon:"🎨",title:"Describing Words",desc:"Choose the word that describes.",bmTitle:"Kata Sifat",bmDesc:"Pilih perkataan yang menerangkan.",kind:"describing",mode:"tap"},
+  {id:"sentencebuilder",cat:"language",icon:"🧱",title:"Sentence Builder",desc:"Put simple words together.",bmTitle:"Bina Ayat",bmDesc:"Susun perkataan menjadi ayat mudah.",kind:"sentence",mode:"sequence"},
+  {id:"plurals",cat:"language",icon:"🍎🍎",title:"One or Many",desc:"Learn simple plurals.",bmTitle:"Satu atau Banyak",bmDesc:"Belajar bentuk satu dan banyak.",kind:"plural",mode:"tap"},
+  {id:"beginningending",cat:"language",icon:"🔎",title:"First & Last Sound",desc:"Find beginning and ending sounds.",bmTitle:"Bunyi Awal & Akhir",bmDesc:"Cari bunyi awal dan akhir.",kind:"phonics",mode:"tap"},
+  {id:"readpicture",cat:"language",icon:"👓",title:"Picture Reading",desc:"Read clues from pictures.",bmTitle:"Baca Gambar",bmDesc:"Baca petunjuk daripada gambar.",kind:"reading",mode:"tap"},
+  {id:"wordfamilies",cat:"language",icon:"🏠",title:"Word Family Fun",desc:"Explore simple word families.",bmTitle:"Keluarga Perkataan",bmDesc:"Terokai keluarga perkataan mudah.",kind:"wordfamily",mode:"tap"},
+
+  {id:"count",cat:"math",icon:"🔢",title:"Count the Objects",desc:"Count up to 10.",bmTitle:"Kira Objek",bmDesc:"Kira sehingga 10.",kind:"count",mode:"count"},
+  {id:"count20",cat:"math",icon:"🔟",title:"Number Trail 1–20",desc:"Count along a number trail.",bmTitle:"Laluan Nombor 1–20",bmDesc:"Kira sepanjang laluan nombor.",kind:"count20",mode:"count"},
+  {id:"numbermatch",cat:"math",icon:"🎯",title:"Number Match",desc:"Match numbers to groups.",bmTitle:"Padan Nombor",bmDesc:"Padankan nombor dengan kumpulan.",kind:"count",mode:"drag"},
+  {id:"addition",cat:"math",icon:"➕",title:"Easy Addition",desc:"Add small numbers.",bmTitle:"Tambah Mudah",bmDesc:"Tambah nombor kecil.",kind:"addition",mode:"tap"},
+  {id:"subtraction",cat:"math",icon:"➖",title:"Easy Subtraction",desc:"Take away small numbers.",bmTitle:"Tolak Mudah",bmDesc:"Tolak nombor kecil.",kind:"subtraction",mode:"tap"},
+  {id:"moreless",cat:"math",icon:"⚖️",title:"More or Less",desc:"Compare groups and numbers.",bmTitle:"Lebih atau Kurang",bmDesc:"Bandingkan kumpulan dan nombor.",kind:"compare",mode:"tap"},
+  {id:"same",cat:"math",icon:"🟰",title:"Same or Different",desc:"Find matching amounts.",bmTitle:"Sama atau Berbeza",bmDesc:"Cari jumlah yang sama.",kind:"same",mode:"tap"},
+  {id:"numberbefore",cat:"math",icon:"⬅️",title:"Before & After",desc:"Find the number before or after.",bmTitle:"Sebelum & Selepas",bmDesc:"Cari nombor sebelum atau selepas.",kind:"beforeafter",mode:"tap"},
+  {id:"numberbonds",cat:"math",icon:"🌈",title:"Number Bonds",desc:"Make numbers in different ways.",bmTitle:"Ikatan Nombor",bmDesc:"Bina nombor dengan cara berbeza.",kind:"addition",mode:"drag"},
+  {id:"shapes",cat:"math",icon:"🔷",title:"Shape Detective",desc:"Find basic shapes.",bmTitle:"Detektif Bentuk",bmDesc:"Cari bentuk asas.",kind:"shapes",mode:"tap"},
+  {id:"shapehunt",cat:"math",icon:"🔍",title:"Shape Hunt",desc:"Spot shapes around you.",bmTitle:"Misi Cari Bentuk",bmDesc:"Cari bentuk di sekeliling.",kind:"shapes",mode:"drag"},
+  {id:"patterns",cat:"math",icon:"🟡",title:"Pattern Power",desc:"Find what comes next.",bmTitle:"Kuasa Corak",bmDesc:"Cari apa yang datang seterusnya.",kind:"patterns",mode:"tap"},
+  {id:"sizeorder",cat:"math",icon:"📏",title:"Big to Small",desc:"Order objects by size.",bmTitle:"Besar ke Kecil",bmDesc:"Susun objek mengikut saiz.",kind:"size",mode:"sequence"},
+  {id:"length",cat:"math",icon:"📐",title:"Long or Short",desc:"Compare lengths.",bmTitle:"Panjang atau Pendek",bmDesc:"Bandingkan panjang.",kind:"length",mode:"tap"},
+  {id:"height",cat:"math",icon:"📊",title:"Tall or Short",desc:"Compare heights.",bmTitle:"Tinggi atau Rendah",bmDesc:"Bandingkan ketinggian.",kind:"height",mode:"tap"},
+  {id:"position",cat:"math",icon:"📍",title:"Where Is It?",desc:"Learn above, below, beside and inside.",bmTitle:"Di Mana?",bmDesc:"Belajar atas, bawah, sebelah dan dalam.",kind:"position",mode:"tap"},
+  {id:"time",cat:"math",icon:"⏰",title:"Time Explorer",desc:"Learn simple o'clock times.",bmTitle:"Jelajah Masa",bmDesc:"Belajar masa tepat yang mudah.",kind:"time",mode:"tap"},
+  {id:"money",cat:"math",icon:"🪙",title:"Little Shop",desc:"Count simple coins and prices.",bmTitle:"Kedai Kecil",bmDesc:"Kira duit syiling dan harga mudah.",kind:"money",mode:"tap"},
+  {id:"measurement",cat:"math",icon:"📏",title:"Measure It",desc:"Measure with simple objects.",bmTitle:"Jom Mengukur",bmDesc:"Mengukur dengan objek mudah.",kind:"measurement",mode:"drag"},
+  {id:"skip2",cat:"math",icon:"2️⃣",title:"Count by 2s",desc:"Jump in twos.",bmTitle:"Kira 2-2",bmDesc:"Melompat nombor dua-dua.",kind:"skip2",mode:"tap"},
+  {id:"mathstories",cat:"math",icon:"🧮",title:"Math Story Quest",desc:"Solve little number stories.",bmTitle:"Misi Cerita Matematik",bmDesc:"Selesaikan cerita nombor mudah.",kind:"mathstory",mode:"tap"},
+
+  {id:"animals",cat:"animal",icon:"🐾",title:"Animal Detective",desc:"50 animal challenges.",bmTitle:"Detektif Haiwan",bmDesc:"50 cabaran haiwan.",kind:"animals",mode:"tap"},
+  {id:"animalhabitat",cat:"animal",icon:"🌎",title:"Animal Habitat",desc:"50 habitat missions.",bmTitle:"Habitat Haiwan",bmDesc:"50 misi habitat.",kind:"habitats",mode:"drag"},
+  {id:"animalsounds",cat:"animal",icon:"🔊",title:"Animal Sounds",desc:"Match animals to sounds.",bmTitle:"Bunyi Haiwan",bmDesc:"Padankan haiwan dengan bunyi.",kind:"animalsounds",mode:"tap"},
+  {id:"animalfood",cat:"animal",icon:"🥕",title:"Animal Food",desc:"Find what animals eat.",bmTitle:"Makanan Haiwan",bmDesc:"Cari makanan haiwan.",kind:"animalfood",mode:"drag"},
+  {id:"animalbody",cat:"animal",icon:"🦴",title:"Animal Body Parts",desc:"Explore tails, wings, fins and more.",bmTitle:"Bahagian Badan Haiwan",bmDesc:"Teroka ekor, sayap, sirip dan banyak lagi.",kind:"animalbody",mode:"tap"},
+  {id:"babyanimals",cat:"animal",icon:"🐣",title:"Baby Animals",desc:"Match babies to parents.",bmTitle:"Anak Haiwan",bmDesc:"Padankan anak dengan induk.",kind:"babyanimals",mode:"drag"},
+  {id:"animalmovement",cat:"animal",icon:"🦘",title:"Animal Movers",desc:"Hop, crawl, swim and fly.",bmTitle:"Pergerakan Haiwan",bmDesc:"Melompat, merangkak, berenang dan terbang.",kind:"movement",mode:"tap"},
+  {id:"farmlife",cat:"animal",icon:"🚜",title:"Farm Friends",desc:"Explore friendly farm animals.",bmTitle:"Kawan Ladang",bmDesc:"Teroka haiwan di ladang.",kind:"farm",mode:"tap"},
+  {id:"jungle",cat:"animal",icon:"🌴",title:"Jungle Rangers",desc:"Meet jungle animals.",bmTitle:"Ranger Hutan",bmDesc:"Kenali haiwan hutan.",kind:"jungle",mode:"tap"},
+  {id:"ocean",cat:"animal",icon:"🌊",title:"Ocean Explorer",desc:"Discover ocean animals.",bmTitle:"Penjelajah Laut",bmDesc:"Kenali haiwan laut.",kind:"ocean",mode:"tap"},
+  {id:"arctic",cat:"animal",icon:"❄️",title:"Arctic Adventure",desc:"Meet cold-climate animals.",bmTitle:"Pengembaraan Artik",bmDesc:"Kenali haiwan kawasan sejuk.",kind:"arctic",mode:"tap"},
+  {id:"insects",cat:"animal",icon:"🐞",title:"Tiny Insects",desc:"Discover tiny creatures.",bmTitle:"Serangga Kecil",bmDesc:"Kenali makhluk kecil.",kind:"insects",mode:"tap"},
+  {id:"birds",cat:"animal",icon:"🦜",title:"Bird Watcher",desc:"Learn about birds.",bmTitle:"Pemerhati Burung",bmDesc:"Belajar tentang burung.",kind:"birds",mode:"tap"},
+  {id:"animalgroups",cat:"animal",icon:"🐾",title:"Animal Groups",desc:"Sort animals into groups.",bmTitle:"Kumpulan Haiwan",bmDesc:"Asingkan haiwan mengikut kumpulan.",kind:"animalgroups",mode:"sort"},
+  {id:"animalsafety",cat:"animal",icon:"🛡️",title:"Animal Safety",desc:"Learn how to be kind and safe around animals.",bmTitle:"Keselamatan Haiwan",bmDesc:"Belajar cara selamat dan baik bersama haiwan.",kind:"animalsafety",mode:"tap"},
+
+  {id:"scientist",cat:"science",icon:"🔬",title:"Little Scientist",desc:"Explore everyday science.",bmTitle:"Saintis Kecil",bmDesc:"Teroka sains harian.",kind:"science",mode:"tap"},
+  {id:"scienceexplorer",cat:"science",icon:"🚀",title:"Science Explorer",desc:"Discover weather, space and nature.",bmTitle:"Jelajah Sains",bmDesc:"Teroka cuaca, angkasa dan alam.",kind:"scienceexplorer",mode:"tap"},
+  {id:"senses",cat:"science",icon:"👀",title:"Five Senses",desc:"See, hear, smell, taste and touch.",bmTitle:"Lima Deria",bmDesc:"Lihat, dengar, hidu, rasa dan sentuh.",kind:"senses",mode:"tap"},
+  {id:"plants",cat:"science",icon:"🌱",title:"Plant Power",desc:"Discover what plants need.",bmTitle:"Kuasa Tumbuhan",bmDesc:"Ketahui apa yang tumbuhan perlukan.",kind:"plants",mode:"drag"},
+  {id:"weather",cat:"science",icon:"🌦️",title:"Weather Watch",desc:"Explore sunny, rainy and windy days.",bmTitle:"Pemerhati Cuaca",bmDesc:"Teroka hari cerah, hujan dan berangin.",kind:"weather",mode:"tap"},
+  {id:"space",cat:"science",icon:"🌌",title:"Space Mission",desc:"Visit the Sun, Moon and planets.",bmTitle:"Misi Angkasa",bmDesc:"Lawat Matahari, Bulan dan planet.",kind:"space",mode:"tap"},
+  {id:"lightshadow",cat:"science",icon:"🔦",title:"Light & Shadow",desc:"Play with light and shadows.",bmTitle:"Cahaya & Bayang",bmDesc:"Bermain dengan cahaya dan bayang.",kind:"lightshadow",mode:"drag"},
+  {id:"soundscience",cat:"science",icon:"🎵",title:"Sound Lab",desc:"Discover how sounds happen.",bmTitle:"Makmal Bunyi",bmDesc:"Ketahui bagaimana bunyi terhasil.",kind:"soundscience",mode:"tap"},
+  {id:"materials",cat:"science",icon:"🧊",title:"Material World",desc:"Hard, soft, wet, dry and more.",bmTitle:"Dunia Bahan",bmDesc:"Keras, lembut, basah, kering dan banyak lagi.",kind:"materials",mode:"sort"},
+  {id:"water",cat:"science",icon:"💧",title:"Water Wonder",desc:"Explore water and floating.",bmTitle:"Keajaiban Air",bmDesc:"Teroka air dan benda terapung.",kind:"water",mode:"drag"},
+  {id:"forces",cat:"science",icon:"🛝",title:"Push & Pull",desc:"Explore simple forces.",bmTitle:"Tolak & Tarik",bmDesc:"Teroka daya mudah.",kind:"forces",mode:"tap"},
+  {id:"living",cat:"science",icon:"🌿",title:"Living or Not?",desc:"Sort living and non-living things.",bmTitle:"Hidup atau Tidak?",bmDesc:"Asingkan benda hidup dan bukan hidup.",kind:"living",mode:"sort"},
+  {id:"earth",cat:"science",icon:"🌍",title:"Our Earth",desc:"Explore land, water and nature.",bmTitle:"Bumi Kita",bmDesc:"Teroka daratan, air dan alam.",kind:"earth",mode:"tap"},
+  {id:"recycle",cat:"science",icon:"♻️",title:"Eco Hero",desc:"Learn simple ways to care for Earth.",bmTitle:"Wira Alam",bmDesc:"Belajar cara mudah menjaga Bumi.",kind:"recycle",mode:"sort"},
+  {id:"simpleexperiments",cat:"science",icon:"🧪",title:"Mini Experiments",desc:"Predict what happens next.",bmTitle:"Eksperimen Mini",bmDesc:"Teka apa yang berlaku seterusnya.",kind:"experiments",mode:"tap"},
+
+  {id:"sorting",cat:"world",icon:"📦",title:"Sort It Out",desc:"Put things in the right group.",bmTitle:"Asingkan",bmDesc:"Masukkan benda ke kumpulan yang betul.",kind:"sorting",mode:"sort"},
+  {id:"sequence",cat:"world",icon:"🔁",title:"What Happens Next?",desc:"Put simple actions in order.",bmTitle:"Apa Berlaku Seterusnya?",bmDesc:"Susun tindakan mudah mengikut urutan.",kind:"sequence",mode:"sequence"},
+  {id:"feelings",cat:"world",icon:"😊",title:"Feelings Friend",desc:"Recognise simple feelings.",bmTitle:"Kawan Perasaan",bmDesc:"Kenali perasaan mudah.",kind:"feelings",mode:"tap"},
+  {id:"healthyfood",cat:"world",icon:"🍎",title:"Healthy Food",desc:"Choose foods that help our bodies.",bmTitle:"Makanan Sihat",bmDesc:"Pilih makanan yang membantu badan.",kind:"healthyfood",mode:"sort"},
+  {id:"hygiene",cat:"world",icon:"🧼",title:"Clean & Healthy",desc:"Build healthy daily habits.",bmTitle:"Bersih & Sihat",bmDesc:"Bina tabiat harian yang sihat.",kind:"hygiene",mode:"sequence"},
+  {id:"safety",cat:"world",icon:"🛡️",title:"Safety Scout",desc:"Make safe choices.",bmTitle:"Pengakap Keselamatan",bmDesc:"Buat pilihan yang selamat.",kind:"safety",mode:"tap"},
+  {id:"community",cat:"world",icon:"🏙️",title:"Community Helpers",desc:"Meet people who help us.",bmTitle:"Pembantu Komuniti",bmDesc:"Kenali orang yang membantu kita.",kind:"community",mode:"tap"},
+  {id:"transport",cat:"world",icon:"🚗",title:"Transport Explorer",desc:"Explore ways people travel.",bmTitle:"Jelajah Pengangkutan",bmDesc:"Teroka cara manusia bergerak.",kind:"transport",mode:"tap"},
+  {id:"home",cat:"world",icon:"🏠",title:"Home Helper",desc:"Find objects and jobs at home.",bmTitle:"Pembantu Rumah",bmDesc:"Kenali objek dan tugas di rumah.",kind:"home",mode:"sort"},
+  {id:"school",cat:"world",icon:"🏫",title:"School Explorer",desc:"Explore school routines and places.",bmTitle:"Jelajah Sekolah",bmDesc:"Teroka rutin dan tempat di sekolah.",kind:"school",mode:"tap"},
+  {id:"timeofday",cat:"world",icon:"🌅",title:"Day & Night",desc:"Explore daily routines.",bmTitle:"Siang & Malam",bmDesc:"Teroka rutin harian.",kind:"daynight",mode:"sequence"},
+  {id:"seasons",cat:"world",icon:"🍂",title:"Season Quest",desc:"Explore changes in the year.",bmTitle:"Misi Musim",bmDesc:"Teroka perubahan sepanjang tahun.",kind:"seasons",mode:"tap"},
+  {id:"naturewalk",cat:"world",icon:"🥾",title:"Nature Walk",desc:"Spot things in nature.",bmTitle:"Jalan Alam",bmDesc:"Cari benda di alam semula jadi.",kind:"naturewalk",mode:"tap"},
+  {id:"maps",cat:"world",icon:"🗺️",title:"Little Map Maker",desc:"Learn simple directions.",bmTitle:"Pembina Peta Kecil",bmDesc:"Belajar arah mudah.",kind:"maps",mode:"drag"},
+  {id:"culture",cat:"world",icon:"🌏",title:"Our World",desc:"Celebrate places, food and greetings.",bmTitle:"Dunia Kita",bmDesc:"Kenali tempat, makanan dan sapaan.",kind:"culture",mode:"tap"},
+  {id:"kindness",cat:"world",icon:"💛",title:"Kindness Quest",desc:"Choose kind actions.",bmTitle:"Misi Kebaikan",bmDesc:"Pilih tindakan yang baik.",kind:"kindness",mode:"tap"},
+
+  {id:"memory",cat:"world",icon:"🧠",title:"Memory Mission",desc:"Remember and match pictures.",bmTitle:"Misi Memori",bmDesc:"Ingat dan padankan gambar.",kind:"memory",mode:"memory"},
+  {id:"oddone",cat:"world",icon:"🕵️",title:"Odd One Out",desc:"Find what does not belong.",bmTitle:"Yang Berbeza",bmDesc:"Cari yang tidak sepatutnya berada dalam kumpulan.",kind:"oddone",mode:"tap"},
+  {id:"patternslogic",cat:"world",icon:"🧩",title:"Pattern Puzzle",desc:"Solve playful patterns.",bmTitle:"Teka-teki Corak",bmDesc:"Selesaikan corak dengan cara menyeronokkan.",kind:"patterns",mode:"tap"},
+  {id:"matchinglogic",cat:"world",icon:"🔗",title:"Match the Pair",desc:"Find things that belong together.",bmTitle:"Padan Pasangan",bmDesc:"Cari benda yang sesuai bersama.",kind:"pairing",mode:"drag"},
+  {id:"treasurelogic",cat:"world",icon:"🗝️",title:"Treasure Clues",desc:"Follow simple clues to the treasure.",bmTitle:"Petunjuk Harta Karun",bmDesc:"Ikuti petunjuk mudah menuju harta karun.",kind:"clues",mode:"tap"},
+  {id:"creativecolor",cat:"world",icon:"🎨",title:"Colour Creator",desc:"Explore colours and choices.",bmTitle:"Pencipta Warna",bmDesc:"Teroka warna dan pilihan.",kind:"colors",mode:"tap"},
+  {id:"musicrhythm",cat:"world",icon:"🥁",title:"Rhythm Quest",desc:"Tap simple rhythm patterns.",bmTitle:"Misi Irama",bmDesc:"Tepuk corak irama mudah.",kind:"rhythm",mode:"tap"},
+  {id:"coding",cat:"world",icon:"🤖",title:"Tiny Coder",desc:"Guide a buddy with simple steps.",bmTitle:"Koder Kecil",bmDesc:"Pandu kawan dengan langkah mudah.",kind:"coding",mode:"sequence"},
+  {id:"builder",cat:"world",icon:"🧱",title:"Build & Balance",desc:"Choose what makes a strong build.",bmTitle:"Bina & Seimbang",bmDesc:"Pilih cara membina yang kukuh.",kind:"builder",mode:"tap"},
+  {id:"treasurecount",cat:"world",icon:"💎",title:"Treasure Counter",desc:"Count gems to unlock treasure.",bmTitle:"Kira Harta Karun",bmDesc:"Kira permata untuk membuka harta.",kind:"count",mode:"count"},
+  {id:"garden",cat:"world",icon:"🌻",title:"Little Gardener",desc:"Plant, water and care for a garden.",bmTitle:"Pekebun Kecil",bmDesc:"Tanam, siram dan jaga taman.",kind:"garden",mode:"sequence"},
+  {id:"petcare",cat:"world",icon:"🐾",title:"Pet Care",desc:"Learn how to care for a pet.",bmTitle:"Jaga Haiwan Peliharaan",bmDesc:"Belajar menjaga haiwan peliharaan.",kind:"petcare",mode:"sequence"},
+  {id:"dressweather",cat:"world",icon:"🧥",title:"Dress for Weather",desc:"Choose clothes for the day.",bmTitle:"Pakai Ikut Cuaca",bmDesc:"Pilih pakaian mengikut cuaca.",kind:"dressweather",mode:"drag"},
+  {id:"dailyplanner",cat:"world",icon:"📅",title:"My Little Day",desc:"Build a simple daily plan.",bmTitle:"Hari Kecil Saya",bmDesc:"Bina rancangan harian mudah.",kind:"dailyplanner",mode:"sequence"},
+  {id:"bigquestion",cat:"world",icon:"💡",title:"Curious Questions",desc:"Ask, think and choose.",bmTitle:"Soalan Ingin Tahu",bmDesc:"Tanya, fikir dan pilih.",kind:"curious",mode:"tap"},
+  {id:"adventurechallenge",cat:"world",icon:"🏕️",title:"Adventure Challenge",desc:"Mix language, math and world skills.",bmTitle:"Cabaran Pengembaraan",bmDesc:"Gabungkan kemahiran bahasa, matematik dan dunia.",kind:"mixed",mode:"tap"}
 ];
 
 const animal50=[
@@ -395,6 +479,163 @@ const scienceExplorer50=[
  ["☀️","What gives us light in the daytime?",["The Sun ☀️","A rock 🪨","A fish 🐟"],"The Sun ☀️"],["🌧️","What do we wear when it rains?",["Raincoat 🧥","Swimsuit 🩱","Helmet 🪖"],"Raincoat 🧥"],["🌙","What do we often see at night?",["Moon 🌙","Rainbow 🌈","Sunflower 🌻"],"Moon 🌙"],["👀","Which sense helps us see?",["Eyes 👀","Ears 👂","Nose 👃"],"Eyes 👀"],["🌈","What colours can a rainbow have?",["Many colours 🌈","Only black","Only white"],"Many colours 🌈"],["☁️","What can clouds bring?",["Rain 🌧️","Sand 🏖️","Apples 🍎"],"Rain 🌧️"],["⛈️","What sound can lightning be followed by?",["Thunder ⛈️","Meow 🐱","Buzz 🐝"],"Thunder ⛈️"],["❄️","What is frozen water called?",["Ice ❄️","Steam 💨","Sand 🏖️"],"Ice ❄️"],["💨","What is moving air called?",["Wind 💨","Stone 🪨","Shadow 🌑"],"Wind 💨"],["🌦️","What is weather?",["What the air and sky are like ☀️🌧️","A kind of animal 🐶","A type of food 🍎"],"What the air and sky are like ☀️🌧️"],["🌞","Which is brighter?",["Sun ☀️","Moon 🌙","Rock 🪨"],"Sun ☀️"],["🌙","Does the Moon shine by making its own light?",["No, it reflects sunlight","Yes, like the Sun","Only when cloudy"],"No, it reflects sunlight"],["🌍","What is Earth shaped roughly like?",["A ball 🌍","A flat sheet 📄","A cube 🧊"],"A ball 🌍"],["🚀","What travels into space?",["Rocket 🚀","Submarine 🚢","Tractor 🚜"],"Rocket 🚀"],["🪐","What goes around the Sun?",["Planets 🪐","Only clouds ☁️","Only birds 🐦"],"Planets 🪐"],["🌌","What can we see in the night sky?",["Stars ⭐","Grass 🌱","Fish 🐟"],"Stars ⭐"],["☀️","Why do we have day and night?",["Earth spins 🌍","The Sun turns off","Clouds move the Earth"],"Earth spins 🌍"],["🌍","What is the Moon to Earth?",["A natural satellite 🌙","A star ⭐","A cloud ☁️"],"A natural satellite 🌙"],["🛰️","What can satellites do?",["Send information from space 📡","Grow trees 🌳","Make rainbows"],"Send information from space 📡"],["🌱","Which season can bring new plant growth?",["Spring 🌸","Only winter ❄️","Only night 🌙"],"Spring 🌸"],["🍂","What can happen to leaves in autumn?",["They can change colour 🍂","They turn into fish","They become clouds"],"They can change colour 🍂"],["❄️","Which season is usually coldest?",["Winter ❄️","Summer ☀️","Spring 🌸"],"Winter ❄️"],["☀️","Which season is usually warmest?",["Summer ☀️","Winter ❄️","Autumn 🍂"],"Summer ☀️"],["🌸","What happens to many plants in spring?",["They grow and bloom 🌸","They freeze forever","They disappear"],"They grow and bloom 🌸"],["🌊","What is a wave?",["Moving water 🌊","A mountain ⛰️","A cloud ☁️"],"Moving water 🌊"],["🏖️","What can wind move at a beach?",["Sand 🏖️","A mountain ⛰️","The Sun ☀️"],"Sand 🏖️"],["🌋","What can come from a volcano?",["Lava 🌋","Snow only ❄️","Milk 🥛"],"Lava 🌋"],["⛰️","What is a mountain?",["A high landform ⛰️","A type of cloud","A fish"],"A high landform ⛰️"],["🌳","Why are forests important?",["They provide homes for many living things 🌳","They make plastic","They stop all rain"],"They provide homes for many living things 🌳"],["🌊","Why is clean water important?",["People and animals need it 💧","It makes rocks fly","It makes the Sun colder"],"People and animals need it 💧"],["♻️","What can recycling help with?",["Reducing waste ♻️","Making more rubbish","Making oceans dirty"],"Reducing waste ♻️"],["🌱","What is one way to help plants?",["Give them water 💧","Pull all leaves off","Cover them with plastic"],"Give them water 💧"],["🐝","Why are bees helpful to plants?",["They help pollinate flowers 🌸","They eat all the roots","They make clouds"],"They help pollinate flowers 🌸"],["🦋","What starts as a caterpillar?",["Butterfly 🦋","Elephant 🐘","Fish 🐟"],"Butterfly 🦋"],["🥚","What can hatch from an egg?",["A chick 🐣","A tree 🌳","A cloud ☁️"],"A chick 🐣"],["🌳","Which part of a tree is usually underground?",["Roots 🌱","Leaves 🍃","Fruit 🍎"],"Roots 🌱"],["🌼","What do flowers attract?",["Some insects 🐝","Cars 🚗","Rocks 🪨"],"Some insects 🐝"],["🌊","What happens when rain falls into rivers?",["Water flows onward 💧","The river becomes fire","The river becomes a cloud instantly"],"Water flows onward 💧"],["☀️","What can solar energy come from?",["Sunlight ☀️","Rocks 🪨","Snowballs ❄️"],"Sunlight ☀️"],["💡","What does a lamp need to make light?",["Energy ⚡","Sand 🏖️","Leaves 🍃"],"Energy ⚡"],["🔋","What can a battery provide?",["Electrical energy 🔋","Water 💧","Grass 🌱"],"Electrical energy 🔋"],["📡","What can sound travel through?",["Air 🌬️","Only empty space","Only rocks"],"Air 🌬️"],["🎵","What makes a sound?",["Vibrations 🎵","A colour 🎨","A shadow 🌑"],"Vibrations 🎵"],["🔍","What does observing mean?",["Looking carefully 👀","Closing your eyes","Guessing without looking"],"Looking carefully 👀"],["🧪","What is a fair test?",["Change one thing and compare 🔬","Change everything at once","Do not observe"],"Change one thing and compare 🔬"],["🧠","What should a scientist do after a test?",["Look at the results 📊","Hide the results","Forget the question"],"Look at the results 📊"],["🌡️","What can a thermometer tell us?",["How hot or cold it is 🌡️","How fast we run","How loud music is"],"How hot or cold it is 🌡️"],["🧭","What can a compass help show?",["Direction 🧭","Temperature 🌡️","Weight ⚖️"],"Direction 🧭"],["🌎","Which is part of our natural world?",["Rivers 🌊","Plastic toy 🧸","Computer screen 💻"],"Rivers 🌊"],["⭐","What should a curious explorer do?",["Ask questions and investigate 🔎","Never ask questions","Always guess"],"Ask questions and investigate 🔎"]
 ];
 
+
+/* =========================
+   TRAINING WORLD V6 — 100 MODULES × 50 MISSIONS
+   Questions are generated from small, reusable age-appropriate banks so the
+   browser stays light while every module still contains a 50-step progression.
+   ========================= */
+trainingModules=trainingModules.filter(m=>!['dailyplanner','bigquestion','adventurechallenge'].includes(m.id));
+
+const W50=[
+ ['cat','🐱','CAT','KUCING'],['dog','🐶','DOG','ANJING'],['sun','☀️','SUN','MATAHARI'],['bus','🚌','BUS','BAS'],['hat','🧢','HAT','TOPI'],['fish','🐟','FISH','IKAN'],['ball','⚽','BALL','BOLA'],['bed','🛏️','BED','KATIL'],['cup','🥤','CUP','CAWAN'],['map','🗺️','MAP','PETA'],['pen','🖊️','PEN','PEN'],['pig','🐷','PIG','BABI'],['hen','🐔','HEN','AYAM'],['fox','🦊','FOX','MUSANG'],['jam','🍓','JAM','JEM'],['log','🪵','LOG','KAYU'],['sun','☀️','SUN','MATAHARI'],['van','🚐','VAN','VAN'],['web','🕸️','WEB','Sarang'],['red','🔴','RED','MERAH'],['blue','🔵','BLUE','BIRU'],['green','🟢','GREEN','HIJAU'],['yellow','🟡','YELLOW','KUNING'],['pink','🩷','PINK','MERAH JAMBU'],['black','⚫','BLACK','HITAM'],['white','⚪','WHITE','PUTIH'],['big','🐘','BIG','BESAR'],['small','🐭','SMALL','KECIL'],['hot','🔥','HOT','PANAS'],['cold','🧊','COLD','SEJUK'],['fast','🐆','FAST','LAJU'],['slow','🐢','SLOW','PERLAHAN'],['happy','😊','HAPPY','GEMBIRA'],['sad','😢','SAD','SEDIH'],['up','⬆️','UP','ATAS'],['down','⬇️','DOWN','BAWAH'],['open','🚪','OPEN','BUKA'],['close','🔒','CLOSE','TUTUP'],['run','🏃','RUN','LARI'],['jump','🦘','JUMP','LOMPAT'],['eat','🍎','EAT','MAKAN'],['sleep','😴','SLEEP','TIDUR'],['read','📖','READ','BACA'],['write','✏️','WRITE','TULIS'],['wash','🧼','WASH','BASUH'],['play','🎮','PLAY','MAIN'],['look','👀','LOOK','LIHAT'],['listen','👂','LISTEN','DENGAR'],['help','🤝','HELP','BANTU'],['kind','💛','KIND','BAIK']
+];
+const NUM_OBJECTS=['🍎','⭐','🐟','🦋','🍪','🚀','🧸','⚽','🌸','🪙','💎','🍓'];
+const SHAPES=[['circle','🔵','Circle','Bulatan'],['triangle','🔺','Triangle','Segi tiga'],['square','🟦','Square','Segi empat sama'],['rectangle','🟨','Rectangle','Segi empat tepat'],['star','⭐','Star','Bintang'],['heart','❤️','Heart','Hati']];
+const COLORS=[['red','🔴','Red','Merah'],['blue','🔵','Blue','Biru'],['green','🟢','Green','Hijau'],['yellow','🟡','Yellow','Kuning'],['orange','🟠','Orange','Oren'],['purple','🟣','Purple','Ungu'],['pink','🩷','Pink','Merah jambu']];
+const ANIMAL_SIMPLE=[['Dog','🐶','Anjing','bark'],['Cat','🐱','Kucing','meow'],['Cow','🐮','Lembu','moo'],['Lion','🦁','Singa','roar'],['Frog','🐸','Katak','ribbit'],['Duck','🦆','Itik','quack'],['Horse','🐴','Kuda','neigh'],['Sheep','🐑','Biri-biri','baa'],['Elephant','🐘','Gajah','trumpet'],['Giraffe','🦒','Zirafah',''],['Rabbit','🐰','Arnab',''],['Tiger','🐯','Harimau',''],['Panda','🐼','Panda',''],['Koala','🐨','Koala',''],['Camel','🐪','Unta',''],['Penguin','🐧','Penguin',''],['Dolphin','🐬','Ikan lumba-lumba',''],['Whale','🐳','Paus',''],['Eagle','🦅','Helang',''],['Bee','🐝','Lebah','buzz'],['Butterfly','🦋','Rama-rama',''],['Spider','🕷️','Labah-labah',''],['Monkey','🐒','Monyet',''],['Snake','🐍','Ular',''],['Kangaroo','🦘','Kanggaru','']];
+const FOOD=[['apple','🍎','Apple','Epal'],['banana','🍌','Banana','Pisang'],['carrot','🥕','Carrot','Lobak'],['broccoli','🥦','Broccoli','Brokoli'],['fish','🐟','Fish','Ikan'],['rice','🍚','Rice','Nasi'],['milk','🥛','Milk','Susu'],['bread','🍞','Bread','Roti'],['water','💧','Water','Air'],['egg','🥚','Egg','Telur']];
+const WEATHER=[['☀️','Sunny','Cerah','sun'],['🌧️','Rainy','Hujan','rain'],['🌬️','Windy','Berangin','wind'],['☁️','Cloudy','Berawan','cloud'],['⛈️','Stormy','Ribut','storm'],['❄️','Snowy','Bersalji','snow']];
+const SENSES=[['👀','eyes','Mata','see'],['👂','ears','Telinga','hear'],['👃','nose','Hidung','smell'],['👅','tongue','Lidah','taste'],['✋','hands','Tangan','touch']];
+const OPP=[['big','small','besar','kecil'],['hot','cold','panas','sejuk'],['up','down','atas','bawah'],['fast','slow','laju','perlahan'],['happy','sad','gembira','sedih'],['open','close','buka','tutup'],['day','night','siang','malam'],['full','empty','penuh','kosong'],['near','far','dekat','jauh'],['light','dark','cerah','gelap']];
+const COMMUNITY=[['👨‍⚕️','doctor','doktor','helps sick people','membantu orang sakit'],['👩‍🏫','teacher','guru','helps children learn','membantu kanak-kanak belajar'],['👨‍🚒','firefighter','bomba','helps in fires','membantu ketika kebakaran'],['👮','police officer','polis','helps keep people safe','membantu menjaga keselamatan'],['👨‍🍳','chef','tukang masak','cooks food','memasak makanan'],['👩‍🌾','farmer','petani','grows food','menanam makanan'],['🧑‍🔧','mechanic','mekanik','fixes vehicles','membaiki kenderaan'],['📮','post worker','pekerja pos','delivers letters','menghantar surat']];
+const VEHICLES=[['🚗','car','kereta','road','jalan'],['🚌','bus','bas','road','jalan'],['🚆','train','kereta api','track','landasan'],['✈️','plane','kapal terbang','sky','langit'],['🚢','boat','bot','water','air'],['🚲','bicycle','basikal','road','jalan'],['🚑','ambulance','ambulans','road','jalan'],['🚁','helicopter','helikopter','sky','langit']];
+const BODY=[['👀','eyes','mata','see','melihat'],['👂','ears','telinga','hear','mendengar'],['👃','nose','hidung','smell','menghidu'],['👄','mouth','mulut','eat','makan'],['🦷','teeth','gigi','chew','mengunyah'],['🖐️','hands','tangan','hold','memegang'],['🦶','feet','kaki','walk','berjalan'],['🧠','brain','otak','think','berfikir']];
+const LIVING=[['🌳','tree','tumbuhan','living'],['🐶','dog','haiwan','living'],['🌸','flower','tumbuhan','living'],['🐟','fish','haiwan','living'],['🪨','rock','batu','nonliving'],['🪑','chair','kerusi','nonliving'],['🚗','car','kereta','nonliving'],['⚽','ball','bola','nonliving']];
+const SAFETY=[['🔥','A fire','Api','tell a grown-up','beritahu orang dewasa'],['🚗','A road','Jalan raya','stop and look','berhenti dan lihat'],['🔌','A socket','Soket','do not touch','jangan sentuh'],['🐕','An unknown dog','Anjing yang tidak dikenali','ask a grown-up first','tanya orang dewasa dahulu'],['🧴','Medicine','Ubat','ask a grown-up','tanya orang dewasa'],['🌊','Deep water','Air dalam','stay with a grown-up','bersama orang dewasa']];
+const KINDNESS=[['🤝','Help a friend','Bantu kawan'],['😊','Say thank you','Ucap terima kasih'],['🧸','Share a toy','Kongsi mainan'],['🧹','Help tidy up','Bantu mengemas'],['💛','Use kind words','Guna kata-kata baik'],['👂','Listen when someone speaks','Dengar apabila orang bercakap']];
+const SIMPLE_SCI=[
+ ['🧊','What melts when it gets warm?',['Ice 🧊','Rock 🪨','Ball ⚽'],'Ice 🧊','Ais 🧊'],
+ ['🎈','What happens when air goes into a balloon?',['It gets bigger 🎈','It becomes a rock 🪨','It gets smaller'],'It gets bigger 🎈','Ia jadi lebih besar 🎈'],
+ ['🧽','Which can soak up water?',['Sponge 🧽','Rock 🪨','Metal spoon 🥄'],'Sponge 🧽','Span 🧽'],
+ ['🪨','Which is hard?',['Rock 🪨','Cloud ☁️','Water 💧'],'Rock 🪨','Batu 🪨'],
+ ['🌱','What does a plant need?',['Water 💧','Only toys 🧸','Only music 🎵'],'Water 💧','Air 💧'],
+ ['🔦','What makes a shadow?',['An object blocks light 💡','A song 🎵','A smell 👃'],'An object blocks light 💡','Objek menghalang cahaya 💡'],
+ ['🌈','What can help make a rainbow?',['Sunlight and water ☀️💧','Only sand 🏖️','Only rocks 🪨'],'Sunlight and water ☀️💧','Cahaya matahari dan air ☀️💧'],
+ ['🧲','What can a magnet attract?',['Some metal 🧲','Paper only 📄','Water only 💧'],'Some metal 🧲','Sesetengah logam 🧲'],
+ ['🚗','What can make a toy car move?',['A push 👋','A colour 🎨','A smell 👃'],'A push 👋','Tolakan 👋'],
+ ['🌬️','What is moving air called?',['Wind 💨','Rock 🪨','Shadow 🌑'],'Wind 💨','Angin 💨']
+];
+
+function shuffleCopy(a){return [...a].sort(()=>Math.random()-.5);}
+function choice3(answer, pool){let arr=shuffleCopy(pool.filter(x=>x!==answer));return [answer,...arr.slice(0,2)];}
+function qObj(icon,prompt,opts,answer,promptMs=null,optsMs=null,answerMs=null,interaction='tap'){
+  return {icon,prompt,opts,answer,promptMs:promptMs||prompt,optsMs:optsMs||opts,answerMs:answerMs||answer,interaction};
+}
+function qFromW(i,mode='tap'){
+  const w=W50[i%W50.length], next=W50[(i+1)%W50.length], alt=W50[(i+2)%W50.length];
+  return qObj(w[1],`Which word matches ${w[1]}?`,choice3(w[2],[next[2],alt[2],w[2]]),w[2],`Apakah perkataan bagi ${w[1]}?`,choice3(w[3],[next[3],alt[3],w[3]]),w[3],mode);
+}
+function makeQuestions(m){
+  const out=[];
+  for(let i=0;i<50;i++){
+    const k=m.kind, n=i%50, mode=m.mode;
+    let q;
+    if(k==='letters'){
+      const letter=String.fromCharCode(65+(i%26)), next=String.fromCharCode(65+((i+1)%26)), prev=String.fromCharCode(65+((i+25)%26));
+      const bm=String.fromCharCode(65+(i%26)); q=qObj('🔤',`Which letter is ${letter}?`,shuffleCopy([letter,next,prev]),letter,`Huruf manakah ${bm}?`,shuffleCopy([bm,next,prev]),bm,mode);
+    } else if(k==='phonics'){
+      const w=W50[i%W50.length], letter=w[2][0], wrong1=W50[(i+7)%W50.length][2][0], wrong2=W50[(i+13)%W50.length][2][0];
+      q=qObj(w[1],`What sound starts ${w[2]}?`,shuffleCopy([letter,wrong1,wrong2]),letter,`Bunyi apakah pada awal ${w[3]}?`,shuffleCopy([letter,wrong1,wrong2]),letter,mode);
+    } else if(k==='spelling'){
+      const w=W50[i%W50.length], letters=w[2].split(''), answer=letters.join('');
+      q=qObj(w[1],`Build the word: ${w[2]}`,shuffleCopy([letters[0],letters[1]||letters[0],letters[2]||letters[0]]),answer,`Bina perkataan: ${w[3]}`,shuffleCopy([letters[0],letters[1]||letters[0],letters[2]||letters[0]]),answer,mode);
+    } else if(k==='sight'){
+      const w=['I','AM','THE','A','MY','SEE','CAN','LIKE','WE','GO','TO','IS','IT','YOU','ME','IN','ON','UP','BIG','RED'][i%20]; q=qObj('👀',`Find the word ${w}.`,shuffleCopy([w,['AM','THE','MY','SEE','GO','LIKE','YOU'][i%7],['A','CAN','IS','IT','ME','IN','UP'][i%7]]),w,`Cari perkataan ${w}.`,shuffleCopy([w,['AM','THE','MY','SEE','GO','LIKE','YOU'][i%7],['A','CAN','IS','IT','ME','IN','UP'][i%7]]),w,mode);
+    } else if(k==='reading'||k==='story'){
+      const w=W50[i%W50.length], w2=W50[(i+5)%W50.length];
+      const p=`I see ${w[2].toLowerCase()}. What do I see?`, pms=`Saya nampak ${w[3].toLowerCase()}. Apakah yang saya nampak?`;
+      q=qObj(w[1],p,[w[2],w2[2],W50[(i+9)%50][2]],w[2],pms,[w[3],w2[3],W50[(i+9)%50][3]],w[3],mode);
+    } else if(k==='picture') q=qFromW(i,mode);
+    else if(k==='rhyme'){
+      const pairs=[['cat','hat','CAT','HAT','kucing','topi'],['dog','log','DOG','LOG','anjing','kayu'],['sun','run','SUN','RUN','matahari','lari'],['fish','dish','FISH','DISH','ikan','pinggan'],['bee','tree','BEE','TREE','lebah','pokok'],['fox','box','FOX','BOX','musang','kotak'],['star','car','STAR','CAR','bintang','kereta'],['cake','snake','CAKE','SNAKE','kek','ular'],['light','night','LIGHT','NIGHT','cahaya','malam'],['ball','tall','BALL','TALL','bola','tinggi']];
+      const a=pairs[i%10], wrong=pairs[(i+3)%10];q=qObj('🎵',`Which word rhymes with ${a[2]}?`,shuffleCopy([a[3],wrong[3],pairs[(i+5)%10][3]]),a[3],`Perkataan manakah berima dengan ${a[2]}?`,shuffleCopy([a[5],wrong[5],pairs[(i+5)%10][5]]),a[5],mode);
+    } else if(k==='syllable'){
+      const words=[['apple','epal',2,'🍎'],['banana','pisang',3,'🍌'],['rabbit','arnab',2,'🐰'],['elephant','gajah',3,'🐘'],['butterfly','rama-rama',3,'🦋'],['tomato','tomato',3,'🍅'],['computer','komputer',3,'💻'],['banana','pisang',3,'🍌'],['animal','haiwan',3,'🐾'],['potato','kentang',3,'🥔']]; const a=words[i%10], opts=[a[2],a[2]===2?1:2,3];q=qObj(a[3],`How many beats are in ${a[0]}?`,shuffleCopy(opts.map(String)),String(a[2]),`Berapa suku kata dalam ${a[1]}?`,shuffleCopy(opts.map(String)),String(a[2]),mode);
+    } else if(k==='vowels'){
+      const a=W50[i%W50.length], vowel=a[2].match(/[AEIOU]/)?.[0]||'A';q=qObj(a[1],`Which vowel is in ${a[2]}?`,shuffleCopy(['A','E','I','O','U'].slice(0,3).concat(vowel)),vowel,`Vokal manakah ada dalam ${a[3]}?`,shuffleCopy(['A','E','I','O','U'].slice(0,3).concat(vowel)),vowel,mode);
+    } else if(k==='opposites'){
+      const a=OPP[i%OPP.length];q=qObj('↔️',`What is the opposite of ${a[0]}?`,shuffleCopy([a[1],OPP[(i+2)%OPP.length][1],OPP[(i+4)%OPP.length][1]]),a[1],`Apakah lawan bagi ${a[2]}?`,shuffleCopy([a[3],OPP[(i+2)%OPP.length][3],OPP[(i+4)%OPP.length][3]]),a[3],mode);
+    } else if(k==='action'){
+      const a=W50[(i*2)%W50.length], b=W50[(i*2+7)%W50.length], c=W50[(i*2+13)%W50.length];q=qObj(a[1],`Which is an action word?`,shuffleCopy([a[2],b[2],c[2]]),a[2],`Yang manakah kata kerja?`,shuffleCopy([a[3],b[3],c[3]]),a[3],mode);
+    } else if(k==='describing'){
+      const a=W50[(i+26)%W50.length], b=W50[(i+2)%W50.length], c=W50[(i+8)%W50.length];q=qObj('🎨',`Which word describes ${a[1]}?`,shuffleCopy(['big','small','red','fast','happy'].slice(i%3,i%3+3).concat('big').slice(0,3)),['big','small','red','fast','happy'][i%5],`Perkataan manakah menerangkan gambar?`,['besar','kecil','merah','laju','gembira'].slice(i%3,i%3+3),['besar','kecil','merah','laju','gembira'][i%5],mode);
+    } else if(k==='sentence'){
+      const a=W50[i%W50.length], b=W50[(i+1)%W50.length];q=qObj('🧱',`What comes first in: “I see ${a[2].toLowerCase()}.”`,shuffleCopy(['I','see',a[2].toLowerCase()]),'I',`Apakah perkataan pertama dalam ayat “Saya nampak ${a[3].toLowerCase()}.”`,shuffleCopy(['Saya','nampak',a[3].toLowerCase()]),'Saya',mode);
+    } else if(k==='plural'){
+      const a=W50[i%W50.length], plural=a[2].endsWith('S')?a[2]:a[2]+'S';q=qObj(a[1],`Which shows more than one ${a[2]}?`,shuffleCopy([plural,a[2],W50[(i+4)%50][2]]),plural,`Yang manakah menunjukkan lebih daripada satu ${a[3]}?`,shuffleCopy([plural,a[3],W50[(i+4)%50][3]]),plural,mode);
+    } else if(k==='wordfamily'){
+      const families=[['CAT','HAT','MAT','kucing','topi','tikar'],['DOG','LOG','FOG','anjing','kayu','kabus'],['SUN','RUN','FUN','matahari','lari','seronok'],['BEE','TREE','SEE','lebah','pokok','lihat'],['BALL','TALL','CALL','bola','tinggi','panggil']]; const a=families[i%5];q=qObj('🏠',`Which word belongs with ${a[0]}?`,shuffleCopy([a[1],a[2],'FISH']),a[1],`Yang manakah satu keluarga dengan ${a[0]}?`,shuffleCopy([a[4],a[5],'IKAN']),a[4],mode);
+    } else if(k==='count'||k==='count20'||k==='treasurecount'){
+      const max=k==='count20'?20:10, num=(i%max)+1, obj=NUM_OBJECTS[i%NUM_OBJECTS.length], opts=shuffleCopy([num,Math.max(1,num-1),Math.min(max,num+1)].map(String));q=qObj(obj,`How many ${obj}?`,opts,String(num),`Berapakah jumlah ${obj}?`,opts,String(num),mode);
+    } else if(k==='addition'||k==='mathstory'){
+      const a=(i%5)+1,b=((i*2)%5)+1,c=a+b;const opts=shuffleCopy([c,c+1,Math.max(0,c-1)].map(String));q=qObj('➕',`${a} + ${b} = ?`,opts,String(c),`Berapakah ${a} + ${b}?`,opts,String(c),mode);
+    } else if(k==='subtraction'){
+      const a=5+(i%5),b=1+(i%4),c=a-b;const opts=shuffleCopy([c,c+1,Math.max(0,c-1)].map(String));q=qObj('➖',`${a} − ${b} = ?`,opts,String(c),`Berapakah ${a} − ${b}?`,opts,String(c),mode);
+    } else if(k==='compare'||k==='same'){
+      const a=1+(i%8),b=(i*3)%9+1, ans=k==='same'?(a===b?'SAME':'DIFFERENT'):(a>b?'LEFT':a<b?'RIGHT':'SAME');const opts=k==='same'?['SAME','DIFFERENT','MAYBE']:['LEFT','SAME','RIGHT'];q=qObj('⚖️',`Which group has more? ${a} vs ${b}`,opts,ans,`Kumpulan manakah lebih banyak? ${a} berbanding ${b}`,opts,ans,mode);
+    } else if(k==='beforeafter'){
+      const x=2+(i%8), after=x+1,before=x-1;const ans=i%2===0?after:before;const prompt=i%2===0?`What comes after ${x}?`:`What comes before ${x}?`;const promptMs=i%2===0?`Apakah nombor selepas ${x}?`:`Apakah nombor sebelum ${x}?`;q=qObj('🔢',prompt,shuffleCopy([String(ans),String(x),String(i%2===0?before:after)]),String(ans),promptMs,shuffleCopy([String(ans),String(x),String(i%2===0?before:after)]),String(ans),mode);
+    } else if(k==='shapes'){
+      const a=SHAPES[i%SHAPES.length], wrong=SHAPES[(i+2)%SHAPES.length];q=qObj(a[1],`Which shape is ${a[2]}?`,shuffleCopy([a[2],wrong[2],SHAPES[(i+4)%6][2]]),a[2],`Bentuk manakah ${a[3]}?`,shuffleCopy([a[3],wrong[3],SHAPES[(i+4)%6][3]]),a[3],mode);
+    } else if(k==='patterns'){
+      const a=COLORS[i%COLORS.length],b=COLORS[(i+1)%COLORS.length];q=qObj('🧩',`${a[2]}, ${b[2]}, ${a[2]}, ?`,[a[2],b[2],COLORS[(i+2)%COLORS.length][2]],a[2],`${a[3]}, ${b[3]}, ${a[3]}, ?`,[a[3],b[3],COLORS[(i+2)%COLORS.length][3]],a[3],mode);
+    } else if(k==='size'||k==='length'||k==='height'){
+      const vals=[['🐘','Elephant','Gajah','big','besar'],['🐭','Mouse','Tikus','small','kecil'],['🦒','Giraffe','Zirafah','tall','tinggi'],['🐜','Ant','Semut','small','kecil'],['🚂','Train','Kereta api','long','panjang'],['🧵','Thread','Benang','long','panjang']];const a=vals[i%vals.length];q=qObj(a[0],`Which word describes this object?`,shuffleCopy([a[3],'small','big']),a[3],`Perkataan manakah menerangkan objek ini?`,shuffleCopy([a[4],'kecil','besar']),a[4],mode);
+    } else if(k==='position'){
+      const a=[['⬆️','above','atas'],['⬇️','below','bawah'],['➡️','beside','sebelah'],['📦','inside','dalam']][i%4];q=qObj('📍',`Where is the arrow? ${a[0]}`,shuffleCopy([a[1],'inside','below']),a[1],`Di manakah anak panah? ${a[0]}`,shuffleCopy([a[2],'dalam','bawah']),a[2],mode);
+    } else if(k==='time'){
+      const h=(i%12)+1, clock=['🕐','🕑','🕒','🕓','🕔','🕕','🕖','🕗','🕘','🕙','🕚','🕛'][h-1], ans=`${h}:00`;q=qObj(clock,`What time is shown?`,shuffleCopy([ans,`${(h%12)+1}:00`,`${((h+4)%12)+1}:00`]),ans,`Pukul berapakah ini?`,shuffleCopy([ans,`${(h%12)+1}:00`,`${((h+4)%12)+1}:00`]),ans,mode);
+    } else if(k==='money'){
+      const a=1+(i%3),b=1+((i+1)%3),c=a+b;const opts=shuffleCopy([c,c+1,c+2].map(String));q=qObj('🪙',`You have ${a} coins and get ${b} more. How many?`,opts,String(c),`Kamu ada ${a} syiling dan dapat ${b} lagi. Berapa jumlahnya?`,opts,String(c),mode);
+    } else if(k==='measurement'){
+      const a=1+(i%5), b=a+1; q=qObj('📏',`Which is longer: ${a} blocks or ${b} blocks?`,[` ${a} blocks`,`${b} blocks`,'Same'],`${b} blocks`,`Yang manakah lebih panjang: ${a} blok atau ${b} blok?`,[` ${a} blok`,`${b} blok`,'Sama'],`${b} blok`,mode);
+    } else if(k==='skip2'){
+      const x=(i%8)*2+2, ans=x+2;q=qObj('2️⃣',`What comes after ${x} when counting by 2s?`,shuffleCopy([String(ans),String(x+1),String(x+3)]),String(ans),`Apakah nombor selepas ${x} apabila kira 2-2?`,shuffleCopy([String(ans),String(x+1),String(x+3)]),String(ans),mode);
+    } else if(k==='animals'||k==='habitats'){
+      const arr=k==='animals'?animal50[i%animal50.length]:animalHabitat50[i%animalHabitat50.length];
+      if(k==='animals'){const [,icon,prompt,opts,ans,sound]=arr;q=qObj(icon, prompt,opts,ans,localizeActivityText.call(null,prompt),opts,ans,mode);}
+      else {const [icon,prompt,opts,ans]=arr;q=qObj(icon,prompt,opts,ans,localizeActivityText(prompt),opts,ans,mode);}
+    } else if(['animalsounds','animalfood','animalbody','babyanimals','movement','farm','jungle','ocean','arctic','insects','birds','animalgroups','animalsafety'].includes(k)){
+      const a=ANIMAL_SIMPLE[i%ANIMAL_SIMPLE.length], b=ANIMAL_SIMPLE[(i+3)%ANIMAL_SIMPLE.length], c=ANIMAL_SIMPLE[(i+7)%ANIMAL_SIMPLE.length];
+      if(k==='animalsounds'){q=qObj(a[1],`Which animal says ${a[3].toUpperCase()}?`,shuffleCopy([a[0],b[0],c[0]]),a[0],`Haiwan manakah berbunyi ${a[3].toUpperCase()}?`,shuffleCopy([a[2],b[2],c[2]]),a[2],mode);}
+      else if(k==='animalbody'){const body=BODY[i%BODY.length];q=qObj(a[1],`Which body part helps an animal ${body[3]}?`,shuffleCopy([body[1],BODY[(i+2)%BODY.length][1],BODY[(i+4)%BODY.length][1]]),body[1],`Bahagian badan manakah membantu haiwan ${body[4]}?`,shuffleCopy([body[2],BODY[(i+2)%BODY.length][2],BODY[(i+4)%BODY.length][2]]),body[2],mode);}
+      else if(k==='babyanimals'){q=qObj(a[1],`Which animal is the parent of a baby ${a[2].toLowerCase()}?`,shuffleCopy([a[0],b[0],c[0]]),a[0],`Haiwan manakah induk kepada anak ${a[2].toLowerCase()}?`,shuffleCopy([a[2],b[2],c[2]]),a[2],mode);}
+      else {q=qObj(a[1],`Which animal fits this mission?`,shuffleCopy([a[0],b[0],c[0]]),a[0],`Haiwan manakah sesuai dengan misi ini?`,shuffleCopy([a[2],b[2],c[2]]),a[2],mode);}
+    } else if(k==='science'||k==='scienceexplorer'){
+      const arr=k==='science'?science50[i%science50.length]:scienceExplorer50[i%scienceExplorer50.length];const [icon,prompt,opts,ans]=arr;q=qObj(icon,prompt,opts,ans,localizeActivityText(prompt),opts,ans,mode);
+    } else if(['senses','plants','weather','space','lightshadow','soundscience','materials','water','forces','living','earth','recycle','experiments'].includes(k)){
+      if(k==='senses'){const a=SENSES[i%SENSES.length];q=qObj(a[0],`Which sense helps us ${a[3]}?`,shuffleCopy([a[1],'eyes','ears']),a[1],`Deria manakah membantu kita ${a[3]==='see'?'melihat':a[3]==='hear'?'mendengar':a[3]==='smell'?'menghidu':a[3]==='taste'?'merasa':'menyentuh'}?`,shuffleCopy([a[2],'mata','telinga']),a[2],mode);}
+      else if(k==='plants'){q=qObj('🌱','What helps a plant grow?',shuffleCopy(['Water 💧','Toy 🧸','Shoe 👟']), 'Water 💧','Apakah yang membantu tumbuhan membesar?',shuffleCopy(['Air 💧','Mainan 🧸','Kasut 👟']),'Air 💧',mode);}
+      else if(k==='weather'){const a=WEATHER[i%WEATHER.length];q=qObj(a[0],`Which weather is this?`,shuffleCopy([a[1],WEATHER[(i+2)%6][1],WEATHER[(i+4)%6][1]]),a[1],`Apakah cuaca ini?`,shuffleCopy([a[2],WEATHER[(i+2)%6][2],WEATHER[(i+4)%6][2]]),a[2],mode);}
+      else if(k==='space'){const qs=[['☀️','What is the Sun?',['A star ⭐','A fish 🐟','A tree 🌳'],'A star ⭐','Apakah Matahari?',['Bintang ⭐','Ikan 🐟','Pokok 🌳'],'Bintang ⭐'],['🌍','What is Earth?',['A planet 🌍','A cloud ☁️','A shoe 👟'],'A planet 🌍','Apakah Bumi?',['Planet 🌍','Awan ☁️','Kasut 👟'],'Planet 🌍'],['🌙','What is the Moon?',['A natural satellite 🌙','A car 🚗','A tree 🌳'],'A natural satellite 🌙','Apakah Bulan?',['Satelit semula jadi 🌙','Kereta 🚗','Pokok 🌳'],'Satelit semula jadi 🌙']];const a=qs[i%3];q=qObj(a[0],a[1],a[2],a[3],a[4],a[5],a[6],mode);}
+      else {const a=SIMPLE_SCI[i%SIMPLE_SCI.length];q=qObj(a[0],a[1],a[2],a[3],a[4],a[2].map((x,j)=>j===0?a[4]:x),a[4],mode);}
+    } else if(['sorting','feelings','healthyfood','hygiene','safety','community','transport','home','school','daynight','seasons','naturewalk','maps','culture','kindness','oddone','pairing','clues','colors','rhythm','coding','builder','garden','petcare','dressweather','memory'].includes(k)){
+      if(k==='feelings'){const a=[['😊','happy','gembira'],['😢','sad','sedih'],['😡','angry','marah'],['😴','tired','letih'],['😮','surprised','terkejut'],['😌','calm','tenang']][i%6];q=qObj(a[0],`How might this face feel?`,shuffleCopy([a[1],'happy','sad']),a[1],`Apakah perasaan wajah ini?`,shuffleCopy([a[2],'gembira','sedih']),a[2],mode);}
+      else if(k==='healthyfood'){const a=FOOD[i%FOOD.length];q=qObj(a[1],`Which is a healthy everyday choice?`,shuffleCopy([a[2],FOOD[(i+3)%10][2],FOOD[(i+6)%10][2]]),a[2],`Yang manakah pilihan makanan harian yang baik?`,shuffleCopy([a[3],FOOD[(i+3)%10][3],FOOD[(i+6)%10][3]]),a[3],mode);}
+      else if(k==='safety'){const a=SAFETY[i%SAFETY.length];q=qObj(a[0],`What should you do near ${a[1]}?`,shuffleCopy([a[3],'run away alone','touch it']),a[3],`Apakah yang patut dilakukan dekat ${a[2]}?`,shuffleCopy([a[4],'lari seorang diri','sentuh']),a[4],mode);}
+      else if(k==='community'){const a=COMMUNITY[i%COMMUNITY.length];q=qObj(a[0],`Who ${a[3]}?`,shuffleCopy([a[1],COMMUNITY[(i+2)%COMMUNITY.length][1],COMMUNITY[(i+4)%COMMUNITY.length][1]]),a[1],`Siapa yang ${a[4]}?`,shuffleCopy([a[2],COMMUNITY[(i+2)%COMMUNITY.length][2],COMMUNITY[(i+4)%COMMUNITY.length][2]]),a[2],mode);}
+      else if(k==='transport'){const a=VEHICLES[i%VEHICLES.length];q=qObj(a[0],`Which vehicle travels on ${a[3]}?`,shuffleCopy([a[1],VEHICLES[(i+2)%8][1],VEHICLES[(i+4)%8][1]]),a[1],`Kenderaan manakah bergerak di ${a[4]}?`,shuffleCopy([a[2],VEHICLES[(i+2)%8][2],VEHICLES[(i+4)%8][2]]),a[2],mode);}
+      else if(k==='home'||k==='school'){const things=k==='home'?[['🪥','toothbrush','berus gigi','brush teeth','memberus gigi'],['🛏️','bed','katil','sleep','tidur'],['🍽️','plate','pinggan','eat','makan'],['🧹','broom','penyapu','clean','membersih']]:[['📚','book','buku','read','membaca'],['✏️','pencil','pensel','write','menulis'],['🪑','chair','kerusi','sit','duduk'],['🎒','bag','beg','carry school things','membawa barang sekolah']];const a=things[i%4];q=qObj(a[0],`What do we use a ${a[1]} for?`,shuffleCopy([a[3],'eat ice','fly']),a[3],`Untuk apa kita guna ${a[2]}?`,shuffleCopy([a[4],'makan ais','terbang']),a[4],mode);}
+      else if(k==='naturewalk'){const a=[['🌳','tree','pokok'],['🌸','flower','bunga'],['🪨','rock','batu'],['🍃','leaf','daun'],['🐦','bird','burung'],['🦋','butterfly','rama-rama']][i%6];q=qObj(a[0],`Can you spot a ${a[1]} in nature?`,['YES','NO','MAYBE'],'YES',`Bolehkah kamu nampak ${a[2]} di alam?`,['YA','TIDAK','MUNGKIN'],'YA',mode);}
+      else if(k==='kindness'){const a=KINDNESS[i%KINDNESS.length];q=qObj(a[0],`Which action is kind?`,shuffleCopy([a[1],'Push someone','Take everything']),a[1],`Yang manakah tindakan yang baik?`,shuffleCopy([a[2],'Tolak orang','Ambil semua']),a[2],mode);}
+      else if(k==='living'){const a=LIVING[i%LIVING.length];q=qObj(a[0],`Is a ${a[1]} living or non-living?`,['living','non-living','both'],a[3],`Adakah ${a[2]} hidup atau bukan hidup?`,['hidup','bukan hidup','kedua-duanya'],a[3]==='living'?'hidup':'bukan hidup',mode);}
+      else if(k==='oddone'){const group=['🐶','🐱','🐟','🍎','🐰'];const odd='🍎';q=qObj('🕵️',`Which one does not belong with the animals?`,shuffleCopy([odd,...group.filter(x=>x!==odd).slice(0,2)]),odd,`Yang manakah tidak termasuk dalam kumpulan haiwan?`,shuffleCopy([odd,'🐶','🐱']),'🍎',mode);}
+      else if(k==='colors'){const a=COLORS[i%COLORS.length];q=qObj(a[1],`Which colour is this?`,shuffleCopy([a[2],COLORS[(i+2)%7][2],COLORS[(i+4)%7][2]]),a[2],`Apakah warna ini?`,shuffleCopy([a[3],COLORS[(i+2)%7][3],COLORS[(i+4)%7][3]]),a[3],mode);}
+      else if(k==='memory'){const a=NUM_OBJECTS[i%NUM_OBJECTS.length];q=qObj(a,`Remember this picture: ${a}. Which one did you see?`,shuffleCopy([a,NUM_OBJECTS[(i+3)%12],NUM_OBJECTS[(i+6)%12]]),a,`Ingat gambar ini: ${a}. Yang manakah kamu nampak?`,shuffleCopy([a,NUM_OBJECTS[(i+3)%12],NUM_OBJECTS[(i+6)%12]]),a,mode);}
+      else {const a=KINDNESS[i%KINDNESS.length];q=qObj(a[0],`Choose the best next step.`,shuffleCopy([a[1],'Wait forever','Break it']),a[1],`Pilih langkah yang paling baik.`,shuffleCopy([a[2],'Tunggu selamanya','Rosakkan']),a[2],mode);}
+    } else {
+      q=qFromW(i,mode);
+    }
+    out.push(q);
+  }
+  return out;
+}
+const QUESTION_CACHE=new Map();
+function getModuleQuestions(m){if(!QUESTION_CACHE.has(m.id))QUESTION_CACHE.set(m.id,makeQuestions(m));return QUESTION_CACHE.get(m.id);}
+
+trainingModules.forEach(m=>{m.questions=getModuleQuestions(m);m.type='mission50';});
+
 const trainingState=new Set(JSON.parse(profileGet("trainingDone","[]")));
 let currentTraining=null;
 
@@ -417,8 +658,8 @@ function seriesAdvance(id,current,total=50,message="🎉 Correct!"){
   return false;
 }
 function seriesProgressMarkup(id,total=50){
-  const n=seriesProgress(id,total),pct=Math.round(n/total*100);
-  return `<div class="series-progress"><div><b>Mission Progress</b><span>${n}/${total}</span></div><div class="series-progress-bar"><span style="width:${pct}%"></span></div></div>`;
+  const n=seriesProgress(id,total),pct=Math.round(n/total*100),label=bakawaliLanguage==='ms'?'Kemajuan Misi':'Mission Progress';
+  return `<div class="series-progress"><div><b>${label}</b><span>${n}/${total}</span></div><div class="series-progress-bar"><span style="width:${pct}%"></span></div></div>`;
 }
 
 function trainingComplete(id){
@@ -427,16 +668,26 @@ function trainingComplete(id){
   trainingFeedback("complete");
   renderTrainingCards();
 }
-function renderTrainingCards(filter="all"){
+let trainingViewFilter="all",trainingViewPage=1;
+function renderTrainingCards(filter=trainingViewFilter,page=trainingViewPage){
+  trainingViewFilter=filter; trainingViewPage=page;
   const wrap=document.getElementById("trainingModules"); if(!wrap)return;
-  wrap.innerHTML=trainingModules.filter(m=>filter==="all"||m.cat===filter).map((m,i)=>{
-    const done=trainingState.has(m.id);
+  const all=trainingModules.filter(m=>filter==="all"||m.cat===filter), perPage=20, totalPages=Math.max(1,Math.ceil(all.length/perPage));
+  trainingViewPage=Math.max(1,Math.min(page,totalPages));
+  const start=(trainingViewPage-1)*perPage, shown=all.slice(start,start+perPage);
+  wrap.innerHTML=shown.map(m=>{
+    const done=trainingState.has(m.id), prog=seriesProgress(m.id,50);
+    const progressText=done?(bakawaliLanguage==='ms'?"✓ SELESAI":"✓ DONE"):(prog?`${prog}/50`:(bakawaliLanguage==='ms'?"MAIN →":"PLAY →"));
     return `<button class="training-module ${done?"complete":""}" data-training-id="${m.id}">
-      <span class="module-icon">${m.icon}</span><span class="module-copy"><b>${moduleTitle(m)}</b><small>${moduleDesc(m)}</small></span>
-      <span class="module-status">${done?(bakawaliLanguage==='ms'?"✓ SELESAI":"✓ DONE"):(bakawaliLanguage==='ms'?"MAIN →":"PLAY →")}</span>
+      <span class="module-icon">${m.icon}</span><span class="module-copy"><b>${moduleTitle(m)}</b><small>${moduleDesc(m)}</small>${!done&&prog?`<span class="module-mini-progress"><i style="width:${prog*2}%"></i></span>`:''}</span>
+      <span class="module-status">${progressText}</span>
     </button>`;
   }).join("");
   wrap.querySelectorAll("[data-training-id]").forEach(b=>b.addEventListener("click",()=>openTraining(b.dataset.trainingId)));
+  const pager=document.getElementById('trainingPager');
+  if(pager){pager.innerHTML=totalPages<=1?'':`<button type="button" data-page="prev" ${trainingViewPage===1?'disabled':''}>←</button><span>${start+1}–${Math.min(start+perPage,all.length)} / ${all.length}</span><button type="button" data-page="next" ${trainingViewPage===totalPages?'disabled':''}>→</button>`;
+    pager.querySelector('[data-page="prev"]')?.addEventListener('click',()=>renderTrainingCards(filter,trainingViewPage-1));
+    pager.querySelector('[data-page="next"]')?.addEventListener('click',()=>renderTrainingCards(filter,trainingViewPage+1));}
 }
 /* =========================
    TRAINING SOUND ENGINE — robust user-gesture audio
@@ -518,6 +769,7 @@ function trainingTemplate(m){
   const cat=bakawaliLanguage==="ms"?(m.cat==="language"?"BAHASA":m.cat==="math"?"MATEMATIK":m.cat==="science"?"SAINS":m.cat==="animal"?"HAIWAN":"TEROKA"):(m.cat==="language"?"LANGUAGE":m.cat==="math"?"MATH":"EXPLORER");
   const u=UI_TEXT[bakawaliLanguage];
   const head=`<div class="training-activity-head"><span class="eyebrow">${cat}</span><h3>${m.icon} ${moduleTitle(m)}</h3><p>${moduleDesc(m)}</p><button type="button" class="secondary training-sound-toggle" id="trainingSoundToggle" aria-pressed="true">🔊 ${u.soundOn}</button></div>`;
+  if(m.type==="mission50") return head+`<div id="missionStage"></div>`;
   if(m.type==="flash") return head+`<div class="flash-stage" id="trainingStage"></div><div class="activity-actions"><button class="secondary" id="trainHear">🔊 ${UI_TEXT[bakawaliLanguage].hear}</button><button class="primary" id="trainNext">${UI_TEXT[bakawaliLanguage].next}</button></div>`;
   if(m.type==="quiz") return head+`<div class="activity-question">${localizeActivityText(m.q)}</div><div class="activity-options">${m.a.map(x=>`<button data-correct="${x===m.correct}">${localizeChoice(x)}</button>`).join("")}</div><p class="activity-feedback" id="trainFeedback"></p>`;
   if(m.type==="spell") return head+`<div id="spellStage"></div>`;
@@ -545,8 +797,73 @@ function doneActivity(id,feedback="🎉 Great job!"){
   trainingComplete(id);
 }
 
+function spawnMissionConfetti(root){
+  if(!root)return;
+  const layer=document.createElement('div');layer.className='mission-confetti';
+  for(let i=0;i<14;i++){const s=document.createElement('span');s.textContent=['⭐','✨','🎉','💫'][i%4];s.style.setProperty('--dx',`${(Math.random()*180-90).toFixed(0)}px`);s.style.setProperty('--dy',`${(Math.random()*130+40).toFixed(0)}px`);s.style.setProperty('--r',`${(Math.random()*80-40).toFixed(0)}deg`);layer.appendChild(s);}
+  root.appendChild(layer);setTimeout(()=>layer.remove(),900);
+}
+
 function wireTraining(m){
   document.querySelectorAll('#trainingModalBody button').forEach(btn=>btn.addEventListener('click',()=>{if(btn.id!=='trainingSoundToggle')trainingClickSound()},{once:false}));
+  if(m.type==="mission50"){
+    let i=seriesProgress(m.id,50); const stage=document.getElementById("missionStage");
+    const qs=m.questions||getModuleQuestions(m);
+    const render=(effect="")=>{
+      const q=qs[i%50]; const ms=bakawaliLanguage==='ms';
+      const prompt=ms?(q.promptMs||localizeActivityText(q.prompt)):q.prompt; const opts=ms?(q.optsMs||q.opts.map(localizeChoice)):q.opts; const ans=ms?(q.answerMs||localizeChoice(q.answer)):q.answer;
+      const mode=q.interaction||m.mode||'tap';
+      const optsShuffled=shuffleCopy(opts);
+      const progress=seriesProgressMarkup(m.id,50);
+      const interactionLabel=mode==='drag'?(ms?'Seret atau tekan jawapan yang betul.':'Drag or tap the correct answer.'):
+        mode==='count'?(ms?'Kira dengan jari kamu!':'Count with your fingers!'):
+        mode==='sequence'?(ms?'Pilih langkah yang betul.':'Choose the right step.'):
+        mode==='sort'?(ms?'Masukkan ke kumpulan yang betul.':'Put it in the right group.'):
+        mode==='memory'?(ms?'Ingat gambar sebelum pilih.':'Remember the picture before choosing.'):(ms?'Pilih jawapan yang betul.':'Choose the correct answer.');
+      stage.innerHTML=`${progress}<div class="mission50-card ${effect}" data-mode="${mode}">
+        <div class="mission50-scene"><div class="mission50-icon" id="missionIcon">${q.icon||'🌟'}</div><div class="mission50-sparkles" aria-hidden="true">✨</div></div>
+        <div class="mission50-counter">${ms?'MISI':'MISSION'} ${i+1} / 50</div>
+        <h3>${prompt}</h3>
+        <p class="mission50-hint">${interactionLabel}</p>
+        ${mode==='drag'?`<div class="mission-drag-source" id="missionDragSource" draggable="true"><span>${q.icon||'🌟'}</span><b>${ms?'Seret saya!':'Drag me!'}</b></div>`:''}
+        <div class="mission50-options ${mode==='drag'?'mission-dropzones':''}">${optsShuffled.map((x,j)=>`<button type="button" class="mission50-option" data-value="${String(x).replace(/"/g,'&quot;')}" data-answer="${String(x)===String(ans)}"><span>${mode==='drag'?'🎯':'◆'}</span>${x}</button>`).join('')}</div>
+        <p class="activity-feedback" id="trainFeedback">${ms?'Mari cuba!':'Let’s go!'}</p>
+      </div>`;
+      if(mode==='drag'){
+        const source=document.getElementById('missionDragSource');
+        if(source){source.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain','mission'));
+          source.addEventListener('touchstart',()=>source.classList.add('drag-ready'),{passive:true});}
+        stage.querySelectorAll('.mission50-option').forEach(target=>{
+          target.addEventListener('dragover',e=>{e.preventDefault();target.classList.add('drag-over');});
+          target.addEventListener('dragleave',()=>target.classList.remove('drag-over'));
+          target.addEventListener('drop',e=>{e.preventDefault();target.classList.remove('drag-over');target.click();});
+        });
+      }
+      stage.querySelectorAll('.mission50-option').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          if(btn.disabled)return;
+          const good=btn.dataset.answer==='true';
+          if(good){
+            stage.querySelectorAll('.mission50-option').forEach(x=>x.disabled=true);
+            btn.classList.add('mission-correct');
+            stage.querySelector('.mission50-card')?.classList.add('mission-win');
+            const icon=document.getElementById('missionIcon'); if(icon){icon.classList.remove('mission-bounce');void icon.offsetWidth;icon.classList.add('mission-bounce');}
+            spawnMissionConfetti(stage);
+            trainingFeedback('correct',ms?'🎉 Betul! Hebat!':'🎉 Correct! Great job!');
+            const finished=seriesAdvance(m.id,i,50,ms?'🎉 Betul!':'🎉 Correct!');
+            i++;
+            if(finished){setTimeout(()=>{if(stage)stage.innerHTML=`<div class="mission-complete"><div class="mission-trophy">🏆</div><h3>${ms?'Misi Selesai!':'Mission Complete!'}</h3><p>${ms?'Kamu jawab 50 soalan!':'You completed all 50 questions!'}</p><div class="mission-reward">⭐ +1 Star &nbsp; 🎉</div></div>`;},700);}
+            else setTimeout(()=>render(),650);
+          }else{
+            btn.classList.remove('mission-wrong');void btn.offsetWidth;btn.classList.add('mission-wrong');
+            trainingFeedback('wrong',ms?'Cuba lagi!':'Try again!');
+          }
+        });
+      });
+    };
+    render();
+    return;
+  }
   if(m.type==="flash"){
     let i=0;const stage=document.getElementById("trainingStage");
     const show=()=>{const [a,b]=m.items[i%m.items.length];stage.innerHTML=`<div class="flash-card"><strong>${a}</strong><span>${b}</span></div>`;speakTraining(a+" "+b);};
@@ -740,7 +1057,7 @@ updateMusicLanguage();
   }
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.classList.contains("hidden"))closeTraining();});
   document.querySelectorAll(".training-filter").forEach(b=>b.addEventListener("click",()=>{
-    document.querySelectorAll(".training-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderTrainingCards(b.dataset.filter);
+    document.querySelectorAll(".training-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderTrainingCards(b.dataset.filter,1);
   }));
   renderTrainingCards("all");trainingSave();
 });
@@ -1338,7 +1655,7 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   }
 
   // Parent corner
-  function updateParentCorner(){const s=document.getElementById('parentStars'),b=document.getElementById('parentBadges'),t=document.getElementById('parentTraining'),g=document.getElementById('parentGames');if(!s)return;s.textContent=stars;b.textContent=badgeDefs.filter(x=>x.ok()).length;t.textContent=Math.round(trainingState.size/trainingModules.length*100)+'%';g.textContent=Number(profileGet('gamesPlayed',0));const cats={language:['abc','phonics','spelling','sight','reading','story','picture','wordmatch'],math:['count','addition','subtraction','shapes','patterns','compare','time','money'],animal:['animals','animalhabitat'],science:['scientist','scienceexplorer']};Object.entries(cats).forEach(([k,ids])=>{const el=document.getElementById('skill'+k.charAt(0).toUpperCase()+k.slice(1));if(el){const pct=Math.round(ids.filter(x=>trainingState.has(x)).length/ids.length*100);el.textContent=pct+'%';el.style.width=pct+'%';}});}
+  function updateParentCorner(){const s=document.getElementById('parentStars'),b=document.getElementById('parentBadges'),t=document.getElementById('parentTraining'),g=document.getElementById('parentGames');if(!s)return;s.textContent=stars;b.textContent=badgeDefs.filter(x=>x.ok()).length;t.textContent=Math.round(trainingState.size/trainingModules.length*100)+'%';g.textContent=Number(profileGet('gamesPlayed',0));const cats={language:trainingModules.filter(x=>x.cat==='language').map(x=>x.id),math:trainingModules.filter(x=>x.cat==='math').map(x=>x.id),animal:trainingModules.filter(x=>x.cat==='animal').map(x=>x.id),science:trainingModules.filter(x=>x.cat==='science').map(x=>x.id),world:trainingModules.filter(x=>x.cat==='world').map(x=>x.id)};Object.entries(cats).forEach(([k,ids])=>{const el=document.getElementById('skill'+k.charAt(0).toUpperCase()+k.slice(1));if(el){const pct=Math.round(ids.filter(x=>trainingState.has(x)).length/ids.length*100);el.textContent=pct+'%';el.style.width=pct+'%';}});}
 
   window.bakawaliRefreshStory=renderStory;
   window.bakawaliUpdateParent=updateParentCorner;

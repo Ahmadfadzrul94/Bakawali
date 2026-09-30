@@ -341,3 +341,51 @@ body.runner-fullscreen .runner-touch{padding:12px 18px}
 @media(max-width:1050px){.photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.gallery-head{align-items:flex-start}.gallery-upload-card{grid-template-columns:auto 1fr}.gallery-upload-card .secondary{grid-column:1/-1;justify-self:start}.photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.gallery-upload-card{padding:18px;gap:12px}.gallery-upload-icon{width:52px;height:52px;font-size:25px}.gallery-upload-copy h3{font-size:16px}.gallery-upload-copy p{font-size:11px}.gallery-upload-top{width:100%}.photo-grid{gap:11px}.photo-info{padding:10px}.photo-caption{font-size:11px}.gallery-toolbar{align-items:flex-start;flex-direction:column}}
+
+/* =========================
+   TRAINING WORLD V6 — playful 50-step mission UI
+   ========================= */
+#missionStage{width:100%;}
+.mission50-card{position:relative;overflow:hidden;max-width:760px;margin:10px auto 0;padding:20px;border:1px solid rgba(26,45,90,.12);border-radius:24px;background:linear-gradient(180deg,#fff,#f6f8ff);box-shadow:0 18px 45px rgba(21,38,77,.10);text-align:center;transform:translateY(0);transition:transform .2s,box-shadow .2s}
+.mission50-scene{position:relative;min-height:118px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;border-radius:20px;background:linear-gradient(180deg,#eaf4ff,#f8fbff);overflow:hidden}
+.mission50-icon{font-size:78px;line-height:1;filter:drop-shadow(0 10px 10px rgba(21,38,77,.12));transition:transform .25s}
+.mission50-sparkles{position:absolute;right:22%;top:15%;font-size:26px;animation:missionFloat 2.2s ease-in-out infinite}
+.mission50-counter{display:inline-flex;padding:6px 12px;border-radius:999px;background:#eef2ff;color:#40517e;font-weight:900;font-size:12px;letter-spacing:.5px;margin:8px 0}
+.mission50-card h3{margin:8px auto 6px;max-width:650px;color:#142451;font-size:24px;line-height:1.25}
+.mission50-hint{margin:0 auto 14px;color:#7080a4;font-weight:700;font-size:13px}
+.mission50-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:680px;margin:0 auto}
+.mission50-option{min-height:64px;border:2px solid #dce3f4;border-radius:17px;background:#fff;color:#17264c;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #dce3f4;transition:transform .12s,box-shadow .12s,border-color .12s,background .12s}
+.mission50-option span{display:block;font-size:14px;opacity:.55;margin-bottom:2px}
+.mission50-option:hover{transform:translateY(-2px);box-shadow:0 7px 0 #dce3f4}
+.mission50-option:active{transform:translateY(4px);box-shadow:0 2px 0 #dce3f4}
+.mission50-option.mission-correct{border-color:#43b96b;background:#e9fff0;box-shadow:0 5px 0 #43b96b;animation:missionPop .35s ease}
+.mission50-option.mission-wrong{border-color:#ff6550;background:#fff0ed;box-shadow:0 5px 0 #ff6550;animation:missionShake .35s ease}
+.mission-win{animation:missionCardWin .5s ease}
+.mission-bounce{animation:missionBounce .6s ease}
+.mission-complete{max-width:620px;margin:20px auto;padding:45px 24px;border-radius:28px;background:linear-gradient(180deg,#fff,#f5f8ff);border:1px solid #dfe6f5;text-align:center;box-shadow:0 20px 50px rgba(21,38,77,.12)}
+.mission-trophy{font-size:76px;animation:missionBounce .8s ease infinite alternate}
+.mission-complete h3{font-size:30px;margin:10px 0 6px;color:#17264c}
+.mission-complete p{color:#7280a2;font-weight:700}
+.mission-reward{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:999px;background:#fff5c8;color:#6d5710;font-weight:900}
+.mission-confetti{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:5}
+.mission-confetti span{position:absolute;left:50%;top:42%;font-size:22px;animation:missionConfetti .8s ease-out forwards;--dx:0px;--dy:80px;--r:0deg}
+.series-progress{max-width:760px;margin:0 auto 12px;padding:8px 2px}
+.series-progress>div:first-child{display:flex;justify-content:space-between;align-items:center;color:#607095;font-size:12px;font-weight:900;margin-bottom:6px}
+.series-progress-bar{height:9px;border-radius:999px;background:#e7ebf5;overflow:hidden}
+.series-progress-bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff6046,#ffb13b);transition:width .35s ease}
+@keyframes missionFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-7px) rotate(5deg)}}
+@keyframes missionBounce{0%{transform:scale(.85) translateY(8px)}45%{transform:scale(1.14) translateY(-8px)}100%{transform:scale(1) translateY(0)}}
+@keyframes missionPop{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes missionShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes missionCardWin{0%{transform:scale(1)}50%{transform:scale(1.015);box-shadow:0 22px 55px rgba(60,170,105,.18)}100%{transform:scale(1)}}
+@keyframes missionConfetti{0%{opacity:0;transform:translate(0,0) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r))}}
+@media(max-width:700px){.mission50-card{padding:14px;border-radius:20px}.mission50-scene{min-height:96px}.mission50-icon{font-size:60px}.mission50-card h3{font-size:19px}.mission50-options{grid-template-columns:1fr;gap:9px}.mission50-option{min-height:56px}.mission50-hint{font-size:12px}}
+.training-pager{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px 0 30px;color:#607095;font-weight:900}
+.training-pager button{min-width:42px;height:42px;border:1px solid #d8e0f1;border-radius:12px;background:#fff;color:#17264c;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #d8e0f1}
+.training-pager button:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+.module-mini-progress{display:block;height:5px;background:#e9edf6;border-radius:999px;margin-top:7px;overflow:hidden;max-width:150px}
+.module-mini-progress i{display:block;height:100%;background:linear-gradient(90deg,#ff6046,#ffb13b);border-radius:inherit}
+@media(max-width:700px){.training-pager{margin-bottom:22px}.training-pager button{min-width:38px;height:38px}}
+.mission-drag-source{display:inline-flex;align-items:center;gap:10px;margin:2px auto 14px;padding:10px 16px;border:2px dashed #9eb0d9;border-radius:16px;background:#f8fbff;color:#24365f;font-weight:900;cursor:grab;box-shadow:0 5px 0 #dce3f4;transition:transform .15s,background .15s}
+.mission-drag-source span{font-size:34px}.mission-drag-source:active,.mission-drag-source.drag-ready{transform:scale(1.05) rotate(-2deg);background:#eef5ff}
+.mission-dropzones .mission50-option{border-style:dashed}.mission-dropzones .mission50-option.drag-over{transform:translateY(-4px) scale(1.02);border-color:#ff9c3a;background:#fff6e8;box-shadow:0 8px 0 #ffc776}
