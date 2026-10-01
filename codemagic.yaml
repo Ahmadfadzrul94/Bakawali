@@ -24,6 +24,7 @@ workflows:
       - name: Build Bakawali Debug APK
         script: |
           cd android
+          chmod +x ./gradlew
           ./gradlew assembleDebug
 
     artifacts:
