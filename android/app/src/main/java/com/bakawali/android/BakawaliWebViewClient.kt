@@ -3,7 +3,7 @@ package com.bakawali.android
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.webkit.WebResourceError
+import android.webkit.WebResourceErrorCompat
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -76,9 +76,10 @@ class BakawaliWebViewClient(
     override fun onReceivedError(
         view: WebView,
         request: WebResourceRequest,
-        error: WebResourceError
+        error: WebResourceErrorCompat
     ) {
         super.onReceivedError(view, request, error)
+        
         // Only trigger error view for the main frame request
         if (request.isForMainFrame) {
             val desc = error.description?.toString() ?: "Unknown WebView Error"
