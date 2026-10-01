@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Bakawali</string>
+    <string name="error_loading_title">Sambungan Terputus / Connection Offline</string>
+    <string name="error_loading_desc">Modul pembelajaran tempatan masih sedia digunakan! / Local training modules are available offline!</string>
+    <string name="retry">Cuba Semula / Retry</string>
+    <string name="exit_prompt">Tekan sekali lagi untuk keluar / Press back again to exit</string>
+</resources>

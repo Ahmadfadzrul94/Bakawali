@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bakawali - Kembara Pembelajaran Kanak-Kanak</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app-container">
+    
+    <!-- Top Stat Header Bar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <div class="stat-chip stars">⭐ <span id="topStars">0</span></div>
+        <div class="stat-chip coins">🪙 <span id="topCoins">0</span></div>
+        <div class="stat-chip streak">🔥 <span id="topStreak">1d</span></div>
+      </div>
+      <div class="top-bar-right">
+        <button id="btnLang" class="lang-switch">🇲🇾 BM</button>
+        <button class="icon-btn" onclick="app.navigate('parents')">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Main View Viewport -->
+    <main class="view-viewport">
+      
+      <!-- 1. Adventure World View -->
+      <section id="view-adventure" class="view-page active">
+        <div class="world-hero">
+          <div class="world-hero-avatar">🌺</div>
+          <div>
+            <h2 style="font-size: 19px; font-weight:800;">Bakawali Adventure</h2>
+            <p style="font-size: 12px; color: #C7D2FE; margin-top:2px;">Pilih pulau pembelajaran anda untuk memulakan kembara!</p>
+          </div>
+        </div>
+
+        <div id="adventureWorldsGrid" class="world-grid"></div>
+      </section>
+
+      <!-- 2. 100 Training Modules View -->
+      <section id="view-modules" class="view-page">
+        <div class="world-hero" style="background: linear-gradient(135deg, #065F46, #047857);">
+          <div class="world-hero-avatar">🎯</div>
+          <div>
+            <h2 style="font-size: 19px; font-weight:800;">100 Modul Latihan</h2>
+            <p style="font-size: 12px; color: #A7F3D0; margin-top:2px;">50 misi interaktif setiap modul (5,000 soalan!)</p>
+          </div>
+        </div>
+
+        <div id="modulesList"></div>
+      </section>
+
+      <!-- 3. Mini Games Hub (Sky Runner, Spin Quest, Block Drop, Astraea Starfighter) -->
+      <section id="view-games" class="view-page">
+        <div class="world-hero" style="background: linear-gradient(135deg, #4C1D95, #6D28D9);">
+          <div class="world-hero-avatar">🎮</div>
+          <div>
+            <h2 style="font-size: 19px; font-weight:800;">Zon Permainan Minda</h2>
+            <p style="font-size: 12px; color: #DDD6FE; margin-top:2px;">Asah kepantasan & pemikiran kreatif kanak-kanak</p>
+          </div>
+        </div>
+
+        <!-- Sky Runner -->
+        <div class="world-card" style="margin-bottom:14px;">
+          <h3>🏃 Sky Runner</h3>
+          <p style="margin-bottom:10px;">Ketuk skrin untuk Baka melompat dan kutip permata!</p>
+          <div class="game-canvas-wrap">
+            <canvas id="skyRunnerCanvas" width="340" height="380"></canvas>
+          </div>
+          <button class="btn-primary" style="margin-top:10px; width:100%;" onclick="app.startSkyRunner()">Mula Sky Runner ▶</button>
+        </div>
+
+        <!-- Spin Quest -->
+        <div class="world-card">
+          <h3>🎡 Spin Quest (Roda Bertuah)</h3>
+          <p style="margin-bottom:10px;">Putar roda untuk dapatkan ganjaran syiling dan bintang!</p>
+          <div style="display:flex; justify-content:center; padding:10px 0;">
+            <canvas id="spinWheelCanvas" width="280" height="280"></canvas>
+          </div>
+          <button class="btn-primary" style="margin-top:10px; width:100%;" onclick="app.spinQuestWheel()">Putar Roda Sekarang 🎯</button>
+        </div>
+      </section>
+
+      <!-- 4. Buddy Camp -->
+      <section id="view-buddy" class="view-page">
+        <div class="world-card" style="text-align:center; padding:30px 16px;">
+          <div id="buddyVisual" style="font-size:80px; margin-bottom:16px;">🐥</div>
+          <h2>Baka The Buddy</h2>
+          <p style="color:#94A3B8; margin-top:4px;">Jaga kawan comel anda dengan memberi makan dan kasih sayang!</p>
+
+          <div style="display:flex; gap:12px; justify-content:center; margin-top:24px;">
+            <button class="btn-primary" onclick="app.feedBuddy()">🍎 Beri Epal (-5🪙)</button>
+            <button class="btn-primary" style="background:#059669;" onclick="app.nativeToast('Baka gembira berenang!')">🛁 Mandi</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Story Quest (Interactive Books) -->
+      <section id="view-stories" class="view-page">
+        <div class="world-hero" style="background: linear-gradient(135deg, #831843, #BE185D);">
+          <div class="world-hero-avatar">📖</div>
+          <div>
+            <h2 style="font-size: 19px; font-weight:800;">Story Quest</h2>
+            <p style="font-size: 12px; color: #FBCFE8; margin-top:2px;">Buku cerita bergambar bersuara bahasa Melayu & Inggeris</p>
+          </div>
+        </div>
+        <div id="storyList"></div>
+      </section>
+
+      <!-- 6. Little Creator (Drawing Canvas) -->
+      <section id="view-creator" class="view-page">
+        <div class="creator-toolbar">
+          <div class="color-dot" style="background:#EF4444;" onclick="setDrawColor('#EF4444')"></div>
+          <div class="color-dot" style="background:#3B82F6;" onclick="setDrawColor('#3B82F6')"></div>
+          <div class="color-dot" style="background:#10B981;" onclick="setDrawColor('#10B981')"></div>
+          <div class="color-dot" style="background:#FBBF24;" onclick="setDrawColor('#FBBF24')"></div>
+          <div class="color-dot" style="background:#8B5CF6;" onclick="setDrawColor('#8B5CF6')"></div>
+          <button class="icon-btn" onclick="clearCanvas()">🗑️</button>
+          <button class="btn-primary" style="padding:6px 14px; font-size:12px;" onclick="saveDrawing()">💾 Simpan</button>
+        </div>
+        <div class="game-canvas-wrap" style="height:360px; background:#FFFFFF;">
+          <canvas id="drawingCanvas" width="340" height="360"></canvas>
+        </div>
+      </section>
+
+      <!-- 7. YouTube Music / Offline Nursery Melodies -->
+      <section id="view-music" class="view-page">
+        <div class="world-card" style="margin-bottom:14px; text-align:center;">
+          <h3 id="nowPlayingTitle">🎵 Muzik Kanak-Kanak</h3>
+          <p style="color:#94A3B8; font-size:12px; margin-top:4px;">Lagu kanak-kanak ceria & pembina minda</p>
+          <div style="margin-top:14px; display:flex; justify-content:center; gap:10px;">
+            <button class="btn-primary" style="background:#DC2626;" onclick="app.stopSong()">⏹ Berhenti</button>
+          </div>
+        </div>
+        <div id="musicListContainer"></div>
+      </section>
+
+      <!-- 8. Badge Collection -->
+      <section id="view-badges" class="view-page">
+        <div id="badgesGrid" class="badges-grid"></div>
+      </section>
+
+      <!-- 9. Photo Gallery -->
+      <section id="view-gallery" class="view-page">
+        <div id="galleryGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+      </section>
+
+      <!-- 10. Parent Corner -->
+      <section id="view-parents" class="view-page">
+        <div class="world-hero" style="background: linear-gradient(135deg, #1E293B, #334155);">
+          <div class="world-hero-avatar">🛡️</div>
+          <div>
+            <h2 style="font-size: 19px; font-weight:800;">Sudut Ibu Bapa / Parent Corner</h2>
+            <p style="font-size: 12px; color: #94A3B8; margin-top:2px;">Kawalan masa skrin, laporan prestasi & tetapan</p>
+          </div>
+        </div>
+        <div id="parentStatsContent"></div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-view="adventure" onclick="app.navigate('adventure')">
+        <span class="nav-icon">🗺️</span>
+        <span>Kembara</span>
+      </button>
+      <button class="nav-item" data-view="modules" onclick="app.navigate('modules')">
+        <span class="nav-icon">📚</span>
+        <span>Modul</span>
+      </button>
+      <button class="nav-item" data-view="games" onclick="app.navigate('games')">
+        <span class="nav-icon">🎮</span>
+        <span>Game</span>
+      </button>
+      <button class="nav-item" data-view="stories" onclick="app.navigate('stories')">
+        <span class="nav-icon">📖</span>
+        <span>Cerita</span>
+      </button>
+      <button class="nav-item" data-view="creator" onclick="app.navigate('creator')">
+        <span class="nav-icon">🎨</span>
+        <span>Lukis</span>
+      </button>
+      <button class="nav-item" data-view="music" onclick="app.navigate('music')">
+        <span class="nav-icon">🎵</span>
+        <span>Muzik</span>
+      </button>
+      <button class="nav-item" data-view="badges" onclick="app.navigate('badges')">
+        <span class="nav-icon">🏆</span>
+        <span>Piala</span>
+      </button>
+      <button class="nav-item" data-view="gallery" onclick="app.navigate('gallery')">
+        <span class="nav-icon">🖼️</span>
+        <span>Galeri</span>
+      </button>
+    </nav>
+
+    <!-- Interactive Mission Question Modal -->
+    <div id="missionModal" style="display:none; position:fixed; inset:0; background:#0F172A; z-index:200; flex-direction:column; padding:16px;">
+      <div class="mission-header">
+        <span id="missionIndexText" style="font-weight:800; color:#FBBF24;">Misi 1/50</span>
+        <button class="icon-btn" onclick="app.closeMissionModal()">✕</button>
+      </div>
+      <div class="mission-card" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+        <h3 id="missionPrompt" class="mission-prompt">Soalan</h3>
+        <div id="missionVisual" class="mission-visual">🌺</div>
+      </div>
+      <div id="missionAnswersGrid" class="answers-grid" style="margin-bottom:10px;"></div>
+    </div>
+
+    <!-- Story Reader Modal -->
+    <div id="storyReaderModal" style="display:none; position:fixed; inset:0; background:#0F172A; z-index:200; flex-direction:column; padding:16px;">
+      <div class="mission-header">
+        <span style="font-weight:800; color:#EC4899;">📖 Story Quest</span>
+        <button class="icon-btn" onclick="app.closeStoryReader()">✕</button>
+      </div>
+      <div id="storyReaderContent" style="flex:1; display:flex; align-items:center; justify-content:center;"></div>
+    </div>
+
+    <!-- Celebration Popup -->
+    <div id="celebrateModal" class="celebrate-modal">
+      <div style="font-size:72px; animation:bounce 1s infinite;">🏆</div>
+      <h2 id="celebrateText" style="font-size:22px; font-weight:900; margin:16px 0; color:#FBBF24;">Hebat!</h2>
+      <button class="btn-primary" onclick="app.closeCelebrate()">Teruskan! 🚀</button>
+    </div>
+
+  </div>
+
+  <script src="audio.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
