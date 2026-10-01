@@ -1,0 +1,26 @@
+#!/bin/sh
+
+APP_HOME="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)"
+APP_BASE_NAME="$(basename "$0")"
+CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+
+if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD="java"
+fi
+
+if ! command -v "$JAVACMD" >/dev/null 2>&1; then
+    echo "ERROR: Java could not be found." >&2
+    exit 1
+fi
+
+if [ ! -f "$CLASSPATH" ]; then
+    echo "ERROR: Gradle wrapper JAR not found: $CLASSPATH" >&2
+    exit 1
+fi
+
+exec "$JAVACMD" \
+    "-Dorg.gradle.appname=$APP_BASE_NAME" \
+    -classpath "$CLASSPATH" \
+    org.gradle.wrapper.GradleWrapperMain "$@"
