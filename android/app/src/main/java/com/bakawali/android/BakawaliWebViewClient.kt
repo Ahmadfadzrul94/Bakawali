@@ -6,7 +6,6 @@ import android.net.Uri
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
-import android.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 
@@ -72,18 +71,3 @@ class BakawaliWebViewClient(
         super.onPageFinished(view, url)
         onPageLoaded()
     }
-
-    override fun onReceivedError(
-        view: WebView,
-        request: WebResourceRequest,
-        error: WebResourceErrorCompat
-    ) {
-        super.onReceivedError(view, request, error)
-        
-        // Only trigger error view for the main frame request
-        if (request.isForMainFrame) {
-            val desc = error.description?.toString() ?: "Unknown WebView Error"
-            onErrorEncountered(desc)
-        }
-    }
-}
