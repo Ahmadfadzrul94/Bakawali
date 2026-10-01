@@ -3,10 +3,10 @@ package com.bakawali.android
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.webkit.WebResourceErrorCompat
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import android.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 
