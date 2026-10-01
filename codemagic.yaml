@@ -1,0 +1,29 @@
+workflows:
+  bakawali-android-debug:
+    name: Bakawali Android Debug APK
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    environment:
+      java: 17
+
+    scripts:
+      - name: Set Android SDK location
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+
+      - name: Verify Android project
+        script: |
+          cd android
+          echo "Java version:"
+          java -version
+          echo "Gradle version:"
+          ./gradlew --version
+
+      - name: Build Bakawali Debug APK
+        script: |
+          cd android
+          ./gradlew assembleDebug
+
+    artifacts:
+      - android/app/build/outputs/apk/debug/app-debug.apk
