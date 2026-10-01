@@ -49,12 +49,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Setup Edge-to-Edge UI
-        setupEdgeToEdge()
-
         // Inflate view binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Setup Edge-to-Edge UI
+        setupEdgeToEdge()
 
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
