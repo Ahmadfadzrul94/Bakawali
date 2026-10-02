@@ -228,11 +228,24 @@ class BakawaliApp {
   }
 
   startModule(moduleId) {
-    this.activeModule = moduleId;
-    this.activeMissions = window.BAKAWALI_DATA.getModuleMissions(moduleId);
-    this.activeMissionIdx = this.progress[moduleId] ? Math.min(this.progress[moduleId], 49) : 0;
-    this.showMissionModal();
+  if (this.progress[moduleId] >= 50) {
+    this.nativeToast(
+      this.lang === "ms"
+        ? "Modul ini sudah selesai!"
+        : "This module is already completed!"
+    );
+    return;
   }
+
+  this.activeModule = moduleId;
+  this.activeMissions = window.BAKAWALI_DATA.getModuleMissions(moduleId);
+  this.activeMissionIdx = Math.max(
+    0,
+    Math.min(this.progress[moduleId] || 0, 49)
+  );
+  this.answerLocked = false;
+  this.showMissionModal();
+}
 
   showMissionModal() {
     const modal = document.getElementById("missionModal");
@@ -246,6 +259,7 @@ class BakawaliApp {
 
   renderCurrentMission() {
     const mission = this.activeMissions[this.activeMissionIdx];
+    this.answerLocked = false;
     if (!mission) {
       this.closeMissionModal();
       return;
@@ -269,39 +283,61 @@ class BakawaliApp {
   }
 
   answerMission(isCorrect, btnElement) {
-    if (isCorrect) {
-      btnElement.classList.add("correct");
-      window.bakawaliAudio.playCorrect();
-      this.nativeVibrate(60);
+  if (this.answerLocked) return;
 
-      this.stars += 1;
-      this.coins += 2;
-      this.progress[this.activeModule] = Math.max(this.progress[this.activeModule] || 0, this.activeMissionIdx + 1);
-      this.saveState();
+  if (isCorrect) {
+    this.answerLocked = true;
 
-      if (window.BakawaliNative && window.BakawaliNative.recordTrainingProgress) {
-        window.BakawaliNative.recordTrainingProgress(this.activeModule, this.activeMissionIdx + 1, 3);
-      }
+    document.querySelectorAll("#missionAnswersGrid .answer-btn")
+      .forEach(button => {
+        button.disabled = true;
+      });
 
-      setTimeout(() => {
-        if (this.activeMissionIdx < 49) {
-          this.activeMissionIdx++;
-          this.renderCurrentMission();
-        } else {
-          this.closeMissionModal();
-          this.showCelebration(`${this.lang === 'ms' ? 'Tahniah! Modul Selesai!' : 'Awesome! Module Completed!'} +50⭐`);
-        }
-      }, 700);
-    } else {
-      btnElement.classList.add("incorrect");
-      window.bakawaliAudio.playWrong();
-      this.nativeVibrate(150);
-      setTimeout(() => {
-        btnElement.classList.remove("incorrect");
-      }, 600);
+    btnElement.classList.add("correct");
+    window.bakawaliAudio.playCorrect();
+    this.nativeVibrate(60);
+
+    this.stars += 1;
+    this.coins += 2;
+    this.progress[this.activeModule] = Math.max(
+      this.progress[this.activeModule] || 0,
+      this.activeMissionIdx + 1
+    );
+    this.saveState();
+
+    if (window.BakawaliNative &&
+        window.BakawaliNative.recordTrainingProgress) {
+      window.BakawaliNative.recordTrainingProgress(
+        this.activeModule,
+        this.activeMissionIdx + 1,
+        3
+      );
     }
-  }
 
+    setTimeout(() => {
+      if (this.activeMissionIdx < 49) {
+        this.activeMissionIdx++;
+        this.renderCurrentMission();
+      } else {
+        this.closeMissionModal();
+        this.showCelebration(
+          this.lang === "ms"
+            ? "Tahniah! Modul Selesai!"
+            : "Awesome! Module Completed!"
+        );
+      }
+    }, 700);
+
+  } else {
+    btnElement.classList.add("incorrect");
+    window.bakawaliAudio.playWrong();
+    this.nativeVibrate(150);
+
+    setTimeout(() => {
+      btnElement.classList.remove("incorrect");
+    }, 600);
+  }
+}
   showCelebration(text) {
     const modal = document.getElementById("celebrateModal");
     document.getElementById("celebrateText").textContent = text;
