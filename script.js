@@ -568,7 +568,7 @@ function makeQuestions(m){
     } else if(k==='wordfamily'){
       const families=[['CAT','HAT','MAT','kucing','topi','tikar'],['DOG','LOG','FOG','anjing','kayu','kabus'],['SUN','RUN','FUN','matahari','lari','seronok'],['BEE','TREE','SEE','lebah','pokok','lihat'],['BALL','TALL','CALL','bola','tinggi','panggil']]; const a=families[i%5];q=qObj('🏠',`Which word belongs with ${a[0]}?`,shuffleCopy([a[1],a[2],'FISH']),a[1],`Yang manakah satu keluarga dengan ${a[0]}?`,shuffleCopy([a[4],a[5],'IKAN']),a[4],mode);
     } else if(k==='count'||k==='count20'||k==='treasurecount'){
-      const max=k==='count20'?20:10, num=(i%max)+1, obj=NUM_OBJECTS[(i*7)%NUM_OBJECTS.length], opts=shuffleCopy([num,Math.max(1,num-1),Math.min(max,num+1)].map(String));
+      const max=k==='count20'?20:10, num=1+Math.floor(Math.random()*max), obj=NUM_OBJECTS[Math.floor(Math.random()*NUM_OBJECTS.length)], distractors=shuffleCopy(Array.from({length:max},(_,j)=>j+1).filter(n=>n!==num)).slice(0,2), opts=shuffleCopy([num,...distractors].map(String));
       const group=Array.from({length:num},()=>`<span style="display:inline-block;font-size:clamp(22px,5vw,38px);margin:3px">${obj}</span>`).join('');
       q=qObj(obj,`How many objects can you count?`,opts,String(num),`Berapakah jumlah objek?`,opts,String(num),mode);q.sceneHtml=`<div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;max-width:340px;margin:auto;line-height:1.15">${group}</div>`;
     } else if(k==='addition'||k==='mathstory'){
@@ -817,7 +817,7 @@ function wireTraining(m){
   document.querySelectorAll('#trainingModalBody button').forEach(btn=>btn.addEventListener('click',()=>{if(btn.id!=='trainingSoundToggle')trainingClickSound()},{once:false}));
   if(m.type==="mission50"){
     let i=seriesProgress(m.id,50); const stage=document.getElementById("missionStage");
-    const qs=m.questions||getModuleQuestions(m);
+    const qs=shuffleCopy(m.questions||getModuleQuestions(m));
     const render=(effect="")=>{
       const q=qs[i%50]; const ms=bakawaliLanguage==='ms';
       const prompt=ms?(q.promptMs||localizeActivityText(q.prompt)):q.prompt; const opts=ms?(q.optsMs||q.opts.map(localizeChoice)):q.opts; const ans=ms?(q.answerMs||localizeChoice(q.answer)):q.answer;
