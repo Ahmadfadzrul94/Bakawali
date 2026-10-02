@@ -538,8 +538,9 @@ function makeQuestions(m){
       const w=W50[i%W50.length], letter=w[2][0], wrong1=W50[(i+7)%W50.length][2][0], wrong2=W50[(i+13)%W50.length][2][0];
       q=qObj(w[1],`What sound starts ${w[2]}?`,shuffleCopy([letter,wrong1,wrong2]),letter,`Bunyi apakah pada awal ${w[3]}?`,shuffleCopy([letter,wrong1,wrong2]),letter,mode);
     } else if(k==='spelling'){
-      const w=W50[i%W50.length], letters=w[2].split(''), answer=letters.join('');
-      q=qObj(w[1],`Build the word: ${w[2]}`,shuffleCopy([letters[0],letters[1]||letters[0],letters[2]||letters[0]]),answer,`Bina perkataan: ${w[3]}`,shuffleCopy([letters[0],letters[1]||letters[0],letters[2]||letters[0]]),answer,mode);
+      const spellPool=W50.filter(x=>x[2].length<=4&&!x[3].includes(' ')), w=spellPool[i%spellPool.length], letters=w[2].split(''), answer=letters.join(''), bmAnswer=w[3].toUpperCase(), bmLetters=bmAnswer.split('');
+      const makeTiles=chars=>{const distractors='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(x=>!chars.includes(x));return shuffleCopy([...chars,...shuffleCopy(distractors).slice(0,Math.max(2,Math.min(3,chars.length)))]);};
+      q=qObj(w[1],`Build the word: ${w[2]}`,makeTiles(letters),answer,`Bina perkataan: ${bmAnswer}`,makeTiles(bmLetters),bmAnswer,'build');
     } else if(k==='sight'){
       const w=['I','AM','THE','A','MY','SEE','CAN','LIKE','WE','GO','TO','IS','IT','YOU','ME','IN','ON','UP','BIG','RED'][i%20]; q=qObj('👀',`Find the word ${w}.`,shuffleCopy([w,['AM','THE','MY','SEE','GO','LIKE','YOU'][i%7],['A','CAN','IS','IT','ME','IN','UP'][i%7]]),w,`Cari perkataan ${w}.`,shuffleCopy([w,['AM','THE','MY','SEE','GO','LIKE','YOU'][i%7],['A','CAN','IS','IT','ME','IN','UP'][i%7]]),w,mode);
     } else if(k==='reading'||k==='story'){
@@ -567,13 +568,21 @@ function makeQuestions(m){
     } else if(k==='wordfamily'){
       const families=[['CAT','HAT','MAT','kucing','topi','tikar'],['DOG','LOG','FOG','anjing','kayu','kabus'],['SUN','RUN','FUN','matahari','lari','seronok'],['BEE','TREE','SEE','lebah','pokok','lihat'],['BALL','TALL','CALL','bola','tinggi','panggil']]; const a=families[i%5];q=qObj('🏠',`Which word belongs with ${a[0]}?`,shuffleCopy([a[1],a[2],'FISH']),a[1],`Yang manakah satu keluarga dengan ${a[0]}?`,shuffleCopy([a[4],a[5],'IKAN']),a[4],mode);
     } else if(k==='count'||k==='count20'||k==='treasurecount'){
-      const max=k==='count20'?20:10, num=(i%max)+1, obj=NUM_OBJECTS[i%NUM_OBJECTS.length], opts=shuffleCopy([num,Math.max(1,num-1),Math.min(max,num+1)].map(String));q=qObj(obj,`How many ${obj}?`,opts,String(num),`Berapakah jumlah ${obj}?`,opts,String(num),mode);
+      const max=k==='count20'?20:10, num=(i%max)+1, obj=NUM_OBJECTS[(i*7)%NUM_OBJECTS.length], opts=shuffleCopy([num,Math.max(1,num-1),Math.min(max,num+1)].map(String));
+      const group=Array.from({length:num},()=>`<span style="display:inline-block;font-size:clamp(22px,5vw,38px);margin:3px">${obj}</span>`).join('');
+      q=qObj(obj,`How many objects can you count?`,opts,String(num),`Berapakah jumlah objek?`,opts,String(num),mode);q.sceneHtml=`<div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;max-width:340px;margin:auto;line-height:1.15">${group}</div>`;
     } else if(k==='addition'||k==='mathstory'){
-      const a=(i%5)+1,b=((i*2)%5)+1,c=a+b;const opts=shuffleCopy([c,c+1,Math.max(0,c-1)].map(String));q=qObj('➕',`${a} + ${b} = ?`,opts,String(c),`Berapakah ${a} + ${b}?`,opts,String(c),mode);
+      const a=(i%5)+1,b=((i*2)%5)+1,c=a+b;const opts=shuffleCopy([c,c+1,Math.max(0,c-1)].map(String));const obj=NUM_OBJECTS[(i*5)%NUM_OBJECTS.length];
+      const groups=`<span style="font-size:clamp(22px,4.5vw,34px)">${Array.from({length:a},()=>obj).join('')}</span><b style="font-size:25px;margin:0 10px">+</b><span style="font-size:clamp(22px,4.5vw,34px)">${Array.from({length:b},()=>obj).join('')}</span>`;
+      q=qObj('➕',`${a} + ${b} = ?`,opts,String(c),`Berapakah ${a} + ${b}?`,opts,String(c),mode);q.sceneHtml=`<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px">${groups}</div>`;
     } else if(k==='subtraction'){
-      const a=5+(i%5),b=1+(i%4),c=a-b;const opts=shuffleCopy([c,c+1,Math.max(0,c-1)].map(String));q=qObj('➖',`${a} − ${b} = ?`,opts,String(c),`Berapakah ${a} − ${b}?`,opts,String(c),mode);
+      const a=5+(i%5),b=1+(i%4),c=a-b;const opts=shuffleCopy([c,c+1,Math.max(0,c-1)].map(String));const obj=NUM_OBJECTS[(i*3)%NUM_OBJECTS.length];
+      q=qObj('➖',`${a} − ${b} = ?`,opts,String(c),`Berapakah ${a} − ${b}?`,opts,String(c),mode);q.sceneHtml=`<div style="font-size:clamp(22px,4.5vw,34px);text-align:center">${Array.from({length:a},(_,j)=>j>=c?`<span style="opacity:.35;text-decoration:line-through">${obj}</span>`:obj).join(' ')}</div>`;
     } else if(k==='compare'||k==='same'){
-      const a=1+(i%8),b=(i*3)%9+1, ans=k==='same'?(a===b?'SAME':'DIFFERENT'):(a>b?'LEFT':a<b?'RIGHT':'SAME');const opts=k==='same'?['SAME','DIFFERENT','MAYBE']:['LEFT','SAME','RIGHT'];q=qObj('⚖️',`Which group has more? ${a} vs ${b}`,opts,ans,`Kumpulan manakah lebih banyak? ${a} berbanding ${b}`,opts,ans,mode);
+      const a=1+(i%8),b=(i*3)%9+1, ans=k==='same'?(a===b?'SAME':'DIFFERENT'):(a>b?'LEFT':a<b?'RIGHT':'SAME');const opts=k==='same'?['SAME','DIFFERENT','MAYBE']:['LEFT','SAME','RIGHT'];const obj=NUM_OBJECTS[(i*11)%NUM_OBJECTS.length];
+      const left=Array.from({length:a},()=>obj).join(' '),right=Array.from({length:b},()=>obj).join(' ');const prompt=k==='same'?`Are these groups the same?`:`Which group has more?`;
+      const promptMs=k==='same'?`Adakah kumpulan ini sama?`:`Kumpulan manakah lebih banyak?`;
+      q=qObj('⚖️',prompt,opts,ans,promptMs,opts,ans,mode);q.sceneHtml=`<div style="display:flex;justify-content:space-around;align-items:center;gap:12px;text-align:center;flex-wrap:wrap"><div><b>LEFT</b><div style="max-width:145px;font-size:25px;line-height:1.5">${left}</div></div><b style="font-size:24px">VS</b><div><b>RIGHT</b><div style="max-width:145px;font-size:25px;line-height:1.5">${right}</div></div></div>`;
     } else if(k==='beforeafter'){
       const x=2+(i%8), after=x+1,before=x-1;const ans=i%2===0?after:before;const prompt=i%2===0?`What comes after ${x}?`:`What comes before ${x}?`;const promptMs=i%2===0?`Apakah nombor selepas ${x}?`:`Apakah nombor sebelum ${x}?`;q=qObj('🔢',prompt,shuffleCopy([String(ans),String(x),String(i%2===0?before:after)]),String(ans),promptMs,shuffleCopy([String(ans),String(x),String(i%2===0?before:after)]),String(ans),mode);
     } else if(k==='shapes'){
@@ -821,12 +830,13 @@ function wireTraining(m){
         mode==='sort'?(ms?'Masukkan ke kumpulan yang betul.':'Put it in the right group.'):
         mode==='memory'?(ms?'Ingat gambar sebelum pilih.':'Remember the picture before choosing.'):(ms?'Pilih jawapan yang betul.':'Choose the correct answer.');
       stage.innerHTML=`${progress}<div class="mission50-card ${effect}" data-mode="${mode}">
-        <div class="mission50-scene"><div class="mission50-icon" id="missionIcon">${q.icon||'🌟'}</div><div class="mission50-sparkles" aria-hidden="true">✨</div></div>
+        <div class="mission50-scene"><div class="mission50-icon" id="missionIcon">${q.sceneHtml||q.icon||'🌟'}</div><div class="mission50-sparkles" aria-hidden="true">✨</div></div>
         <div class="mission50-counter">${ms?'MISI':'MISSION'} ${i+1} / 50</div>
         <h3>${prompt}</h3>
         <p class="mission50-hint">${interactionLabel}</p>
         ${mode==='drag'?`<div class="mission-drag-source" id="missionDragSource" draggable="true"><span>${q.icon||'🌟'}</span><b>${ms?'Seret saya!':'Drag me!'}</b></div>`:''}
-        <div class="mission50-options ${mode==='drag'?'mission-dropzones':''}">${optsShuffled.map((x,j)=>`<button type="button" class="mission50-option" data-value="${String(x).replace(/"/g,'&quot;')}" data-answer="${String(x)===String(ans)}"><span>${mode==='drag'?'🎯':'◆'}</span>${x}</button>`).join('')}</div>
+        ${mode==='build'?`<div id="buildSlots" style="display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:14px 0">${ans.split('').map((_,j)=>`<span data-slot="${j}" style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:48px;border:2px dashed #8aa5ce;border-radius:10px;font-size:24px;background:#fff">_</span>`).join('')}</div>`:''}
+        <div class="mission50-options ${mode==='drag'?'mission-dropzones':''}">${optsShuffled.map((x,j)=>`<button type="button" class="mission50-option" data-value="${String(x).replace(/"/g,'&quot;')}" data-letter="${String(x)}" data-answer="${String(x)===String(ans)}"><span>${mode==='drag'?'🎯':mode==='build'?'🔤':'◆'}</span>${x}</button>`).join('')}</div>
         <p class="activity-feedback" id="trainFeedback">${ms?'Mari cuba!':'Let’s go!'}</p>
       </div>`;
       if(mode==='drag'){
@@ -838,6 +848,18 @@ function wireTraining(m){
           target.addEventListener('dragleave',()=>target.classList.remove('drag-over'));
           target.addEventListener('drop',e=>{e.preventDefault();target.classList.remove('drag-over');target.click();});
         });
+      }
+      if(mode==='build'){
+        let chosen='';
+        stage.querySelectorAll('.mission50-option').forEach(btn=>btn.addEventListener('click',()=>{
+          if(btn.disabled)return;
+          const letter=btn.dataset.letter, expected=ans[chosen.length];
+          if(letter!==expected){btn.classList.add('mission-wrong');trainingFeedback('wrong',ms?'Cuba huruf seterusnya!':'Try the next letter!');setTimeout(()=>btn.classList.remove('mission-wrong'),450);return;}
+          chosen+=letter;btn.disabled=true;btn.classList.add('mission-correct');
+          const slot=stage.querySelector(`[data-slot="${chosen.length-1}"]`);if(slot)slot.textContent=letter;
+          if(chosen.length===ans.length){stage.querySelectorAll('.mission50-option').forEach(x=>x.disabled=true);stage.querySelector('.mission50-card')?.classList.add('mission-win');spawnMissionConfetti(stage);trainingFeedback('correct',ms?'🎉 Hebat! Perkataan betul!':'🎉 Great! You built the word!');const finished=seriesAdvance(m.id,i,50,ms?'🎉 Betul!':'🎉 Correct!');i++;if(finished){setTimeout(()=>{if(stage)stage.innerHTML=`<div class="mission-complete"><div class="mission-trophy">🏆</div><h3>${ms?'Misi Selesai!':'Mission Complete!'}</h3><p>${ms?'Kamu jawab 50 soalan!':'You completed all 50 questions!'}</p><div class="mission-reward">⭐ +1 Star &nbsp; 🎉</div></div>`;},700);}else setTimeout(()=>render(),650);}
+        }));
+        return;
       }
       stage.querySelectorAll('.mission50-option').forEach(btn=>{
         btn.addEventListener('click',()=>{
