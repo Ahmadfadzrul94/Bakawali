@@ -14,6 +14,7 @@ class BakawaliApp {
     this.activeModule = null;
     this.activeMissionIdx = 0;
     this.activeMissions = [];
+    this.answerLocked = false;
     this.buddy = {
       hunger: 80,
       happiness: 90,
